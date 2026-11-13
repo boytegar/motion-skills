@@ -1,0 +1,13 @@
+{
+  "comp": "Episode",
+  "out": "episode-line-art-animation",
+  "style": "line-art-animation",
+  "engine": "remotion",
+  "fps": 30,
+  "scenes": [
+    "S01Hook"
+  ],
+  "banners": {
+    "S01Hook": "Serene Dawn"
+  }
+}

@@ -1,0 +1,27 @@
+[package]
+name = "motion-papercut"
+version = "0.1.0"
+edition = "2021"
+description = "Papercut style engine for the motion-explainer skills: builds an explainer reel from episode.json + plan.json with fframes."
+license = "MIT"
+
+[dependencies]
+fframes = { version = "1.4.2-rc.1", default-features = false, features = ["cli", "captions"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+clap = { version = "4.5", features = ["derive"] }
+
+[features]
+default = ["renderer"]
+# the encoder + the CLI (render, frame, strip, inspect, audio). The library itself builds without it.
+renderer = ["fframes/compile-time-svgtree", "fframes/cpu_renderer"]
+# encode H.264 through the bundled portable ffmpeg; leave off on machines without a toolchain for it
+encode = ["fframes/h264", "fframes/build-portable"]
+
+[lints.rust]
+unexpected_cfgs = "allow"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1

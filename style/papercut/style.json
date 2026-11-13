@@ -1,0 +1,30 @@
+{
+  "name": "papercut",
+  "title": "Papercut",
+  "tagline": "Layered construction paper brought to life: grain, torn edges, stacked shade strips, a slow camera push and stop-motion paper boil.",
+  "description": "Short vertical (9:16) explainer style. Every prop is paper: grain, a rough cut edge, a drop shadow, stacked darker/lighter pieces instead of outlines or gradients. Rigid cut-out motion, one taped banner per beat, word-by-word torn tag captions, a boxy paper critter as the hero.",
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "bannerZone": [0.14, 0.21],
+    "captionsBand": [0.68, 0.80],
+    "keepClearBottom": 0.80
+  },
+  "engines": ["remotion", "fframes"],
+  "audio": {
+    "sfx": "../../core/audio/sfx",
+    "beds": "../../core/audio/beds"
+  },
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md",
+    "motionPrinciples": "docs/motion-principles.md",
+    "assetPrompts": "docs/asset-prompts.md",
+    "frameBreakdown": "docs/frame-breakdown.md"
+  },
+  "enginesDoc": {
+    "remotion": "remotion/README.md",
+    "fframes": "fframes/README.md"
+  }
+}

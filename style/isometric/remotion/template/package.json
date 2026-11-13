@@ -1,0 +1,23 @@
+{
+  "name": "isometric-episode",
+  "version": "1.0.0",
+  "description": "Isometric explainer episode",
+  "private": true,
+  "dependencies": {
+    "@remotion/captions": "4.0.530",
+    "@remotion/cli": "4.0.530",
+    "@remotion/google-fonts": "4.0.530",
+    "@remotion/layout-utils": "4.0.530",
+    "@remotion/media": "4.0.530",
+    "@remotion/tailwind-v4": "4.0.530",
+    "@remotion/transitions": "4.0.530",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.530",
+    "tailwindcss": "4.0.0"
+  },
+  "scripts": {
+    "dev": "remotion studio",
+    "build": "remotion bundle"
+  }
+}

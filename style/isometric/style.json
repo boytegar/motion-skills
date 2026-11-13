@@ -1,0 +1,36 @@
+{
+  "name": "isometric",
+  "title": "Isometric",
+  "tagline": "Calm, precise product line art in 2:1 dimetric isometric with constant hairlines and spring settles.",
+  "description": "Clean isometric product illustration style on light/dark ground. 2.0px constant hairlines, rounded slabs, stacked layers and spring motion on 1s.",
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "bannerZone": [
+      0.14,
+      0.21
+    ],
+    "captionsBand": [
+      0.68,
+      0.8
+    ],
+    "keepClearBottom": 0.8
+  },
+  "engines": [
+    "remotion",
+    "fframes"
+  ],
+  "audio": {
+    "sfx": "../../core/audio/sfx",
+    "beds": "../../core/audio/beds"
+  },
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  },
+  "enginesDoc": {
+    "remotion": "remotion/README.md",
+    "fframes": "fframes/README.md"
+  }
+}

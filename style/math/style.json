@@ -1,0 +1,36 @@
+{
+  "name": "math",
+  "title": "Math (Manim)",
+  "tagline": "Manim-style mathematical motion graphics: chalkboard dark stage, written equations, smooth easing on 1s.",
+  "description": "Mathematical visual explainer. Color-coded formulas, axes and graphs with ShowCreation sweeps, Transform morphs and little pi hero.",
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "bannerZone": [
+      0.14,
+      0.21
+    ],
+    "captionsBand": [
+      0.68,
+      0.8
+    ],
+    "keepClearBottom": 0.8
+  },
+  "engines": [
+    "remotion",
+    "fframes"
+  ],
+  "audio": {
+    "sfx": "../../core/audio/sfx",
+    "beds": "../../core/audio/beds"
+  },
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  },
+  "enginesDoc": {
+    "remotion": "remotion/README.md",
+    "fframes": "fframes/README.md"
+  }
+}

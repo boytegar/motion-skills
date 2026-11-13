@@ -1,0 +1,36 @@
+{
+  "name": "cut-paper",
+  "title": "Cut Paper (Collage)",
+  "tagline": "Torn-edge paper collage with drop shadows, crayon fills, playful patterns and character faces.",
+  "description": "Collage-style cut-paper animation. Full-bleed colour worlds, crayon/pattern textures, layered paper parts and orange spark mascot.",
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "bannerZone": [
+      0.14,
+      0.21
+    ],
+    "captionsBand": [
+      0.68,
+      0.8
+    ],
+    "keepClearBottom": 0.8
+  },
+  "engines": [
+    "remotion",
+    "fframes"
+  ],
+  "audio": {
+    "sfx": "../../core/audio/sfx",
+    "beds": "../../core/audio/beds"
+  },
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  },
+  "enginesDoc": {
+    "remotion": "remotion/README.md",
+    "fframes": "fframes/README.md"
+  }
+}

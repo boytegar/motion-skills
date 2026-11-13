@@ -1,0 +1,36 @@
+{
+  "name": "pixel",
+  "title": "Pixel Art",
+  "tagline": "Low-res pixel art drawn at native raster grids and upscaled nearest-neighbour to 1080x1920.",
+  "description": "Retro pixel art style. Dithered shading, 5x7 bitmap typography, CRT/scanline/LCD effects and resolution eras that tell time.",
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "bannerZone": [
+      0.14,
+      0.21
+    ],
+    "captionsBand": [
+      0.68,
+      0.8
+    ],
+    "keepClearBottom": 0.8
+  },
+  "engines": [
+    "remotion",
+    "fframes"
+  ],
+  "audio": {
+    "sfx": "../../core/audio/sfx",
+    "beds": "../../core/audio/beds"
+  },
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  },
+  "enginesDoc": {
+    "remotion": "remotion/README.md",
+    "fframes": "fframes/README.md"
+  }
+}

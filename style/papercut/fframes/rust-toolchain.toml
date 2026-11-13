@@ -1,0 +1,7 @@
+[toolchain]
+# ffmpeg-sys-fframes pulls in bindgen 0.72.1, which ICEs under rustc 1.93
+# (`rustc_serialize/src/serialize.rs:136` panicked). 1.91 builds the whole
+# dependency tree cleanly. Bump only after checking bindgen against the
+# newer compiler.
+channel = "1.91.0"
+components = ["rustfmt", "clippy"]

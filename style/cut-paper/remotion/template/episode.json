@@ -1,0 +1,13 @@
+{
+  "comp": "Episode",
+  "out": "episode-cut-paper",
+  "style": "cut-paper",
+  "engine": "remotion",
+  "fps": 30,
+  "scenes": [
+    "S01Hook"
+  ],
+  "banners": {
+    "S01Hook": "Cut Paper Style Ready"
+  }
+}

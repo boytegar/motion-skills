@@ -1,0 +1,36 @@
+{
+  "name": "line-art-animation",
+  "title": "Line Art Animation",
+  "tagline": "Elegant ink-on-paper animated line-art: procedural walk cycles, architectural street scenes, and fluid day-to-night transitions.",
+  "description": "Hand-drawn Japanese and European ink line-art aesthetic. Crisp SVG path rendering, constant hairline pen weights (1.5\u20132.5px), animated gait solvers, architectural backgrounds, and atmospheric time-of-day palettes.",
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "bannerZone": [
+      0.12,
+      0.2
+    ],
+    "captionsBand": [
+      0.68,
+      0.8
+    ],
+    "keepClearBottom": 0.8
+  },
+  "engines": [
+    "remotion",
+    "fframes"
+  ],
+  "audio": {
+    "sfx": "../../core/audio/sfx",
+    "beds": "../../core/audio/beds"
+  },
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  },
+  "enginesDoc": {
+    "remotion": "remotion/README.md",
+    "fframes": "fframes/README.md"
+  }
+}
