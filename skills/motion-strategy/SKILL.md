@@ -36,9 +36,11 @@ Write at the level `SERIES.md` sets. There is no default audience. The feeling t
 - Caption: the hook as the first line, a follow line so the DM lands, "READ BELOW" with the useful part written out, one send prompt ("Send this to the friend who..."), 3-5 hashtags.
 - Shares matter most to the algorithm. A funny or useful reel gets sent.
 
-## 5. Write the BRIEF
+## 5. Write the BRIEF and Scaffold
 
-Put this block at the top of `episodes/NN-slug/research/facts.md`. `motion-hook` and `motion-script` read it.
+Ask for the engine: `fframes` (Rust crate) or `remotion` (React)? Default: the first entry of `engines` in `$MOTION_LIB/style/$MOTION_STYLE/style.json`, else `remotion`.
+
+Write this block at the top of `episodes/NN-slug/research/facts.md`. Every later stage (`motion-hook`, `motion-script`, `motion-storyboard`, `motion-build`) reads it to know the engine and format target.
 
 ```
 BRIEF
@@ -48,9 +50,20 @@ Role:     <who or what does the work vs who advises or approves>
 Mode:     open-source drop | news launch / worth-it | feature unlock
 Format:   <the one familiar format>
 Audience: <level, copied from SERIES.md>
+Engine:   fframes | remotion
 CTA:      <KEYWORD> -> <the freebie>
 Length:   22-30 s
 ```
+
+**Scaffold immediately once the BRIEF questions are answered.** Do not wait for the build stage:
+
+```
+$MOTION_LIB/new_episode.sh <series-dir> NN-slug CompId [out-name] --engine fframes|remotion
+```
+
+This creates `<series>/episodes/NN-slug/{research,narration/voice,video}` with `video/episode.json` recording `engine`. Then output the preview command:
+- **fframes**: `cargo install --locked cargo-fframes` (once if CLI missing), then `cd episodes/NN-slug/video && cargo run --release -- preview`
+- **remotion**: `cd episodes/NN-slug/video && npx remotion studio`
 
 ## 6. Competitor study (when the user shares reels)
 
@@ -71,9 +84,11 @@ Method, setup and the subagent prompt: `references/competitor-analysis.md`.
 - [ ] `SERIES.md` read; audience, regions and voice respected.
 - [ ] Topic has a demand signal, a usable outcome and a freebie by DM.
 - [ ] One format named in a line.
+- [ ] Engine selected (`fframes` or `remotion`).
 - [ ] Vocabulary and the DM match the audience level.
-- [ ] BRIEF written; caption planned.
+- [ ] BRIEF written in `facts.md`; project scaffolded immediately via `new_episode.sh`.
+- [ ] Preview command surfaced to user (`cargo run --release -- preview` or `npx remotion studio`).
 
 ## Hand-off
 
-Next is `motion-hook`. It reads the BRIEF in `episodes/NN-slug/research/facts.md` and writes the HOOK block at the top of `episodes/NN-slug/video/STORYBOARD.md`. If the episode folder isn't scaffolded yet, create `research/` and `video/` by hand; `motion-build` merges them when it scaffolds.
+Next is `motion-hook`. It reads the BRIEF in `episodes/NN-slug/research/facts.md` (including the selected `Engine`) and writes the HOOK block at the top of `episodes/NN-slug/video/STORYBOARD.md`. The episode project is already scaffolded and ready.

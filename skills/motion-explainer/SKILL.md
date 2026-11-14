@@ -33,25 +33,25 @@ Reuse the style and the storytelling, not the worked examples' content. Every pr
 - **Source**: usually a link (repo, product site, announcement). Everything else is researched from it.
 - **The one claim** the video proves, and the topic.
 - **Role framing**: who or what does the work, who advises or approves. Confirm it with the user and never invent product behaviour.
+- **Engine**: `fframes` (Rust) or `remotion` (React).
 - **CTA keyword** and what the viewer gets (the deliverable).
 - **Length**: default 22-30 s.
 - **Audience level** (from `SERIES.md`) and any accent colour or mascot.
 
-Write the answers as the BRIEF block at the top of `episodes/NN-slug/research/facts.md` (format in `motion-strategy`).
+Write the answers as the BRIEF block at the top of `episodes/NN-slug/research/facts.md` (format in `motion-strategy`) and scaffold the episode project immediately (`new_episode.sh ... --engine <engine>`).
 
 ## Stages
 
 | # | Stage | Skill | Reads | Writes |
 |---|---|---|---|---|
-| 1 | Strategy | `motion-strategy` | `SERIES.md`, the source | BRIEF in `research/facts.md`, `SERIES.md` |
+| 1 | Strategy & Scaffold | `motion-strategy` | `SERIES.md`, the source | BRIEF in `research/facts.md`, scaffolded project, `video/episode.json` |
 | 2 | Hook | `motion-hook` | BRIEF | HOOK block at the top of `video/STORYBOARD.md` |
 | 3 | Script | `motion-script` | BRIEF, HOOK | `research/facts.md`, `narration/script.json`, staging table in `STORYBOARD.md` |
-| 4 | Storyboard | `motion-storyboard` | `script.json`, `STORYBOARD.md` | Camera/Cut table, scene blocks, SFX plan in `STORYBOARD.md` |
-| 5 | Scaffold and plan | `motion-build` | `STORYBOARD.md` | the project, `episode.json` |
-| 6 | Voice and timing | `motion-voice` | `script.json`, `voice/voice.json` | `narration/` takes, `public/vo/captions.json`, `src/plan.json` |
-| 7 | Scenes, sound, render | `motion-build` | `plan.json`, `STORYBOARD.md` | `src/scenes/*`, `tools/cues.json`, `out/*.mp4` |
-| 8 | QA | `motion-qa` | stills, `STORYBOARD.md` | fixes, the delivery summary |
-| 9 | After posting | `motion-strategy` (autopsy), `motion-build` (harvest) | platform numbers, the project | `research/analytics/`, library promotions |
+| 4 | Storyboard | `motion-storyboard` | `script.json`, `STORYBOARD.md`, `episode.json` | Camera/Cut table, scene blocks (engine-specific), SFX plan in `STORYBOARD.md` |
+| 5 | Voice and timing | `motion-voice` | `script.json`, `voice/voice.json` | `narration/` takes, `public/vo/captions.json`, `src/plan.json` |
+| 6 | Scenes, sound, render | `motion-build` | `plan.json`, `STORYBOARD.md`, `episode.json` | `src/scenes/*` (TSX or Rust), `tools/cues.json`, `out/*.mp4` |
+| 7 | QA | `motion-qa` | stills, `STORYBOARD.md` | fixes, the delivery summary |
+| 8 | After posting | `motion-strategy` (autopsy), `motion-build` (harvest) | platform numbers, the project | `research/analytics/`, library promotions |
 
 ## Project files
 

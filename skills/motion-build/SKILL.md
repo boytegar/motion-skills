@@ -15,17 +15,20 @@ Build every episode on the library instead of writing a Remotion project from sc
 - Needs `video/STORYBOARD.md` and `narration/script.json` from the earlier stages.
 - Smoke test of the whole toolchain: `$MOTION_LIB/core/tools/selftest.sh` builds `examples/hello-reel/` in a throwaway folder and renders one still.
 
-## 1. Scaffold
+## 1. Scaffold & Verify Engine
 
-```
-$MOTION_LIB/new_episode.sh <series-dir> NN-slug CompId [out-name]
-```
+The episode project should already be scaffolded from the intake / `motion-strategy` stage. Verify `video/episode.json` for the recorded `engine`:
 
-It creates `<series>/episodes/NN-slug/{research,narration/voice,video}` with the template project and a synced copy of the kit in `src/lib/`. `node_modules` comes from `$DONOR`, else the newest sibling episode, else `npm i`. If `<series>/video-assets/` exists, it is laid over the default textures and props.
+- If not yet scaffolded, ask the user (`fframes` or `remotion`) and run:
+  ```
+  $MOTION_LIB/new_episode.sh <series-dir> NN-slug CompId [out-name] --engine fframes|remotion
+  ```
+- Preview commands from `video/`:
+  - **fframes**: `cargo run --release -- preview` (or install CLI: `cargo install --locked cargo-fframes`)
+  - **remotion**: `npx remotion studio` (or `npm run dev`)
 
-The folder may already exist, because the earlier stages wrote `research/`, `narration/script.json` and `video/STORYBOARD.md` into it. The script merges into it and never overwrites a file that is there. It stops only if `video/package.json` exists (already scaffolded).
-
-Never edit `src/lib/` in a project. It is a snapshot, so an old episode renders the same after the library changes. Fix the library, then re-sync with `video/sync_kit.sh`.
+- **fframes**: episode project is a Rust crate (`media/`, `src/main.rs`). Render with `cargo run --release -- render` or `$MOTION_LIB/core/tools/render.sh`.
+- **remotion**: React project (`src/`, `package.json`). Render with `npx remotion render <CompId> out/<out>.mp4` or `render.sh`.
 
 ## 2. Plan: `episode.json`, voice, timing
 
@@ -36,7 +39,7 @@ From the storyboard, fill `video/episode.json`:
 Then run `motion-voice` through its timing step (it ends with `build_vo.py` and `timing_md.py`). Then, from `video/`:
 
 ```
-python3 $MOTION_LIB/video/stubs.py        # src/scenes/index.ts + a stub per scene
+python3 $MOTION_LIB/core/tools/stubs.py        # generates multi-file scene stubs based on engine
 ```
 
 `build_vo.py` flags any scene under 1.2 s; merge it into a neighbour. `timing_md.py` writes the Timing section of `STORYBOARD.md` (absolute frames and word cues), so agents never open `plan.json`.
@@ -45,12 +48,30 @@ python3 $MOTION_LIB/video/stubs.py        # src/scenes/index.ts + a stub per sce
 
 Follow `$MOTION_LIB/style/$MOTION_STYLE/docs/asset-prompts.md`: an image tool (anything that outputs transparent PNGs) for backgrounds and complex static props, code for characters, all text, tags, gauges, buttons and UI. No text inside generated images. With no image tool, build every prop in code with the paper filter; the style holds up. Backdrops: use the library's `<Backdrop>` set (`style/$MOTION_STYLE/remotion/public/bg/backdrops/_sheet.jpg`); generate a new one only when an episode needs a place the library lacks. The proof screenshot: `node $MOTION_LIB/core/tools/capture.mjs <url> public/proof/x.png`, shown with the kit's `RealShot`.
 
-## 4. Scenes
+## 4. Scenes (Strict Multi-file Architecture)
 
-1. Build `S01Hook` yourself first, from the HOOK block. It is the reference scene the agents match (cue constants, the camera, clamped `interpolate`).
-2. Hand the rest to scene agents in parallel, grouped by scene (2-3 scenes each; more agents cost more startup context). Use the `motion-scene` agent that `install.sh` wrote for your harness (Claude Code `~/.claude/agents`, OpenCode `~/.config/opencode/agents`, Codex `~/.codex/agents`, Gemini CLI `~/.gemini/agents`); a general agent also works. Spawn it with your harness's own mechanism (the Task tool in Claude Code, the subagent tool in opencode, Codex's subagents, Gemini's agent tool). **If your harness has no subagents, build the scenes yourself one at a time**, in the same order and with the same brief; it is slower, not different. The brief is `style/$MOTION_STYLE/remotion/AGENT_BRIEF.md`. The spawn message gives the project path, each agent's scenes with absolute frame ranges, a QA folder name and the value of `$MOTION_LIB`.
-3. File ownership: an agent writes only `src/scenes/<Scene>.tsx`, an optional `<Scene>.parts.tsx` and `tools/cue_sheet.d/<Scene>.json`. Never `src/lib/**`, other scenes, `index.ts`, `plan.json`, `episode.json` or the storyboard.
-4. Agents read `style/$MOTION_STYLE/remotion/CATALOG.md` and `$MOTION_LIB/core/audio/CATALOG.md`, not the kit source, and reuse components, prop sets and scene templates (`kit/scenes/`, for example `CtaPhoneDM` for the CTA) before drawing anything new.
+**NEVER put all scenes in one file.** Each scene must live in its own isolated file to allow parallel agent work, independent testing, and clean git diffs.
+
+Check `engine` from `video/episode.json`:
+
+### For Remotion (`engine: "remotion"`)
+- **File Structure**:
+  - `src/scenes/<Scene>.tsx` (e.g. `S01Hook.tsx`, `S02Name.tsx`) — exactly **one file per scene**.
+  - `src/scenes/<Scene>.parts.tsx` (optional) — for private sub-components of that scene only.
+  - `src/scenes/index.ts` — registry array `SCENES` automatically managed by `stubs.py`. Never inline scene bodies here.
+1. Build `S01Hook` yourself first in `src/scenes/S01Hook.tsx`, from the HOOK block. It is the reference scene the agents match (cue constants, the camera, clamped `interpolate`).
+2. Hand the rest to scene agents in parallel, grouped by scene (2-3 scenes each). The brief is `style/$MOTION_STYLE/remotion/AGENT_BRIEF.md`.
+3. File ownership: an agent writes only `src/scenes/<Scene>.tsx`, an optional `<Scene>.parts.tsx` and `tools/cue_sheet.d/<Scene>.json`. Never edit other scenes or `index.ts`.
+4. Agents read `style/$MOTION_STYLE/remotion/CATALOG.md` and `$MOTION_LIB/core/audio/CATALOG.md`.
+
+### For fframes (`engine: "fframes"`)
+- **File Structure**:
+  - `src/scenes/<scene_snake>.rs` (e.g. `s01_hook.rs`, `s02_name.rs`) — exactly **one file per scene**, defining its struct and `impl Scene for <Scene>`.
+  - `src/scenes/mod.rs` — automatically registers all scene modules via `stubs.py` (`pub mod s01_hook; pub use s01_hook::*;`).
+  - `src/main.rs` / `lib.rs` — only mounts the scenes via `Video::define_scenes()`. Never write scene drawing code inside `main.rs`.
+1. Build `s01_hook.rs` first as the reference scene.
+2. Hand remaining scenes to agents in parallel (each agent owns only `src/scenes/<scene_snake>.rs`).
+3. Read `style/$MOTION_STYLE/fframes/src/` for available camera, set, and prop structs instead of TSX components.
 
 Build rules: 1080x1920, 30 fps, scenes chained in the kit's transition series. Global layers: VO and music `<Audio>`, the taped banner with `<Boil>`, `<WordTagCaptions>`, `<GrainOverlay>`. Every prop is wrapped in `<Paper>`, entrances use `<PopIn>`, each scene runs inside its storyboard camera. No CSS animations. Keep the bottom 20% clear. Neighbouring scenes never share a backdrop. The default hero is a boxy orange critter (token `C.hero` `#D67354`, shade `C.heroLo` `#A9553B`, alias `you`); accessories and name pills tell the cast apart.
 
@@ -66,7 +87,7 @@ python3 $MOTION_LIB/core/tools/cues.py && node $MOTION_LIB/core/audio/render.mjs
 
 ## 6. Render
 
-Preview in the Studio (`npx remotion studio`). Render only when asked:
+Preview: `cargo run --release -- preview` (fframes) or `npx remotion studio` (remotion). Render only when asked, always through the wrapper — it picks the engine from `episode.json`:
 
 ```
 $MOTION_LIB/core/tools/render.sh        # -> out/<out>.mp4
