@@ -33,7 +33,7 @@ Reuse the style and the storytelling, not the worked examples' content. Every pr
 - **Source**: usually a link (repo, product site, announcement). Everything else is researched from it.
 - **The one claim** the video proves, and the topic.
 - **Role framing**: who or what does the work, who advises or approves. Confirm it with the user and never invent product behaviour.
-- **Engine**: read the series `agents.md` first when it exists — it is the initialized source of truth and must not be asked again. Else ask: `remotion` (React), `fframes` (Rust crate) or `kyfram` (Logos `.lgv` scripts, one per scene). Kyfram needs the `kyfram` binary: `curl -fsSL https://kyfram-site-68056d.gitlab.io/install.sh | sh`, and its DSL is the `kyfram` skill.
+- **Engine**: read the series `agents.md` first when it exists — it is the initialized source of truth and must not be asked again. Else ask: `remotion` (React), `fframes` (Rust crate) or `kyfram` (Logos `.lgv` scripts, one per scene). If the selected engine is `kyfram`, invoke the `kyfram` skill before any storyboard, scene, render, or Kyfram-specific QA work. Kyfram needs the `kyfram` binary: `curl -fsSL https://kyfram-site-68056d.gitlab.io/install.sh | sh`.
 - **CTA keyword** and what the viewer gets (the deliverable).
 - **Length**: default 22-30 s.
 - **Audience level** (from `SERIES.md`) and any accent colour or mascot.

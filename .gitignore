@@ -7,3 +7,8 @@ out/
 *.bak
 .cache/
 .pcb
+.agents
+episodes
+agents.md
+design.md
+SERIES.md

@@ -38,7 +38,7 @@ Write at the level `SERIES.md` sets. There is no default audience. The feeling t
 
 ## 5. Write the BRIEF and Scaffold
 
-Ask for the engine: `remotion` (React), `fframes` (Rust crate) or `kyfram` (Logos `.lgv`, one script per scene)? Default: read `agents.md` in the series folder if it exists, then `$MOTION_ENGINE`, then the first entry of `engines` in `$MOTION_LIB/style/$MOTION_STYLE/style.json`, else `remotion`. A style offers `kyfram` only when it ships `style/<name>/kyfram/PRELUDE.lgv` (today: papercut).
+Ask for the engine: `remotion` (React), `fframes` (Rust crate) or `kyfram` (Logos `.lgv`, one script per scene)? Default: read `agents.md` in the series folder if it exists, then `$MOTION_ENGINE`, then the first entry of `engines` in `$MOTION_LIB/style/$MOTION_STYLE/style.json`, else `remotion`. A style offers `kyfram` only when it ships `style/<name>/kyfram/PRELUDE.lgv` (today: papercut). When selected, invoke the `kyfram` skill before Kyfram-specific setup or guidance.
 
 Write this block at the top of `episodes/NN-slug/research/facts.md`. Every later stage (`motion-hook`, `motion-script`, `motion-storyboard`, `motion-build`) reads it to know the engine and format target.
 

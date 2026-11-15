@@ -35,8 +35,8 @@ let popText = fn(txt, cx, cy, size, t0, ink) {
 // A rounded plate behind one word, popping with it.
 let popPlate = fn(cx, cy, w, h, t0, fill, radius) {
   let kf = table{}
-  kf[toStr(t0)] = table{x: cx - w / 2, y: cy - h / 2, w: w, h: h, radius: radius, color: fill, alpha: 0}
-  kf[toStr(t0 + 0.09)] = table{x: cx - w / 2, y: cy - h / 2, w: w, h: h, radius: radius, color: fill, alpha: 1}
+  kf[toStr(t0)] = table{x: cx - w / 2.0, y: cy - h / 2.0, w: w, h: h, radius: radius, color: fill, alpha: 0}
+  kf[toStr(t0 + 0.09)] = table{x: cx - w / 2.0, y: cy - h / 2.0, w: w, h: h, radius: radius, color: fill, alpha: 1}
   return kf
 }
 
@@ -48,18 +48,57 @@ let drawTag = fn(name, word, cx, cy, t0, size, plate, ink, radius) {
   text("word_${name}", popText(word, cx, cy, size, t0, ink))
 }
 
-// A centred row of tags from a cue list [{w, f, e}], shrunk to stay inside maxW.
+// A centred row of tags from a cue list [{w, f, e}], rendered as paged groups of
+// PAGE_SIZE words so the full font size is preserved on a 1080-wide canvas.
+// Each page appears only while its words are active (alpha 0→1 on the first word's
+// onset, 1→0 immediately after the last word's end), so the row never tries to fit
+// more words than the page holds and the scale factor stays at 1.0.
+// PAGE_SIZE = 3 (matches style guide: "pages of 1-3").
 let drawCaptionRow = fn(list, cy, size, plate, ink, maxW, radius) {
   let gap = 16.0
-  let total = 0.0
-  for i, c in list { total = total + pad(textW(c.w, size), 34) + gap }
-  let sc = maxW / (total - gap)
-  if sc > 1.0 { sc = 1.0 }
-  let x = 540 - (total - gap) * sc / 2
-  for i, c in list {
-    let w = pad(textW(c.w, size), 34) * sc
-    drawTag("c${i}", c.w, x + w / 2, cy, c.f / FPSR, size * sc, plate, ink, radius)
-    x = x + w + gap * sc
+  let PAGE = 3.0
+  // ── build pages: each page is a slice of up to PAGE words ──────────────
+  let n = len(list)
+  let numPages = mathCeil(n * 1.0 / PAGE)
+  for pi in range(0, numPages) {
+    let start = pi * 3
+    let stop = start + 3
+    if stop > n { stop = n }
+    // measure this page only
+    let ptotal = 0.0
+    for j in range(start, stop) {
+      ptotal = ptotal + pad(textW(list[j].w, size), 34) + gap
+    }
+    ptotal = ptotal - gap
+    let sc = maxW / ptotal
+    if sc > 1.0 { sc = 1.0 }
+    // onset = frame of first word in page; end = frame of last word in page
+    let onF = list[start].f
+    let enF = list[stop - 1].e
+    let tOn  = onF * 1.0 / (FPSR * 1.0)
+    let tOff = enF * 1.0 / (FPSR * 1.0)
+    let x = 540.0 - ptotal * sc / 2.0
+    for j in range(start, stop) {
+      let c = list[j]
+      let tw = pad(textW(c.w, size), 34) * sc
+      let cx = x + tw / 2.0
+      let t0 = c.f * 1.0 / (FPSR * 1.0)
+      // plate and word pop in at onset, entire page fades out at page end
+      let ph = size * sc * 1.55
+      let kfPlate = table{}
+      kfPlate[toStr(t0)]          = table{x: cx - tw / 2.0, y: cy - ph / 2.0, w: tw, h: ph, radius: radius, color: plate, alpha: 0}
+      kfPlate[toStr(t0 + 0.09)]   = table{x: cx - tw / 2.0, y: cy - ph / 2.0, w: tw, h: ph, radius: radius, color: plate, alpha: 1}
+      kfPlate[toStr(tOff - 0.04)] = table{x: cx - tw / 2.0, y: cy - ph / 2.0, w: tw, h: ph, radius: radius, color: plate, alpha: 1}
+      kfPlate[toStr(tOff)]        = table{x: cx - tw / 2.0, y: cy - ph / 2.0, w: tw, h: ph, radius: radius, color: plate, alpha: 0}
+      shape("plate_p${pi}_c${j}", "roundRect", kfPlate)
+      let kfTxt = table{}
+      kfTxt[toStr(t0)]          = table{content: c.w, x: cx, y: cy, size: size * sc, color: ink, alpha: 0, scale: 0.86, rotate: -3}
+      kfTxt[toStr(t0 + 0.09)]   = table{content: c.w, x: cx, y: cy, size: size * sc, color: ink, alpha: 1, scale: 1, rotate: 0, ease: "cubicOut"}
+      kfTxt[toStr(tOff - 0.04)] = table{content: c.w, x: cx, y: cy, size: size * sc, color: ink, alpha: 1}
+      kfTxt[toStr(tOff)]        = table{content: c.w, x: cx, y: cy, size: size * sc, color: ink, alpha: 0}
+      text("word_p${pi}_c${j}", kfTxt)
+      x = x + tw + gap * sc
+    }
   }
 }
 

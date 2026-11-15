@@ -95,7 +95,7 @@ Build rules: 1080x1920, 30 fps, scenes chained in the kit's transition series. G
 
 ## 5. Sound
 
-Pick SFX by name from `$MOTION_LIB/core/audio/sfx/*.js` and the bed by preset from `$MOTION_LIB/core/audio/beds/*.json`. From `video/`:
+Pick SFX by name from `$MOTION_LIB/core/audio/sfx/*.js` and the bed by preset from `$MOTION_LIB/core/audio/beds/*.json`. For **kyfram**, invoke the `kyfram` skill first and write per-scene SFX rows in `tools/cue_sheet.d/<Scene>.json`; it owns the same shared sound pipeline as fframes and Remotion. From `video/`:
 
 ```
 python3 $MOTION_LIB/core/tools/cues.py && node $MOTION_LIB/core/audio/render.mjs

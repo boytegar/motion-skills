@@ -16,7 +16,7 @@ def header(ep, scene, scene_frames, fps):
         f'let SCENE_ID = {lua_str(scene["id"])}',
         f'let BANNER = {lua_str(ep.get("banners", {}).get(scene["id"], ""))}',
         f'let DUR = {scene_frames / fps:.4f}',
-        f'let FPSR = {fps}',
+        f'let FPSR = {float(fps):.1f}',
     ]
     rows = []
     for w in scene.get('words', []):

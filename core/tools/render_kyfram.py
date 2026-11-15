@@ -46,8 +46,8 @@ def die(msg):
     sys.exit(f'render_kyfram: {msg}')
 
 
-def run(cmd):
-    r = subprocess.run(cmd, capture_output=True, text=True)
+def run(cmd, cwd=None):
+    r = subprocess.run(cmd, capture_output=True, text=True, cwd=cwd)
     if r.returncode:
         die(f"command failed: {' '.join(cmd)}\n{r.stdout[-3000:]}\n{r.stderr[-3000:]}")
     return r
@@ -134,8 +134,11 @@ def main():
         built = f'{CACHE}/build/{name}.lgv'
         with open(built, 'wb') as f:
             f.write(prelude_bytes + head + body)
+        # kyfram resolves relative font paths ("media/fonts/...") against its cwd,
+        # so run it from the episode project, not wherever the script was launched.
         run(['kyfram', 'render', '--out', os.path.abspath(path), '--width', str(w), '--height', str(h),
-             '--fps', str(fps), '--crf', '16', '--preset', 'slow', os.path.abspath(built)])
+             '--fps', str(fps), '--crf', '16', '--preset', 'slow', os.path.abspath(built)],
+            cwd=os.getcwd())
         got = frame_count(path)
         if got != dur:
             die(f'{src}: rendered {got} frames, plan says {dur}. A shape must not change the scene '
