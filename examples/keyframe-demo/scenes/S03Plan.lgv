@@ -1,0 +1,45 @@
+// S03Plan: the timing is not in the scene. It is in a plan file.
+// Two cards, an arrow between them: scene on the left, plan on the right, arrow from plan to scene.
+
+drawRoom(C_BOARD, C_FLOOR)
+
+// Left card: the scene file. Plain, small.
+shape("card_scene", "rect", table{
+  "0": table{x: 90, y: 640, w: 400, h: 380, color: C_CREAM_LO},
+  "0.15": table{x: 90, y: 700, w: 400, h: 380, color: C_CREAM_LO, ease: "cubicOut"}})
+text("lbl_scene", popText("scene.lgv", 290, 780, 40, 0.3, C_INK))
+text("lbl_shapes", popText("shapes only", 290, 862, 32, 0.55, C_INK))
+
+// Right card: the plan. Emphasised, big.
+shape("card_plan", "rect", table{
+  "0.4": table{x: 590, y: 560, w: 400, h: 560, color: C_CREAM},
+  "0.55": table{x: 590, y: 620, w: 400, h: 560, color: C_CREAM, ease: "cubicOut"}})
+shape("card_plan_hi", "rect", table{
+  "0.55": table{x: 590, y: 620, w: 400, h: 10, color: C_HERO}})
+text("lbl_plan", popText("plan.json", 790, 700, 40, 0.7, C_INK))
+
+// The one number that matters, highlighted on the word "timing" (f 12 -> 0.4 s).
+text("k_dur", popText("DUR", 690, 800, 34, 0.95, C_INK_SOFT))
+text("v_dur", popText("3.53", 850, 800, 50, 1.05, C_HERO))
+text("k_fps", popText("FPSR", 690, 890, 34, 1.2, C_INK_SOFT))
+text("v_fps", popText("30", 850, 890, 50, 1.3, C_INK))
+text("k_banner", popText("BANNER", 790, 985, 24, 1.45, C_INK_SOFT))
+text("v_banner", popText("ONE NUMBER", 790, 1030, 32, 1.55, C_INK))
+
+// The arrow from the plan to the scene, drawn on "It is in a plan file" (f 68+).
+let ax0 = 600.0
+let ay0 = 1120.0
+let ax1 = 540.0
+let ay1 = 1080.0
+shape("arrow", "line", table{
+  "2.2": table{x1: ax0, y1: ay0, x2: ax0, y2: ay0, width: 12, color: C_TAG, alpha: 1},
+  "2.7": table{x1: ax0, y1: ay0, x2: ax1, y2: ay1, width: 12, color: C_TAG, alpha: 1, ease: "cubicOut"}})
+shape("arrow_head", "polygon", table{
+  "2.65": table{points: [ax1, ay1, ax1, ay1, ax1, ay1, ax1, ay1], filled: true, width: 2, color: C_TAG, alpha: 0},
+  "2.7": table{points: [ax1, ay1 - 30, ax1 + 46, ay1 + 6, ax1, ay1 + 42, ax1, ay1], filled: true, width: 2, color: C_TAG, alpha: 1}})
+
+// A note: retiming is editing this number.
+text("note", popText("retime = edit this", 540, 1240, 46, 3.1, C_TAG_TEXT))
+
+drawBanner(BANNER)
+drawCaptions(CAPS)

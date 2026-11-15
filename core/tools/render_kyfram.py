@@ -106,7 +106,10 @@ def main():
         if not os.path.isfile(src):
             die(f'{src} missing: run python3 $MOTION_LIB/core/tools/kyfram_stubs.py, then write the scene')
         body = open(src, 'rb').read()
-        if b'scene(' in body:
+        # The stub template and every doc line talk about scene(); only a real call is a
+        # mistake. Strip // comments before looking, so the stubs' own doc header passes.
+        code = b'\n'.join(l.split(b'//', 1)[0] for l in body.split(b'\n'))
+        if b'scene(' in code:
             die(f'{src}: remove the scene(...) call; the renderer emits it from src/plan.json')
         head = header(ep, sc, fps).encode()
         key = sha(body, head, prelude_sha, canvas_key)[:12]

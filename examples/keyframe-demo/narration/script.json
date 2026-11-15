@@ -1,0 +1,7 @@
+[
+ {"id": "l1_hook",  "text": "You change one number, and the whole cut moves."},
+ {"id": "l2_code",  "text": "Here, that is the entire scene. Four lines."},
+ {"id": "l3_plan",  "text": "The timing is not in there. It is in a plan file."},
+ {"id": "l4_drift", "text": "Render the wrong frame count and it fails, instead of drifting."},
+ {"id": "l5_cta",   "text": "Ten styles ship this. Clone it, and retime your own."}
+]

@@ -1,0 +1,48 @@
+{
+ "comp": "KeyframeDemo",
+ "out": "kyfram-demo",
+ "style": "papercut",
+ "engine": "kyfram",
+ "narration": "../narration",
+ "timing": "timing_narrator.js",
+ "width": 1080,
+ "height": 1920,
+ "fps": 30,
+ "start": 0.2,
+ "gap": 0.22,
+ "hold": 1.4,
+ "scenes": [
+  [
+   "S01Hook",
+   "l1_hook",
+   0
+  ],
+  [
+   "S02Code",
+   "l2_code",
+   0
+  ],
+  [
+   "S03Plan",
+   "l3_plan",
+   0
+  ],
+  [
+   "S04Drift",
+   "l4_drift",
+   0
+  ],
+  [
+   "S05Cta",
+   "l5_cta",
+   0
+  ]
+ ],
+ "banners": {
+  "S01Hook": "ONE NUMBER",
+  "S02Code": "FOUR LINES",
+  "S03Plan": "NOT IN THERE",
+  "S04Drift": "IT FAILS",
+  "S05Cta": "TEN STYLES"
+ }
+}

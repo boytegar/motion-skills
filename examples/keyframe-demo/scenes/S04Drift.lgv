@@ -1,0 +1,31 @@
+// S04Drift: the frame counter flips red and a STOP plate stamps.
+// "Render the wrong frame count and it fails, instead of drifting."
+
+drawRoom(C_BOARD, C_FLOOR)
+
+// A counter card: the count climbing, then wrong, then red.
+shape("counter_card", "rect", table{
+  "0": table{x: 240, y: 700, w: 600, h: 460, color: C_CREAM},
+  "0.15": table{x: 240, y: 760, w: 600, h: 460, color: C_CREAM, ease: "cubicOut"}})
+shape("counter_hi", "rect", table{
+  "0.15": table{x: 240, y: 760, w: 600, h: 10, color: C_BRASS}})
+
+// The number ticks up on "Render the wrong" (f 3-32), then "106 vs 90" flashes red on "count".
+text("cnt_label", popText("frames rendered", 540, 850, 34, 0.35, C_INK_SOFT))
+text("cnt_num", table{
+  "0.5": table{content: "38", x: 540, y: 990, size: 130, font: F_BANNER, color: C_INK, alpha: 0},
+  "0.6": table{content: "38", x: 540, y: 990, size: 130, font: F_BANNER, color: C_INK, alpha: 1, ease: "cubicOut"},
+  "0.95": table{content: "64", x: 540, y: 990, size: 130, font: F_BANNER, color: C_INK, alpha: 1},
+  "1.25": table{content: "90", x: 540, y: 990, size: 130, font: F_BANNER, color: C_NOGO, alpha: 1}})
+
+// The drift line under it, struck through on "instead" (f 78 -> 2.6 s).
+shape("strike", "line", table{
+  "2.6": table{x1: 320, y1: 1160, x2: 320, y2: 1160, width: 10, color: C_NOGO, alpha: 1},
+  "2.9": table{x1: 320, y1: 1160, x2: 760, y2: 1150, width: 10, color: C_NOGO, alpha: 1, ease: "cubicOut"}})
+text("drift_lbl", popText("drifts silently", 540, 1165, 40, 2.35, C_INK_SOFT))
+
+// The verdict plate stamps on "fails" (f 66 -> 2.2 s).
+drawTag("verdict", "STOP", 540, 1320, 2.2, 96, C_NOGO, C_TAG_TEXT, 10)
+
+drawBanner(BANNER)
+drawCaptions(CAPS)
