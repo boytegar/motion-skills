@@ -76,6 +76,25 @@ Style furniture (papercut): `drawRoom(wall, floor)`, `drawHero(cx, cy, r, color)
 - **Arity errors panic** rather than error cleanly: a wrong argument count to a
   helper fails the build with a Go panic. Count the args.
 
+## Audio: voice yes, SFX and music not yet
+
+`render_kyfram.py --voice` muxes exactly one track, `public/vo/voiceover.wav`, as AAC. That
+covers narration only. The Remotion and fframes paths also mix a silent SFX layer
+(`public/audio/fx.wav`) and a music bed (`public/audio/music.wav`) built by
+`core/tools/cues.py` + `core/audio/render.mjs`, but a kyfram render has nowhere to put
+them, so an episode with sound design needs a post-mix:
+
+```
+# once out/<name>.mp4 exists with the voice muxed
+ffmpeg -i out/<name>.mp4 -i public/audio/fx.wav -i public/audio/music.wav \
+  -filter_complex "[1:a][2:a]amix=inputs=2:duration=longest[add];[0:a][add]amix=inputs=2:duration=first:dropout_transition=0" \
+  -c:v copy -c:a aac -b:a 320k out/<name>-mixed.mp4
+```
+
+That is a manual step today. The clean fix is a `--sfx` flag on `render_kyfram.py` doing the
+same amix inside the existing voice mux; do it there, not in a wrapper script, so the cache
+key and the QA path stay one code path.
+
 ## Pipeline wiring
 
 `motion-build` and the other pipeline skills treat `kyfram` like any engine: the
