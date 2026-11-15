@@ -204,10 +204,10 @@ doctor() {
     if ls -d "$HOME"/.cache/huggingface/hub/models--Qwen--Qwen3-TTS-12Hz-*-CustomVoice >/dev/null 2>&1; then ok "voice: CustomVoice model cached"; L_FULL=1; else miss "voice: no CustomVoice model in the Hugging Face cache"; fi
   else miss "voice: qwen-tts not installed (optional; ./install.sh --mode custom --components tts)"; fi
   for f in kit/paper/camera.tsx public/bg/backdrops/backdrops.json public/bg/textures/felt-fibre.mp4; do
-    [ -e "$MOTION_LIB/style/papercut/remotion/$f" ] && ok "library: papercut/$f" || { bad "library file missing: papercut/$f"; L_STD=0; }
+    [ -e "$ROOT/style/papercut/remotion/$f" ] && ok "library: papercut/$f" || { bad "library file missing: papercut/$f"; L_STD=0; }
   done
   for s in papercut; do
-    [ -f "$MOTION_LIB/style/$s/kyfram/PRELUDE.lgv" ] && ok "kyfram: style/$s/PRELUDE.lgv" || miss "kyfram: style/$s/PRELUDE.lgv missing (the kyfram engine cannot render this style)"
+    [ -f "$ROOT/style/$s/kyfram/PRELUDE.lgv" ] && ok "kyfram: style/$s/PRELUDE.lgv" || miss "kyfram: style/$s/PRELUDE.lgv missing (the kyfram engine cannot render this style)"
   done
   local level="none (skills not installed)"
   if [ $L_SKILLS = 1 ]; then level="Minimal"; [ $L_STD = 1 ] && level="Standard" && [ $L_FULL = 1 ] && level="Full"; fi
@@ -304,8 +304,8 @@ step_config() {
   say "config"
   run mkdir -p "$CFG_DIR"
   if [ "$DRY" = 0 ]; then
-    papercut_config_set PAPERCUT_HOME "$ROOT"
-    papercut_config_set PAPERCUT_LIB "$LIB"
+    motion_config_set MOTION_HOME "$ROOT"
+    motion_config_set MOTION_LIB "$LIB"
   fi
   ok "$PAPERCUT_CONFIG"
 }
@@ -409,7 +409,7 @@ step_pytools() {
     run python3 -m venv "$V" || { rm -rf "$V"; note_fail pytools "could not create a venv (on Debian/Ubuntu: apt install python3-venv, then rerun with --mode custom --components pytools,verify)"; return 1; }
   fi
   run "$V/bin/python" -m pip install -q -U pip numpy pillow soundfile || { note_fail pytools "pip install failed"; return 1; }
-  [ "$DRY" = 1 ] || papercut_config_set PAPERCUT_PY "$V/bin/python"
+  [ "$DRY" = 1 ] || motion_config_set MOTION_PY "$V/bin/python"
   ok "PAPERCUT_PY=$V/bin/python"
 }
 
@@ -422,7 +422,7 @@ step_tts() {
 
 step_verify() {
   say "self-test render"
-  run bash "$LIB/tools/selftest.sh" || note_fail verify "self-test failed; run library/tools/selftest.sh to see why"
+  run bash "$LIB/tools/selftest.sh" || note_fail verify "self-test failed; run core/tools/selftest.sh to see why"
 }
 
 step_config

@@ -68,7 +68,8 @@ motion_find_chrome() {
 }
 
 # motion_styles: every style under style/ that ships a style.json, one name per line.
-motion_styles() { local d; for d in "$MOTION_LIB"/style/*/; do [ -f "$d/style.json" ] && basename "$d"; done; }
+MOTION_STYLES="${MOTION_STYLES:-$MOTION_LIB/../style}"; export MOTION_STYLES
+motion_styles() { local d; for d in "$MOTION_STYLES"/*/; do [ -f "$d/style.json" ] && basename "$d"; done; }
 
 # motion_style_of EPISODE_DIR [STYLE]: print the style name the episode uses: an explicit name,
 # else episode.json "style", else $MOTION_STYLE. Fail 1 if none is set, 2 if it does not exist.
@@ -77,12 +78,12 @@ motion_style_of() {
   [ -n "$want" ] || { [ -f "$ep" ] && want="$(python3 -c "import json,sys;print(json.load(open(sys.argv[1])).get('style',''))" "$ep" 2>/dev/null)"; }
   [ -n "$want" ] || want="${MOTION_STYLE:-}"
   [ -n "$want" ] || return 1
-  [ -f "$MOTION_LIB/style/$want/style.json" ] || { echo "unknown style '$want' (have: $(motion_styles | tr '\n' ' '))" >&2; return 2; }
+  [ -f "$MOTION_STYLES/$want/style.json" ] || { echo "unknown style '$want' (have: $(motion_styles | tr '\n' ' '))" >&2; return 2; }
   echo "$want"
 }
 
 # motion_engine_of ENGINE_DIR: the engine the episode.json in ENGINE_DIR (the project folder) names,
-# which is in engine/ folder: remotion or fframes. Default remotion.
+# which is in engine/ folder: remotion, fframes or kyfram. Default remotion.
 motion_engine_of() {
   local ep="$1/episode.json"
   [ -f "$ep" ] && python3 -c "import json,sys;print(json.load(open(sys.argv[1])).get('engine','remotion'))" "$ep" 2>/dev/null || echo remotion

@@ -44,8 +44,8 @@ if [ -z "$STYLE" ]; then
   echo "pass --style <name> (or write {\"style\": \"<name>\"} into the series SERIES.md/episode.json)" >&2
   exit 2
 fi
-[ -f "$MOTION_LIB/style/$STYLE/style.json" ] || { echo "unknown style '$STYLE' (have: $(motion_styles | tr '\n' ' '))" >&2; exit 2; }
-S=$MOTION_LIB/style/$STYLE
+[ -f "$MOTION_STYLES/$STYLE/style.json" ] || { echo "unknown style '$STYLE' (have: $(motion_styles | tr '\n' ' '))" >&2; exit 2; }
+S=$MOTION_STYLES/$STYLE
 
 # --- engine: explicit, else the style's first engine ---
 if [ -z "$ENGINE" ]; then ENGINE=$(python3 -c "import json,sys;e=json.load(open(sys.argv[1])).get('engines',['remotion']);print(e[0])" "$S/style.json"); fi

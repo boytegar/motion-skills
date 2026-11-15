@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Build the bundled example reel through the real pipeline in a throwaway folder and render one still.
 # Checks: scaffold, kit sync, placeholder narration, build_vo, stubs, typecheck, a Remotion render with fonts, backdrops and camera.
-#   usage: library/tools/selftest.sh [WORK_DIR]    (default: a temp dir, removed on success; pass a dir to keep the result)
+#   usage: core/tools/selftest.sh [WORK_DIR]    (default: a temp dir, removed on success; pass a dir to keep the result)
 #   needs: node 20+, npm, ffmpeg, python3 (first run downloads npm packages and Remotion's headless Chrome)
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -9,10 +9,11 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 KEEP=1; W="${1:-}"; if [ -z "$W" ]; then W="$(mktemp -d)"; KEEP=0; trap 'rm -rf "$W"' EXIT; fi   # temp dir goes away on failure too
 say() { printf '  selftest: %s\n' "$*"; }
 EX="$MOTION_LIB/../examples/hello-reel"
+S="$MOTION_LIB/../style/papercut"
 
 say "scaffold in $W"
-bash "$MOTION_LIB/new_episode.sh" "$W/series" 01-selftest Example example-papercut >/dev/null
-E="$W/series/episodes/01-selftest"; P="$E/papercut"
+bash "$MOTION_LIB/new_episode.sh" "$W/series" 01-selftest Example example-papercut --style papercut >/dev/null
+E="$W/series/episodes/01-selftest"; P="$E/video"
 
 say "narration (placeholder, silent)"
 cp "$EX/narration/script.json" "$E/narration/script.json"
@@ -22,7 +23,7 @@ say "plan and scenes"
 cp "$EX/episode.json" "$P/episode.json"
 cp "$EX/scenes/"*.tsx "$P/src/scenes/"
 mkdir -p "$P/tools/cue_sheet.d" && cp "$EX/tools/cue_sheet.d/"*.json "$P/tools/cue_sheet.d/"
-( cd "$P" && python3 "$MOTION_LIB/papercut/stubs.py" >/dev/null && python3 "$MOTION_LIB/tools/build_vo.py" >/dev/null )
+( cd "$P" && python3 "$MOTION_LIB/tools/stubs.py" >/dev/null && python3 "$MOTION_LIB/tools/build_vo.py" >/dev/null )
 
 say "typecheck"
 ( cd "$P" && npx tsc --noEmit )
