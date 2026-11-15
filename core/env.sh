@@ -10,6 +10,7 @@
 #   ASR_PY            python with an ASR backend (core/voice/asr)                      default: python3
 #   CARGO             cargo that builds the fframes engine                             default: cargo
 #   MOTION_STYLE      default style folder name under style/ (none by default: ask the user)
+#   MOTION_ENGINE     default episode engine: remotion, fframes or kyfram (none by default: ask the user)
 #   MOTION_CONFIG     config file path   default: ${XDG_CONFIG_HOME:-~/.config}/motion-explainer/config.env
 #
 # Installers before the rename wrote papercut-explainer/config.env with PAPERCUT_* keys. That file is
@@ -46,7 +47,7 @@ fi
 export MOTION_LIB
 
 : "${MOTION_PY:=python3}"; : "${QWEN_TTS_PY:=python3}"; : "${ASR_PY:=python3}"; : "${CARGO:=cargo}"
-export MOTION_PY QWEN_TTS_PY ASR_PY CARGO
+export MOTION_PY QWEN_TTS_PY ASR_PY CARGO MOTION_ENGINE
 # names older scripts and older skill text still read
 export MOTION_LIB="$MOTION_LIB" MOTION_PY="$MOTION_PY" MOTION_CONFIG="$_pc_cfg"
 
@@ -68,7 +69,14 @@ motion_find_chrome() {
 }
 
 # motion_styles: every style under style/ that ships a style.json, one name per line.
-MOTION_STYLES="${MOTION_STYLES:-$MOTION_LIB/../style}"; export MOTION_STYLES
+# MOTION_LIB normally names the repository root; older installers stored core/ instead.
+# Support both layouts without silently searching elsewhere.
+if [ -d "${MOTION_STYLES:-$MOTION_LIB/style}" ]; then
+  MOTION_STYLES="${MOTION_STYLES:-$MOTION_LIB/style}"
+else
+  MOTION_STYLES="${MOTION_STYLES:-$MOTION_LIB/../style}"
+fi
+export MOTION_STYLES
 motion_styles() { local d; for d in "$MOTION_STYLES"/*/; do [ -f "$d/style.json" ] && basename "$d"; done; }
 
 # motion_style_of EPISODE_DIR [STYLE]: print the style name the episode uses: an explicit name,
@@ -80,6 +88,19 @@ motion_style_of() {
   [ -n "$want" ] || return 1
   [ -f "$MOTION_STYLES/$want/style.json" ] || { echo "unknown style '$want' (have: $(motion_styles | tr '\n' ' '))" >&2; return 2; }
   echo "$want"
+}
+
+# motion_engine_default [STYLE]: print the configured engine, otherwise the style's first engine.
+# Fails if no configured/default engine is valid for the selected style.
+motion_engine_default() {
+  local want="${MOTION_ENGINE:-}" style="${1:-}" have
+  [ -n "$style" ] || return 1
+  [ -f "$MOTION_STYLES/$style/style.json" ] || return 2
+  if [ -z "$want" ]; then
+    want="$(python3 -c "import json,sys; print(json.load(open(sys.argv[1])).get('engines',['remotion'])[0])" "$MOTION_STYLES/$style/style.json")"
+  fi
+  have="$(python3 -c "import json,sys; print(' '.join(json.load(open(sys.argv[1])).get('engines',['remotion'])))" "$MOTION_STYLES/$style/style.json")"
+  case " $have " in *" $want "*) printf '%s\n' "$want" ;; *) return 3 ;; esac
 }
 
 # motion_engine_of ENGINE_DIR: the engine the episode.json in ENGINE_DIR (the project folder) names,

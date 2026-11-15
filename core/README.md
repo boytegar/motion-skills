@@ -60,6 +60,16 @@ export MOTION_LIB="$PWD/library"
 
 `../install.sh` at the repo root can do the same setup for you (skill links, Python tools, optionally the voice venv). `./install.sh --doctor` lists what it finds.
 
+### Initialize defaults for a series
+
+Run this once inside a series folder (or pass `--series`):
+
+```sh
+$MOTION_LIB/core/init.sh [--series ~/videos/my-series]
+```
+
+It asks for the default **style** and **engine**, stores them as `MOTION_STYLE` and `MOTION_ENGINE` in the motion config, then creates `design.md` (style DNA/reference paths) and `agents.md` (the defaults/workflow for coding agents). Future agents read `agents.md`; they should not ask again for style or engine.
+
 Make a first episode.
 
 ```

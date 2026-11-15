@@ -47,8 +47,11 @@ fi
 [ -f "$MOTION_STYLES/$STYLE/style.json" ] || { echo "unknown style '$STYLE' (have: $(motion_styles | tr '\n' ' '))" >&2; exit 2; }
 S=$MOTION_STYLES/$STYLE
 
-# --- engine: explicit, else the style's first engine ---
-if [ -z "$ENGINE" ]; then ENGINE=$(python3 -c "import json,sys;e=json.load(open(sys.argv[1])).get('engines',['remotion']);print(e[0])" "$S/style.json"); fi
+# --- engine: explicit, else configured default, else the style's first engine ---
+if [ -z "$ENGINE" ]; then
+  ENGINE=$(motion_engine_default "$STYLE" 2>/dev/null || true)
+fi
+[ -n "$ENGINE" ] || { echo "no engine resolved for style '$STYLE'" >&2; exit 2; }
 case "$ENGINE" in remotion|fframes|kyfram) ;; *) echo "--engine must be remotion, fframes or kyfram (got '$ENGINE')" >&2; exit 2 ;; esac
 # an engine is present when its folder exists; kyfram lives outside the style folder, as one PRELUDE
 if [ "$ENGINE" = kyfram ]; then

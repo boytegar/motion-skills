@@ -447,5 +447,8 @@ Next: open your coding agent (Claude Code, opencode, Codex, Gemini CLI, Cursor .
   "make a papercut explainer about <link>"
 or run one stage on its own: "write a hook for ...", "storyboard this script", "set up the voice".
 
+To pick a default style and engine and generate design.md + agents.md for your series:
+  $ROOT/core/init.sh [--series <series-dir>]
+
 Check the setup any time: ./install.sh --doctor [--target auto|all|claude,codex,...]
 EOF

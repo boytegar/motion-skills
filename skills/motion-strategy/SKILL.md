@@ -10,7 +10,7 @@ These notes decide what a reel says and why it holds attention. The other paperc
 ## Preflight
 
 - Install: Minimal is enough. No library needed.
-- Find the series folder and read its `SERIES.md` first. It holds the audience (who, level, regions to aim for and avoid), voice, palette and mascot notes, the visual style, the keyword log and what has worked so far. If it is missing, ask the user for those fields and write the file.
+- Find the series folder and read its `SERIES.md` first. Then read `agents.md` when it exists: it supplies the initialized default style + engine, so do not ask for either again. It holds the audience (who, level, regions to aim for and avoid), voice, palette and mascot notes, the visual style, the keyword log and what has worked so far. If `SERIES.md` is missing, ask the user for those fields and write the file.
 - For a competitor study: `yt-dlp`, `ffmpeg` and any speech-to-text tool. For an autopsy: the platform's insights numbers from the user.
 
 ## 1. Topic
@@ -38,7 +38,7 @@ Write at the level `SERIES.md` sets. There is no default audience. The feeling t
 
 ## 5. Write the BRIEF and Scaffold
 
-Ask for the engine: `remotion` (React), `fframes` (Rust crate) or `kyfram` (Logos `.lgv`, one script per scene)? Default: the first entry of `engines` in `$MOTION_LIB/style/$MOTION_STYLE/style.json`, else `remotion`. A style offers `kyfram` only when it ships `style/<name>/kyfram/PRELUDE.lgv` (today: papercut).
+Ask for the engine: `remotion` (React), `fframes` (Rust crate) or `kyfram` (Logos `.lgv`, one script per scene)? Default: read `agents.md` in the series folder if it exists, then `$MOTION_ENGINE`, then the first entry of `engines` in `$MOTION_LIB/style/$MOTION_STYLE/style.json`, else `remotion`. A style offers `kyfram` only when it ships `style/<name>/kyfram/PRELUDE.lgv` (today: papercut).
 
 Write this block at the top of `episodes/NN-slug/research/facts.md`. Every later stage (`motion-hook`, `motion-script`, `motion-storyboard`, `motion-build`) reads it to know the engine and format target.
 

@@ -18,7 +18,7 @@ Reuse the style and the storytelling, not the worked examples' content. Every pr
 
 - **Library.** Resolve `$MOTION_LIB`, else the `MOTION_LIB=` line in `${XDG_CONFIG_HOME:-~/.config}/motion-explainer/config.env`, else ask once. Never hard-code a machine path. Stages 1 to 4 need no library.
 - **Install mode.** Probe it before promising a stage (see Install modes below).
-- **Series.** Find the series folder (it holds `episodes/`). Read its `SERIES.md` if it exists.
+- **Series.** Find the series folder (it holds `episodes/`). Read `agents.md` first when present (chosen style/engine), then `SERIES.md` (audience, voice, palette).
 
 ## Run modes (ask first)
 
@@ -33,7 +33,7 @@ Reuse the style and the storytelling, not the worked examples' content. Every pr
 - **Source**: usually a link (repo, product site, announcement). Everything else is researched from it.
 - **The one claim** the video proves, and the topic.
 - **Role framing**: who or what does the work, who advises or approves. Confirm it with the user and never invent product behaviour.
-- **Engine**: `remotion` (React), `fframes` (Rust crate) or `kyfram` (Logos `.lgv` scripts, one per scene). Kyfram needs the `kyfram` binary: `curl -fsSL https://kyfram-site-68056d.gitlab.io/install.sh | sh`, and its DSL is the `kyfram` skill.
+- **Engine**: read the series `agents.md` first when it exists — it is the initialized source of truth and must not be asked again. Else ask: `remotion` (React), `fframes` (Rust crate) or `kyfram` (Logos `.lgv` scripts, one per scene). Kyfram needs the `kyfram` binary: `curl -fsSL https://kyfram-site-68056d.gitlab.io/install.sh | sh`, and its DSL is the `kyfram` skill.
 - **CTA keyword** and what the viewer gets (the deliverable).
 - **Length**: default 22-30 s.
 - **Audience level** (from `SERIES.md`) and any accent colour or mascot.
