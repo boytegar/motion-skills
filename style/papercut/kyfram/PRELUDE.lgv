@@ -76,3 +76,26 @@ let drawHero = fn(cx, cy, r, body) {
   shape("hero_eye_l", "circle", table{"0": table{x: cx - r * 0.38, y: cy - r * 0.12, r: r * 0.13, color: C_INK}})
   shape("hero_eye_r", "circle", table{"0": table{x: cx + r * 0.38, y: cy - r * 0.12, r: r * 0.13, color: C_INK}})
 }
+
+// Cover title (HOOK block): torn tags over scene 1, out at HOOK_OUT.
+// When HOOK is defined the scene calls drawHook() after everything else.
+let drawHook = fn() {
+  let out = HOOK_OUT
+  for i in range(0, len(HOOK)) {
+    let h = HOOK[i]
+    let size = HOOK_SIZE
+    let w = pad(textW(h.w, size), 40)
+    let fill = C_TAG
+    if h.hot { fill = C_AMBER }
+    shape("hook_plate_${i}", "roundRect", table{
+      "0": table{x: h.x - w / 2, y: h.y - size * 0.78, w: w, h: size * 1.56, radius: 12, color: fill, alpha: 0, rotate: -2},
+      "0.12": table{x: h.x - w / 2, y: h.y - size * 0.78, w: w, h: size * 1.56, radius: 12, color: fill, alpha: 1, rotate: 0, ease: "cubicOut"},
+      toStr(out - 0.12): table{x: h.x - w / 2, y: h.y - size * 0.78, w: w, h: size * 1.56, radius: 12, color: fill, alpha: 1, rotate: 0},
+      toStr(out): table{x: h.x - w / 2, y: h.y - size * 0.78, w: w, h: size * 1.56, radius: 12, color: fill, alpha: 0, rotate: 2, ease: "cubicIn"}})
+    text("hook_txt_${i}", table{
+      "0": table{content: h.w, x: h.x, y: h.y, size: size, font: F_BANNER, color: C_TAG_TEXT, alpha: 0, scale: 0.88},
+      "0.12": table{content: h.w, x: h.x, y: h.y, size: size, font: F_BANNER, color: C_TAG_TEXT, alpha: 1, scale: 1, ease: "cubicOut"},
+      toStr(out - 0.12): table{content: h.w, x: h.x, y: h.y, size: size, font: F_BANNER, color: C_TAG_TEXT, alpha: 1, scale: 1},
+      toStr(out): table{content: h.w, x: h.x, y: h.y, size: size, font: F_BANNER, color: C_TAG_TEXT, alpha: 0, scale: 1.06, ease: "cubicIn"}})
+  }
+}
