@@ -1,5 +1,26 @@
 # Changelog
 
+## Unreleased
+
+Kyfram engine (third engine, next to `remotion` and `fframes`).
+
+- `core/kyfram/lgv/core.lgv`: style-free helpers (`textW`, `pad`, `clamp`, `popText`, `popPlate`,
+  `drawTag`, `drawCaptionRow`, `pushIn`).
+- `core/kyfram/README.md`: how an episode compiles, and the DSL traps the render is built around.
+- `core/tools/render_kyfram.py`: one `.lgv` per scene, cached per scene, concat + one x264 encode,
+  `--voice` mux. The scene header (`SCENE_ID`, `BANNER`, `DUR`, `FPSR`, `CAPS`, `scene()`) is generated
+  from `episode.json` + `src/plan.json`, and a frame count that disagrees with the plan fails the render.
+- `core/tools/kyfram_header.py`, `kyfram_stubs.py`, `kyfram_qa.py`: header builder, scene stubs
+  (also reached through `stubs.py`), and QA stills lifted from cached segments (`kyfram` only writes
+  a still at t=0).
+- `core/tools/render.sh`, `qa.sh`, `new_episode.sh`, `stubs.py`: dispatch on `"engine": "kyfram"`.
+- `skills/kyfram/`: the DSL skill, with the measured traps (colour does not hold across keyframes,
+  `..` is not concat, arity panics) and `references/kyfram-upstream-SKILL.md` vendored.
+- `style/papercut/kyfram/PRELUDE.lgv`: papercut tokens and furniture for `.lgv` scenes;
+  `style/papercut/style.json` lists `kyfram`; `docs/style-prompt.md` gains block A2.
+- `install.sh`: `--doctor` and `step_deps` check `kyfram`; fixed `LIB` pointing at a `library/`
+  folder that does not exist, the `papercut_find_chrome` name, and the unbound `PAPERCUT_PY`.
+
 ## 0.1.0: first public release
 
 What ships.

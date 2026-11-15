@@ -10,6 +10,8 @@ Compare stills for style, not content, against the Style DNA and the storyboard.
 ## Preflight
 
 - Install: **Standard** or Full. Stills need a scaffolded project with Remotion, and the contact sheets need Python with numpy and Pillow (`$MOTION_PY`). Missing pieces: `./install.sh --doctor`, then `motion-setup`.
+- A `kyfram` project needs no Remotion: `qa.sh` lifts its stills out of the cached per-scene segments
+  (`core/tools/kyfram_qa.py`), so render once with `core/tools/render.sh` before QA. Everything below applies unchanged.
 - Library: `$MOTION_LIB`, else the `MOTION_LIB=` line in `~/.config/motion-explainer/config.env`, else ask once.
 - Read first: Style DNA in `$MOTION_LIB/style/$MOTION_STYLE/docs/style-guide.md` section 2, and the backdrop sheet `style/$MOTION_STYLE/remotion/public/bg/backdrops/_sheet.jpg`. Each image costs about 0.7-1.5k tokens, so open only what the step needs.
 - For density, `$MOTION_LIB/style/$MOTION_STYLE/docs/frame-breakdown.md` ("Pacing stats" at the end): scenes average 2.8 s, 2-4 discrete visual events per scene, one every 0.4-0.8 s on a stressed word, a new caption page about every 0.6 s. Copy the density, not the content.

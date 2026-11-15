@@ -21,6 +21,11 @@ def run():
     if not scenes:
         sys.exit("error: no scenes found in episode.json")
 
+    if engine == "kyfram":
+        # kyfram keeps one .lgv per scene under scenes/, written by its own generator
+        import subprocess
+        sys.exit(subprocess.call([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), "kyfram_stubs.py")]))
+
     os.makedirs("src/scenes", exist_ok=True)
 
     if engine == "fframes":

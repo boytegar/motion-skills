@@ -1,0 +1,69 @@
+// ===== shared kyfram helpers: no styling lives here =====
+//
+// Every scene gets this prelude prepended by core/tools/render_kyfram.py, after the
+// style prelude and before the generated header. Write shapes; never re-declare these.
+
+// A fallback cap on how wide one glyph can draw, as a multiple of its font size.
+// Measured on Archivo Black: 0.30 ("i") to 0.93 ("M"); 0.70 plus padding clears both.
+let GLYPH = 0.70
+
+let textW = fn(txt, size) { return len(txt) * size * GLYPH }
+
+let pad = fn(w, extra) {
+  let out = w + extra
+  if out < extra * 2 { out = extra * 2 }
+  return out
+}
+
+let clamp = fn(v, lo, hi) {
+  let out = v
+  if out < lo { out = lo }
+  if out > hi { out = hi }
+  return out
+}
+
+// A keyframe table that fades and pops in over 0.09 s, starting at t0.
+// Repeats content and color on both keys: kyfram renders an omitted color as white,
+// and text content never interpolates anyway.
+let popText = fn(txt, cx, cy, size, t0, ink) {
+  let kf = table{}
+  kf[toStr(t0)] = table{content: txt, x: cx, y: cy, size: size, color: ink, alpha: 0, scale: 0.86, rotate: -3}
+  kf[toStr(t0 + 0.09)] = table{content: txt, x: cx, y: cy, size: size, color: ink, alpha: 1, scale: 1, rotate: 0, ease: "cubicOut"}
+  return kf
+}
+
+// A rounded plate behind one word, popping with it.
+let popPlate = fn(cx, cy, w, h, t0, fill, radius) {
+  let kf = table{}
+  kf[toStr(t0)] = table{x: cx - w / 2, y: cy - h / 2, w: w, h: h, radius: radius, color: fill, alpha: 0}
+  kf[toStr(t0 + 0.09)] = table{x: cx - w / 2, y: cy - h / 2, w: w, h: h, radius: radius, color: fill, alpha: 1}
+  return kf
+}
+
+// One caption tag: plate + word, both popping on the cue frame.
+let drawTag = fn(name, word, cx, cy, t0, size, plate, ink, radius) {
+  let w = pad(textW(word, size), 34)
+  let h = size * 1.55
+  shape("plate_${name}", "roundRect", popPlate(cx, cy, w, h, t0, plate, radius))
+  text("word_${name}", popText(word, cx, cy, size, t0, ink))
+}
+
+// A centred row of tags from a cue list [{w, f, e}], shrunk to stay inside maxW.
+let drawCaptionRow = fn(list, cy, size, plate, ink, maxW, radius) {
+  let gap = 16.0
+  let total = 0.0
+  for i, c in list { total = total + pad(textW(c.w, size), 34) + gap }
+  let sc = maxW / (total - gap)
+  if sc > 1.0 { sc = 1.0 }
+  let x = 540 - (total - gap) * sc / 2
+  for i, c in list {
+    let w = pad(textW(c.w, size), 34) * sc
+    drawTag("c${i}", c.w, x + w / 2, cy, c.f / FPSR, size * sc, plate, ink, radius)
+    x = x + w + gap * sc
+  }
+}
+
+// A slow camera push across the beat: the calm default.
+let pushIn = fn(from, to, cx, cy) {
+  return table{"0": table{x: cx, y: cy, zoom: from}, toStr(DUR): table{x: cx, y: cy, zoom: to, ease: "sine"}}
+}

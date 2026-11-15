@@ -11,7 +11,7 @@ Build every episode on the library instead of writing a Remotion project from sc
 
 - Install: **Standard** or Full. Needs the library, node 20+, npm, ffmpeg, Python tools (numpy, Pillow, soundfile) and Chrome or Chromium for the audio render. Probe with the commands in `motion-explainer`; if something is missing, run `./install.sh --doctor` and hand over to `motion-setup`.
 - Library: `$MOTION_LIB`, else the `MOTION_LIB=` line in `~/.config/motion-explainer/config.env`, else ask once. With no library at all, build from the sketches in `$MOTION_LIB/style/$MOTION_STYLE/remotion/RECIPES.md`.
-- Load the Remotion best-practices skill first (`remotion-best-practices`, from the Remotion plugin, or `npx skills add remotion-dev/skills -g -y -a <your harness id>`; `install.sh --mode standard` does this) and follow its routing for markup, captions and the Studio.
+- Load the Remotion best-practices skill first only for the remotion engine (`remotion-best-practices`, from the Remotion plugin, or `npx skills add remotion-dev/skills -g -y -a <your harness id>`; `install.sh --mode standard` does this) and follow its routing for markup, captions and the Studio. For `kyfram`, load the `kyfram` skill instead.
 - Needs `video/STORYBOARD.md` and `narration/script.json` from the earlier stages.
 - Smoke test of the whole toolchain: `$MOTION_LIB/core/tools/selftest.sh` builds `examples/hello-reel/` in a throwaway folder and renders one still.
 
@@ -19,15 +19,17 @@ Build every episode on the library instead of writing a Remotion project from sc
 
 The episode project should already be scaffolded from the intake / `motion-strategy` stage. Verify `video/episode.json` for the recorded `engine`:
 
-- If not yet scaffolded, ask the user (`fframes` or `remotion`) and run:
+- If not yet scaffolded, ask the user (`remotion`, `fframes` or `kyfram`) and run:
   ```
-  $MOTION_LIB/new_episode.sh <series-dir> NN-slug CompId [out-name] --engine fframes|remotion
+  $MOTION_LIB/new_episode.sh <series-dir> NN-slug CompId [out-name] --engine remotion|fframes|kyfram
   ```
 - Preview commands from `video/`:
   - **fframes**: `cargo run --release -- preview` (or install CLI: `cargo install --locked cargo-fframes`)
+  - **kyfram**: render once, then `kyfram view out/cache/kyfram/build/<Scene>.lgv` (the compiled script: preludes + generated header + your scene)
   - **remotion**: `npx remotion studio` (or `npm run dev`)
 
 - **fframes**: episode project is a Rust crate (`media/`, `src/main.rs`). Render with `cargo run --release -- render` or `$MOTION_LIB/core/tools/render.sh`.
+- **kyfram**: episode project is `.lgv` scripts (`scenes/`, `media/fonts/`, `src/plan.json`). Render with `$MOTION_LIB/core/tools/render.sh` (it caches per scene and concats). Invoke the `kyfram` skill first.
 - **remotion**: React project (`src/`, `package.json`). Render with `npx remotion render <CompId> out/<out>.mp4` or `render.sh`.
 
 ## 2. Plan: `episode.json`, voice, timing
@@ -73,6 +75,22 @@ Check `engine` from `video/episode.json`:
 2. Hand remaining scenes to agents in parallel (each agent owns only `src/scenes/<scene_snake>.rs`).
 3. Read `style/$MOTION_STYLE/fframes/src/` for available camera, set, and prop structs instead of TSX components.
 
+### For kyfram (`engine: "kyfram"`)
+- **File Structure**:
+  - `scenes/<Scene>.lgv` (e.g. `S01Hook.lgv`) — exactly **one script per scene**, shapes only.
+  - The renderer prepends `$MOTION_LIB/core/kyfram/lgv/core.lgv`, `style/$MOTION_STYLE/kyfram/PRELUDE.lgv`
+    and a generated header (`SCENE_ID`, `BANNER`, `DUR`, `FPSR`, `CAPS`, and the `scene()` call), so a scene
+    never calls `scene()`, never hard-codes its duration or caption cues, and never re-declares a helper.
+1. Invoke the `kyfram` skill. Build `S01Hook.lgv` yourself first as the reference scene, and verify it with
+   `bash $MOTION_LIB/core/tools/render.sh` plus `bash $MOTION_LIB/core/tools/qa.sh hook 0-<N> 6 0.3 6`.
+2. Hand remaining scenes to agents in parallel (each agent owns only `scenes/<Scene>.lgv`), with the
+   `kyfram` skill named in the brief.
+3. Agents read `style/$MOTION_STYLE/kyfram/PRELUDE.lgv` for tokens and furniture (`drawRoom`, `drawHero`,
+   `drawBanner`, `drawCaptions`), and `out/cache/kyfram/build/<Scene>.lgv` after a render for the exact
+   compiled script.
+4. SFX and bed wiring follow the remotion flow below; `render.sh --voice` muxes
+   `public/vo/voiceover.wav` into the mp4 once that file exists.
+
 Build rules: 1080x1920, 30 fps, scenes chained in the kit's transition series. Global layers: VO and music `<Audio>`, the taped banner with `<Boil>`, `<WordTagCaptions>`, `<GrainOverlay>`. Every prop is wrapped in `<Paper>`, entrances use `<PopIn>`, each scene runs inside its storyboard camera. No CSS animations. Keep the bottom 20% clear. Neighbouring scenes never share a backdrop. The default hero is a boxy orange critter (token `C.hero` `#D67354`, shade `C.heroLo` `#A9553B`, alias `you`); accessories and name pills tell the cast apart.
 
 ## 5. Sound
@@ -87,7 +105,7 @@ python3 $MOTION_LIB/core/tools/cues.py && node $MOTION_LIB/core/audio/render.mjs
 
 ## 6. Render
 
-Preview: `cargo run --release -- preview` (fframes) or `npx remotion studio` (remotion). Render only when asked, always through the wrapper — it picks the engine from `episode.json`:
+Preview: `cargo run --release -- preview` (fframes), `npx remotion studio` (remotion) or `kyfram view out/cache/kyfram/build/<Scene>.lgv` (kyfram). Render only when asked, always through the wrapper — it picks the engine from `episode.json`:
 
 ```
 $MOTION_LIB/core/tools/render.sh        # -> out/<out>.mp4

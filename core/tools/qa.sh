@@ -2,7 +2,7 @@
 # One-shot QA sheet: stills across a range at low scale, then a labelled contact sheet.
 #   usage (from an episode project dir): $MOTION_LIB/core/tools/qa.sh NAME [FROM-TO] [NTH=12] [SCALE=0.3] [COLS=9]
 #   -> out/qa/NAME/ (frames) and out/qa/NAME_0.jpg, _1.jpg ... (<= 45 frames per sheet)
-#   the engine comes from the project's episode.json ("engine": remotion | fframes)
+#   the engine comes from the project's episode.json ("engine": remotion | fframes | kyfram)
 #   env: MOTION_PY (python with Pillow, default python3), CONC (render tabs, default 2)
 set -euo pipefail
 
@@ -28,6 +28,10 @@ print(r.replace('-', '..') if r else 'all')
 PY
 )
   "$MOTION_LIB/style/$STYLE/fframes/tools/ff.sh" strip "$R" -n "$NTH" --columns "$COLS" -o "out/qa/$NAME" >/dev/null
+elif [ "$ENGINE" = "kyfram" ]; then
+  # kyfram writes a still only at t=0, so the stills come from the cached per-scene segments
+  # (run core/tools/render.sh first). Files land as out/qa/NAME/element-*.jpeg, as sheet.py expects.
+  "$PY" "$LIB/kyfram_qa.py" "$NAME" "$RANGE" "$NTH" "$SCALE"
 else
   COMP=$(python3 -c "import json;print(json.load(open('episode.json'))['comp'])")
   FRAMES=(); [ -n "$RANGE" ] && FRAMES=("--frames=$RANGE")

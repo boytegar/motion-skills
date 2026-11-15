@@ -7,11 +7,21 @@
     "width": 1080,
     "height": 1920,
     "fps": 30,
-    "bannerZone": [0.14, 0.21],
-    "captionsBand": [0.68, 0.80],
-    "keepClearBottom": 0.80
+    "bannerZone": [
+      0.14,
+      0.21
+    ],
+    "captionsBand": [
+      0.68,
+      0.8
+    ],
+    "keepClearBottom": 0.8
   },
-  "engines": ["remotion", "fframes"],
+  "engines": [
+    "remotion",
+    "fframes",
+    "kyfram"
+  ],
   "audio": {
     "sfx": "../../core/audio/sfx",
     "beds": "../../core/audio/beds"
@@ -25,6 +35,7 @@
   },
   "enginesDoc": {
     "remotion": "remotion/README.md",
-    "fframes": "fframes/README.md"
+    "fframes": "fframes/README.md",
+    "kyfram": "kyfram/PRELUDE.lgv"
   }
 }

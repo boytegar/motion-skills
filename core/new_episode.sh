@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Scaffold a new episode from the shared library, in the style and engine you name.
-#   usage: new_episode.sh <series dir> <NN-slug> <CompositionId> [out-name] [--style NAME] [--engine remotion|fframes]
+#   usage: new_episode.sh <series dir> <NN-slug> <CompositionId> [out-name] [--style NAME] [--engine remotion|fframes|kyfram]
 #   e.g.   new_episode.sh ~/videos/my-series 04-mcp McpPapercut mcp-papercut --style papercut --engine remotion
 #
 # Creates <series>/episodes/<NN-slug>/{research,narration/voice,video}. An existing episode folder is fine (the
@@ -16,7 +16,7 @@ set -euo pipefail
 
 rp() { python3 -c 'import os,sys;print(os.path.realpath(sys.argv[1]))' "$1"; }
 
-usage() { echo "usage: $0 <series dir> <NN-slug> <CompositionId> [out-name] [--style NAME] [--engine remotion|fframes]" >&2; exit 2; }
+usage() { echo "usage: $0 <series dir> <NN-slug> <CompositionId> [out-name] [--style NAME] [--engine remotion|fframes|kyfram]" >&2; exit 2; }
 
 POS=(); STYLE=""; ENGINE=""
 while [ $# -gt 0 ]; do
@@ -49,8 +49,13 @@ S=$MOTION_LIB/style/$STYLE
 
 # --- engine: explicit, else the style's first engine ---
 if [ -z "$ENGINE" ]; then ENGINE=$(python3 -c "import json,sys;e=json.load(open(sys.argv[1])).get('engines',['remotion']);print(e[0])" "$S/style.json"); fi
-case "$ENGINE" in remotion|fframes) ;; *) echo "--engine must be remotion or fframes (got '$ENGINE')" >&2; exit 2 ;; esac
-[ -d "$S/$ENGINE" ] || { echo "style '$STYLE' has no $ENGINE engine (have: $(ls "$S" | tr '\n' ' '))" >&2; exit 2; }
+case "$ENGINE" in remotion|fframes|kyfram) ;; *) echo "--engine must be remotion, fframes or kyfram (got '$ENGINE')" >&2; exit 2 ;; esac
+# an engine is present when its folder exists; kyfram lives outside the style folder, as one PRELUDE
+if [ "$ENGINE" = kyfram ]; then
+  [ -f "$S/kyfram/PRELUDE.lgv" ] || { echo "style '$STYLE' has no kyfram PRELUDE.lgv" >&2; exit 2; }
+else
+  [ -d "$S/$ENGINE" ] || { echo "style '$STYLE' has no $ENGINE engine (have: $(ls "$S" | tr '\n' ' '))" >&2; exit 2; }
+fi
 
 E=$CH/episodes/$SLUG; P=$E/video
 mkdir -p "$E/research" "$E/narration/voice" "$P"
@@ -87,6 +92,15 @@ scaffold_fframes() {
   [ -d "$CH/video-assets" ] && rsync -a "$CH/video-assets/" "$P/media/"
   [ -d "$CH/papercut-assets" ] && rsync -a "$CH/papercut-assets/" "$P/media/"
   printf '%s\n' "synced from style/$STYLE/fframes on $(date '+%Y-%m-%d %H:%M'); do not edit here, edit the style and re-sync" > "$P/media/SYNCED.txt"
+  return 0
+}
+
+scaffold_kyfram() {
+  if [ -e "$P/scenes" ]; then echo "already scaffolded: $P" >&2; exit 1; fi
+  mkdir -p "$P/scenes" "$P/src" "$P/media/fonts" "$P/out"
+  # fonts are copied once (a kyfram project has no kit sync): the style's TTF set is what text draws with
+  [ -d "$S/fframes/media/fonts" ] && rsync -a "$S/fframes/media/fonts/" "$P/media/fonts/"
+  printf '%s\n' "synced from style/$STYLE/fframes/media/fonts on $(date '+%Y-%m-%d %H:%M')" > "$P/media/fonts/SYNCED.txt"
   return 0
 }
 

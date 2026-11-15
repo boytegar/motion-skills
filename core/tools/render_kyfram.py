@@ -1,0 +1,173 @@
+#!/usr/bin/env python3
+"""Kyfram engine: one .lgv per scene -> per-scene mp4 -> concat (+ optional voice).
+
+  python3 core/tools/render_kyfram.py [--force] [--keep] [--workers N] [--voice]   (from the episode project)
+
+Reads:  episode.json ("style", "width", "height", "fps", "out", "banners")
+        src/plan.json  (per-scene durationInFrames + word cues, from core/tools/build_vo.py)
+        scenes/<Scene>.lgv  (what an agent writes: shapes only)
+Writes: out/cache/kyfram/seg/<Scene>-<key>.mp4, then out/<out>.mp4
+
+Each scene compiles from four layers, in this order:
+  1. core/kyfram/lgv/core.lgv        engine helpers (tags, plates, camera) — style-free
+  2. style/<style>/kyfram/PRELUDE.lgv tokens + furniture for that style
+  3. a generated header              SCENE_ID, BANNER, DUR, FPSR, CAPS, and the scene() call
+  4. scenes/<Scene>.lgv              the shapes
+
+The header is generated, so a scene never hard-codes its duration or its caption
+cues and retiming is a plan.json edit. A rendered frame count that disagrees with
+the plan fails the render instead of shipping a silent drift.
+"""
+import argparse
+import hashlib
+import json
+import os
+import subprocess
+import sys
+import time
+from concurrent.futures import ThreadPoolExecutor
+
+LIB = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(os.path.dirname(LIB))
+CACHE = 'out/cache/kyfram'
+
+
+def sha(*parts):
+    h = hashlib.sha1()
+    for p in parts:
+        h.update(p if isinstance(p, bytes) else str(p).encode())
+        h.update(b'\0')
+    return h.hexdigest()
+
+
+def die(msg):
+    sys.exit(f'render_kyfram: {msg}')
+
+
+def run(cmd):
+    r = subprocess.run(cmd, capture_output=True, text=True)
+    if r.returncode:
+        die(f"command failed: {' '.join(cmd)}\n{r.stdout[-3000:]}\n{r.stderr[-3000:]}")
+    return r
+
+
+def header(ep, scene, fps):
+    from kyfram_header import header as build
+    return build(ep, scene, scene['durationInFrames'], fps)
+
+
+def frame_count(path):
+    out = run(['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-count_frames',
+               '-show_entries', 'stream=nb_read_frames', '-of', 'csv=p=0', path]).stdout.strip()
+    return int(out or 0)
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--force', action='store_true', help='ignore the per-scene cache')
+    ap.add_argument('--keep', action='store_true', help='keep superseded cached segments')
+    ap.add_argument('--workers', type=int, default=3, help='scenes rendered at once')
+    ap.add_argument('--voice', action='store_true', help='mux public/vo/voiceover.wav')
+    a = ap.parse_args()
+    t0 = time.time()
+
+    if not os.path.isfile('episode.json'):
+        die('no episode.json here; run this from the episode project folder')
+    ep = json.load(open('episode.json'))
+    style = ep.get('style', 'papercut')
+    out = f"out/{ep['out']}.mp4"
+    w, h = ep.get('width', 1080), ep.get('height', 1920)
+
+    if not os.path.isfile('src/plan.json'):
+        die('src/plan.json missing: run core/tools/build_vo.py first (the voice + timing step)')
+    plan = json.load(open('src/plan.json'))
+    fps = plan.get('fps', ep.get('fps', 30))
+
+    preludes = [
+        os.path.join(ROOT, 'core', 'kyfram', 'lgv', 'core.lgv'),
+        os.path.join(ROOT, 'style', style, 'kyfram', 'PRELUDE.lgv'),
+    ]
+    for p in preludes:
+        if not os.path.isfile(p):
+            die(f'missing prelude: {p}' + ('' if 'core' in p else f' (style {style!r} has no kyfram prelude)'))
+    prelude_bytes = b'\n'.join(open(p, 'rb').read() for p in preludes) + b'\n'
+    prelude_sha = sha(prelude_bytes)
+    canvas_key = sha('kyfram-v2', w, h, fps)
+
+    os.makedirs(f'{CACHE}/seg', exist_ok=True)
+    os.makedirs(f'{CACHE}/build', exist_ok=True)
+    os.makedirs('out/chunks', exist_ok=True)
+
+    scenes = plan['scenes']
+    jobs, files = [], []
+    for sc in scenes:
+        name = sc['id']
+        src = f'scenes/{name}.lgv'
+        if not os.path.isfile(src):
+            die(f'{src} missing: run python3 $MOTION_LIB/core/tools/kyfram_stubs.py, then write the scene')
+        body = open(src, 'rb').read()
+        if b'scene(' in body:
+            die(f'{src}: remove the scene(...) call; the renderer emits it from src/plan.json')
+        head = header(ep, sc, fps).encode()
+        key = sha(body, head, prelude_sha, canvas_key)[:12]
+        path = f'{CACHE}/seg/{name}-{key}.mp4'
+        files.append(path)
+        if not a.keep and os.path.isdir(f'{CACHE}/seg'):
+            for old in os.listdir(f'{CACHE}/seg'):
+                if old.startswith(name + '-') and f'{CACHE}/seg/{old}' != path:
+                    os.remove(f'{CACHE}/seg/{old}')
+        if a.force or not os.path.isfile(path):
+            jobs.append((name, sc['durationInFrames'], src, path, head, body))
+
+    total = sum(sc['durationInFrames'] for sc in scenes)
+    todo = sum(j[1] for j in jobs)
+    print(f'{len(scenes) - len(jobs)}/{len(scenes)} scenes cached, rendering {todo} of {total} frames')
+
+    def render(job):
+        name, dur, src, path, head, body = job
+        ts = time.time()
+        built = f'{CACHE}/build/{name}.lgv'
+        with open(built, 'wb') as f:
+            f.write(prelude_bytes + head + body)
+        run(['kyfram', 'render', '--out', os.path.abspath(path), '--width', str(w), '--height', str(h),
+             '--fps', str(fps), '--crf', '16', '--preset', 'slow', os.path.abspath(built)])
+        got = frame_count(path)
+        if got != dur:
+            die(f'{src}: rendered {got} frames, plan says {dur}. A shape must not change the scene '
+                f'duration; run kyfram view {built} to see what it drew.')
+        return f'{name} {dur}f {time.time() - ts:.0f}s'
+
+    if jobs:
+        with ThreadPoolExecutor(a.workers) as pool:
+            for msg in pool.map(render, jobs):
+                print(' ', msg, flush=True)
+
+    with open(f'{CACHE}/concat.txt', 'w') as f:
+        f.writelines(f"file '{os.path.abspath(p)}'\n" for p in files)
+    te = time.time()
+    run(['ffmpeg', '-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', f'{CACHE}/concat.txt',
+         '-vf', 'format=yuv420p', '-r', str(fps), '-c:v', 'libx264', '-preset', 'slow', '-crf', '16',
+         '-profile:v', 'high', '-level', '4.2', '-movflags', '+faststart', out])
+    print(f'final encode {time.time() - te:.0f}s, total {time.time() - t0:.0f}s')
+
+    if a.voice:
+        vo = 'public/vo/voiceover.wav'
+        if not os.path.isfile(vo):
+            die(f'--voice: {vo} missing (run core/tools/build_vo.py first)')
+        muxed = out.replace('.mp4', '-vo.mp4')
+        run(['ffmpeg', '-v', 'error', '-y', '-i', out, '-i', vo, '-map', '0:v', '-map', '1:a',
+             '-c:v', 'copy', '-c:a', 'aac', '-b:a', '320k', '-shortest', '-movflags', '+faststart', muxed])
+        os.replace(muxed, out)
+        print(f'voice muxed from {vo}')
+
+    errs = subprocess.run(['ffmpeg', '-v', 'error', '-i', out, '-f', 'null', '-'],
+                          capture_output=True, text=True).stderr
+    print(f'decode errors: {len(errs.splitlines())}')
+    info = run(['ffprobe', '-v', 'error', '-count_frames', '-select_streams', 'v', '-show_entries',
+                'stream=codec_name,width,height,pix_fmt,nb_read_frames:format=duration,bit_rate',
+                '-of', 'compact', out]).stdout
+    print(info.strip().replace('\n', ' '))
+
+
+if __name__ == '__main__':
+    main()

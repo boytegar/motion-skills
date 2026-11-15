@@ -49,8 +49,12 @@ docs/style-guide.md section 2 is the Style DNA. docs/frame-breakdown.md is a wor
 |---|---|---|
 | remotion | `remotion/` | `template/`, `kit/`, `sync_kit.sh`, `CATALOG.md`, `AGENT_BRIEF.md` |
 | fframes | `fframes/` | `Cargo.toml`, `src/` (lib, tokens, kit, look, video, main), `tools/ff.sh` |
+| kyfram | `kyfram/PRELUDE.lgv` | the tokens and furniture an `.lgv` scene may call (`drawRoom`, `drawHero`, `drawBanner`, `drawCaptions`); engine helpers come from `core/kyfram/lgv/core.lgv` |
 
-Registered engines: `remotion`, `fframes`.
+Registered engines: `remotion`, `fframes`, `kyfram`. Kyfram draws from the same primitives, so the
+Style DNA holds, minus the paper grain, torn edge and boil overlays that only the Remotion kit ships;
+there the paper read comes from stacked pieces, shadow tint and the token palette. Load the `kyfram`
+skill before writing a scene.
 
 ## Scaffold an episode
 
@@ -58,6 +62,7 @@ Registered engines: `remotion`, `fframes`.
 # from the library root, with MOTION_LIB resolved
 ./core/new_episode.sh <series-dir> 01-slug Episode out-name --style papercut --engine remotion
 ./core/new_episode.sh <series-dir> 01-slug Episode out-name --style papercut --engine fframes
+./core/new_episode.sh <series-dir> 01-slug Episode out-name --style papercut --engine kyfram
 ```
 
 Or name the style in a series `SERIES.md` / `episode.json` as `"style": "papercut"` and let `motion_style_of` pick it up.
@@ -82,5 +87,6 @@ Check these on every contact sheet before calling a scene done; the rest of the 
 - `remotion/CATALOG.md`
 - `remotion/AGENT_BRIEF.md`
 - `remotion/RECIPES.md`
+- `kyfram/PRELUDE.lgv`, plus `core/kyfram/README.md` for the engine wiring
 - `style.json`: the manifest (canvas, engine list, doc paths, audio roots)
 - `sample.png`: one representative frame

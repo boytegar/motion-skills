@@ -36,11 +36,13 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LIB="$ROOT/library"
+LIB="$ROOT/core"
 CFG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/papercut-explainer"
 DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/papercut-explainer"
 export PAPERCUT_CONFIG="$CFG_DIR/config.env"
 . "$LIB/env.sh"
+: "${PAPERCUT_PY:=$MOTION_PY}" "${PAPERCUT_HOME:=$ROOT}" "${MOTION_STYLE:=papercut}"
+export PAPERCUT_PY MOTION_STYLE
 export PAPERCUT_LIB="$LIB"   # this checkout wins over a stale path left in an older config file
 
 MODE=""; COMPONENTS=""; TARGET="auto"; TARGET_EXPLICIT=0; SKILLS_DIR=""; SKILLS_DIR_EXPLICIT=0; PROJECT_DIR=""
@@ -187,7 +189,8 @@ doctor() {
   if command -v node >/dev/null 2>&1; then v="$(node -v | sed 's/^v//')"; if ver_ge "$v" 20; then ok "node $v"; else bad "node $v (need 20+)"; L_STD=0; fi; else miss "node (need 20+)"; L_STD=0; fi
   command -v npm >/dev/null 2>&1 && ok "npm" || { miss "npm"; L_STD=0; }
   command -v ffmpeg >/dev/null 2>&1 && ok "ffmpeg" || { miss "ffmpeg"; L_STD=0; }
-  command -v rsync >/dev/null 2>&1 && ok "rsync" || { miss "rsync"; L_STD=0; }
+  if command -v rsync >/dev/null 2>&1; then ok "rsync"; else miss "rsync (the kit sync uses it)"; L_STD=0; fi
+  if command -v kyfram >/dev/null 2>&1; then ok "kyfram $(kyfram --version 2>/dev/null | grep -o '[0-9][0-9.]*' | head -1) (kyfram engine)"; else miss "kyfram (only the kyfram engine needs it: curl -fsSL https://kyfram-site-68056d.gitlab.io/install.sh | sh)"; fi
   command -v python3 >/dev/null 2>&1 && ok "python3 $(python3 -c 'import platform;print(platform.python_version())')" || { miss "python3"; L_STD=0; }
   local remo_found=0 d
   for d in "${SKILLS_DIRS[@]}" "$HOME/.claude/skills" "$HOME/.config/opencode/skills" "$HOME/.agents/skills" "$HOME/.gemini/skills" "$HOME/.cursor/skills"; do
@@ -195,13 +198,16 @@ doctor() {
   done
   if [ $remo_found = 1 ]; then ok "remotion skills"; else miss "remotion skills (npx skills add remotion-dev/skills, see step_remotion)"; L_STD=0; fi
   if "$PAPERCUT_PY" -c 'import numpy, PIL, soundfile' >/dev/null 2>&1; then ok "python tools: numpy + Pillow + soundfile ($PAPERCUT_PY)"; else miss "python tools (numpy + Pillow + soundfile)"; L_STD=0; fi
-  if papercut_find_chrome >/dev/null; then ok "Chrome or Chromium (sound effects and music render)"; else miss "Chrome/Chromium (only the SFX and music render needs it)"; fi
+  if motion_find_chrome >/dev/null; then ok "Chrome or Chromium (sound effects and music render)"; else miss "Chrome/Chromium (only the SFX and music render needs it)"; fi
   if "$QWEN_TTS_PY" -c 'import qwen_tts' >/dev/null 2>&1; then
     ok "voice: qwen-tts importable ($QWEN_TTS_PY)"
     if ls -d "$HOME"/.cache/huggingface/hub/models--Qwen--Qwen3-TTS-12Hz-*-CustomVoice >/dev/null 2>&1; then ok "voice: CustomVoice model cached"; L_FULL=1; else miss "voice: no CustomVoice model in the Hugging Face cache"; fi
   else miss "voice: qwen-tts not installed (optional; ./install.sh --mode custom --components tts)"; fi
   for f in kit/paper/camera.tsx public/bg/backdrops/backdrops.json public/bg/textures/felt-fibre.mp4; do
-    [ -e "$LIB/papercut/$f" ] && ok "library: $f" || { bad "library file missing: $f"; L_STD=0; }
+    [ -e "$MOTION_LIB/style/papercut/remotion/$f" ] && ok "library: papercut/$f" || { bad "library file missing: papercut/$f"; L_STD=0; }
+  done
+  for s in papercut; do
+    [ -f "$MOTION_LIB/style/$s/kyfram/PRELUDE.lgv" ] && ok "kyfram: style/$s/PRELUDE.lgv" || miss "kyfram: style/$s/PRELUDE.lgv missing (the kyfram engine cannot render this style)"
   done
   local level="none (skills not installed)"
   if [ $L_SKILLS = 1 ]; then level="Minimal"; [ $L_STD = 1 ] && level="Standard" && [ $L_FULL = 1 ] && level="Full"; fi
@@ -368,7 +374,10 @@ step_deps() {
   command -v npm >/dev/null 2>&1 && ok "npm" || { bad "npm not found (ships with node)"; miss_any=1; }
   command -v ffmpeg >/dev/null 2>&1 && ok "ffmpeg" || { bad "ffmpeg not found: 'brew install ffmpeg' or 'apt install ffmpeg'"; miss_any=1; }
   command -v rsync >/dev/null 2>&1 && ok "rsync" || { bad "rsync not found (the kit sync uses it): 'brew install rsync' or 'apt install rsync'"; miss_any=1; }
-  if papercut_find_chrome >/dev/null; then
+  if command -v kyfram >/dev/null 2>&1; then
+    ok "kyfram $(kyfram --version 2>/dev/null | grep -o '[0-9][0-9.]*' | head -1)"
+  else miss "kyfram not found (only the kyfram engine needs it): curl -fsSL https://kyfram-site-68056d.gitlab.io/install.sh | sh"; fi
+  if motion_find_chrome >/dev/null; then
     ok "Chrome or Chromium (sound effects and music render)"
   else miss "Chrome/Chromium not found: only the SFX and music render needs it (set CHROME_PATH or install Chrome); video renders do not"; fi
   command -v python3 >/dev/null 2>&1 && ok "python3" || { bad "python3 not found"; miss_any=1; }

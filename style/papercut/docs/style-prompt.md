@@ -56,6 +56,36 @@ STORY
   resource → "comment KEYWORD" CTA typed into a comment box.
 ```
 
+## A2. The same style as kyfram `.lgv`
+
+For a kyfram episode (engine `kyfram`) do not restate the look: the prelude already carries the palette,
+fonts and furniture. What a scene author needs is the mapping from the rules above onto kyfram's twelve
+primitives, and the three traps that render wrong without an error.
+
+```
+Write one kyfram .lgv per scene. It renders after core/kyfram/lgv/core.lgv, style/papercut/kyfram/PRELUDE.lgv
+and a generated header, so SCENE_ID, BANNER, DUR, FPSR, CAPS and the helpers already exist.
+Never call scene(); never re-declare a token or a helper.
+
+Paper from primitives
+- paper piece   = roundRect (radius 2-6), with a darker rect band behind it as the cast shadow, offset +6..10 x/y
+- torn edge     = a second roundRect 2px larger in the lighter token (C_CREAM_HI) behind the piece
+- stacked shade = one rect in the darker token (C_HERO_LO, C_CREAM_LO) inset along the underside
+- rivets/bulbs  = small circles in C_METAL / C_BRASS
+- screen        = rect in C_SCREEN plus text in C_SCREEN_TEXT; never a gradient
+- light from the top-left: shadows fall down and slightly right, always
+
+Motion
+- rigid transforms only: x, y, scale, rotate, alpha. popText/popPlate give the 0.09 s pop.
+- camera: pushIn(1.0, 1.04, cx, cy) across the beat; no shake.
+- one visual event per stressed word, cued off CAPS[].f / FPSR.
+
+Three traps that render wrong with no error
+1. Repeat color on EVERY keyframe of a shape. An omitted color draws white on every kind.
+2. Concatenate with interpolation: "tag_${name}". "a" .. b is a parse error.
+3. Draw inside the canvas (1080x1920) and inside a group's local bounds; off-canvas renders nothing.
+```
+
 ---
 
 ## B. Image-generation style lock (append to any prop or background prompt)

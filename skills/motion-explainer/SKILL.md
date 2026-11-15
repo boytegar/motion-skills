@@ -33,7 +33,7 @@ Reuse the style and the storytelling, not the worked examples' content. Every pr
 - **Source**: usually a link (repo, product site, announcement). Everything else is researched from it.
 - **The one claim** the video proves, and the topic.
 - **Role framing**: who or what does the work, who advises or approves. Confirm it with the user and never invent product behaviour.
-- **Engine**: `fframes` (Rust) or `remotion` (React).
+- **Engine**: `remotion` (React), `fframes` (Rust crate) or `kyfram` (Logos `.lgv` scripts, one per scene). Kyfram needs the `kyfram` binary: `curl -fsSL https://kyfram-site-68056d.gitlab.io/install.sh | sh`, and its DSL is the `kyfram` skill.
 - **CTA keyword** and what the viewer gets (the deliverable).
 - **Length**: default 22-30 s.
 - **Audience level** (from `SERIES.md`) and any accent colour or mascot.
@@ -49,7 +49,7 @@ Write the answers as the BRIEF block at the top of `episodes/NN-slug/research/fa
 | 3 | Script | `motion-script` | BRIEF, HOOK | `research/facts.md`, `narration/script.json`, staging table in `STORYBOARD.md` |
 | 4 | Storyboard | `motion-storyboard` | `script.json`, `STORYBOARD.md`, `episode.json` | Camera/Cut table, scene blocks (engine-specific), SFX plan in `STORYBOARD.md` |
 | 5 | Voice and timing | `motion-voice` | `script.json`, `voice/voice.json` | `narration/` takes, `public/vo/captions.json`, `src/plan.json` |
-| 6 | Scenes, sound, render | `motion-build` | `plan.json`, `STORYBOARD.md`, `episode.json` | `src/scenes/*` (TSX or Rust), `tools/cues.json`, `out/*.mp4` |
+| 6 | Scenes, sound, render | `motion-build` | `plan.json`, `STORYBOARD.md`, `episode.json` | `src/scenes/*` (TSX or Rust) or `scenes/*.lgv`, `tools/cues.json`, `out/*.mp4` |
 | 7 | QA | `motion-qa` | stills, `STORYBOARD.md` | fixes, the delivery summary |
 | 8 | After posting | `motion-strategy` (autopsy), `motion-build` (harvest) | platform numbers, the project | `research/analytics/`, library promotions |
 

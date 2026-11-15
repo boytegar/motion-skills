@@ -9,10 +9,11 @@ The storyboard is the plan every scene is built from. It names the camera move a
 
 ## Preflight
 
-- Read `video/episode.json` or `research/facts.md` to identify the selected **Engine** (`fframes` or `remotion`).
+- Read `video/episode.json` or `research/facts.md` to identify the selected **Engine** (`remotion`, `fframes` or `kyfram`).
 - Install: Minimal is enough. With a library:
   - For **remotion**: check `style/$MOTION_STYLE/remotion/CATALOG.md` (sections "paper/camera.tsx" and "paper/transitions.tsx") for each move's props and when it fits.
   - For **fframes**: inspect the Rust style modules under `style/$MOTION_STYLE/fframes/src/` (`camera.rs`, `cut.rs`, `sets.rs`, `props.rs`).
+  - For **kyfram**: inspect `style/$MOTION_STYLE/kyfram/PRELUDE.lgv` (the tokens and furniture a scene may call) and `$MOTION_LIB/core/kyfram/lgv/core.lgv` (the engine helpers). Invoke the `kyfram` skill before writing any scene block.
   If catalog files are missing or stale, run `python3 $MOTION_LIB/core/tools/catalog.py`. Resolve `$MOTION_LIB` from the environment, else the `MOTION_LIB=` line in `~/.config/motion-explainer/config.env`, else ask once.
 - Needs `narration/script.json` and `video/STORYBOARD.md` with the HOOK block and the staging table (banner, set, prop, UI moment, mascot, gag per row). Missing: run `motion-hook` and `motion-script`.
 - Backdrop sheet for choosing sets: `style/$MOTION_STYLE/remotion/public/bg/backdrops/_sheet.jpg` (or synced in `video/media/backdrops/` for fframes). Open only what the step needs.

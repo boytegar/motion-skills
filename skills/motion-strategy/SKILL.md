@@ -38,7 +38,7 @@ Write at the level `SERIES.md` sets. There is no default audience. The feeling t
 
 ## 5. Write the BRIEF and Scaffold
 
-Ask for the engine: `fframes` (Rust crate) or `remotion` (React)? Default: the first entry of `engines` in `$MOTION_LIB/style/$MOTION_STYLE/style.json`, else `remotion`.
+Ask for the engine: `remotion` (React), `fframes` (Rust crate) or `kyfram` (Logos `.lgv`, one script per scene)? Default: the first entry of `engines` in `$MOTION_LIB/style/$MOTION_STYLE/style.json`, else `remotion`. A style offers `kyfram` only when it ships `style/<name>/kyfram/PRELUDE.lgv` (today: papercut).
 
 Write this block at the top of `episodes/NN-slug/research/facts.md`. Every later stage (`motion-hook`, `motion-script`, `motion-storyboard`, `motion-build`) reads it to know the engine and format target.
 
@@ -50,7 +50,7 @@ Role:     <who or what does the work vs who advises or approves>
 Mode:     open-source drop | news launch / worth-it | feature unlock
 Format:   <the one familiar format>
 Audience: <level, copied from SERIES.md>
-Engine:   fframes | remotion
+Engine:   remotion | fframes | kyfram
 CTA:      <KEYWORD> -> <the freebie>
 Length:   22-30 s
 ```
@@ -58,11 +58,12 @@ Length:   22-30 s
 **Scaffold immediately once the BRIEF questions are answered.** Do not wait for the build stage:
 
 ```
-$MOTION_LIB/new_episode.sh <series-dir> NN-slug CompId [out-name] --engine fframes|remotion
+$MOTION_LIB/new_episode.sh <series-dir> NN-slug CompId [out-name] --engine remotion|fframes|kyfram
 ```
 
 This creates `<series>/episodes/NN-slug/{research,narration/voice,video}` with `video/episode.json` recording `engine`. Then output the preview command:
 - **fframes**: `cargo install --locked cargo-fframes` (once if CLI missing), then `cd episodes/NN-slug/video && cargo run --release -- preview`
+- **kyfram**: `curl -fsSL https://kyfram-site-68056d.gitlab.io/install.sh | sh` (once, needs ffmpeg), then `kyfram view out/cache/kyfram/build/<Scene>.lgv` after a render — that builds the exact compiled script
 - **remotion**: `cd episodes/NN-slug/video && npx remotion studio`
 
 ## 6. Competitor study (when the user shares reels)
@@ -84,7 +85,7 @@ Method, setup and the subagent prompt: `references/competitor-analysis.md`.
 - [ ] `SERIES.md` read; audience, regions and voice respected.
 - [ ] Topic has a demand signal, a usable outcome and a freebie by DM.
 - [ ] One format named in a line.
-- [ ] Engine selected (`fframes` or `remotion`).
+- [ ] Engine selected (`remotion`, `fframes` or `kyfram`).
 - [ ] Vocabulary and the DM match the audience level.
 - [ ] BRIEF written in `facts.md`; project scaffolded immediately via `new_episode.sh`.
 - [ ] Preview command surfaced to user (`cargo run --release -- preview` or `npx remotion studio`).
