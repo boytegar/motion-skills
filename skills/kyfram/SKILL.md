@@ -14,6 +14,15 @@ skill is the DSL itself. The full upstream reference (every declaration, kind, f
 interpolation rule, and a Logos primer) is `references/upstream-SKILL.md`; read it when
 a script needs something the summary below does not cover.
 
+Every style ships `style/<name>/kyfram/PRELUDE.lgv` (tokens + `drawBackdrop`,
+`drawBanner`, `drawCaptions`, at minimum), so any style renders with `--engine
+kyfram`. papercut is the hand-tuned one; the other nine ship a minimal prelude built
+from that style's real palette. Read your style's prelude before writing a scene:
+the token names (`C_BG`, `C_INK`, `C_ACCENT`...) and the furniture it offers are the
+vocabulary you build with. No style TTFs ship outside papercut, so outside papercut
+text uses kyfram's built-in bold sans — pass `font:` only if the style's prelude
+defines a font variable.
+
 ## The five declarations here
 
 ```

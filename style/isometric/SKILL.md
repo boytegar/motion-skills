@@ -5,7 +5,7 @@ description: Render a reel in the Isometric style: calm precise product line art
 
 Calm, precise product line art in 2:1 dimetric isometric with constant hairlines and spring settles.
 
-This is one style of the motion-explainer library. It ships the same three things every style ships: a `style.json` manifest, a Remotion engine, and an fframes engine. The pipeline skills (`motion-explainer`, `motion-script`, `motion-storyboard`, `motion-build`, `motion-qa`) all take the style name as `$MOTION_STYLE`, so nothing else in the workflow changes when you pick this one.
+This is one style of the motion-explainer library. It ships the same three engines every style ships: a Remotion engine, an fframes engine, and a kyfram prelude (`kyfram/PRELUDE.lgv`), with a `style.json` manifest tying them together. The pipeline skills (`motion-explainer`, `motion-script`, `motion-storyboard`, `motion-build`, `motion-qa`) all take the style name as `$MOTION_STYLE`, so nothing else in the workflow changes when you pick this one.
 
 ## When to use it
 

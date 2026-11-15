@@ -19,7 +19,8 @@
   },
   "engines": [
     "remotion",
-    "fframes"
+    "fframes",
+    "kyfram"
   ],
   "audio": {
     "sfx": "../../core/audio/sfx",
@@ -31,6 +32,7 @@
   },
   "enginesDoc": {
     "remotion": "remotion/README.md",
-    "fframes": "fframes/README.md"
+    "fframes": "fframes/README.md",
+    "kyfram": "kyfram/PRELUDE.lgv"
   }
 }

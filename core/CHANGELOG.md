@@ -18,8 +18,16 @@ Kyfram engine (third engine, next to `remotion` and `fframes`).
   `..` is not concat, arity panics) and `references/kyfram-upstream-SKILL.md` vendored.
 - `style/papercut/kyfram/PRELUDE.lgv`: papercut tokens and furniture for `.lgv` scenes;
   `style/papercut/style.json` lists `kyfram`; `docs/style-prompt.md` gains block A2.
+- `style/<every style>/kyfram/PRELUDE.lgv`: all ten styles ship a prelude, so `--engine kyfram`
+  works with any of them. The nine without hand-authored furniture get a minimal one built from
+  that style's real `fframes/src/tokens.rs` palette (`drawBackdrop`, `drawBanner`, `drawCaptions`,
+  `drawPanel`, `drawDot`, `drawFrame`, plus `CANVAS_W/H`, `BANNER_Y`, `CAPTION_Y`). `drawFrame`
+  exists because five of those palettes have `C_SURFACE == C_BG` — a panel fill would be invisible
+  against the ground — so it strokes a `polygon` outline (kyfram `rect` has no stroke). No style
+  TTFs ship outside papercut, so those preludes use kyfram's built-in bold sans, not a `font:` path.
 - `install.sh`: `--doctor` and `step_deps` check `kyfram`; fixed `LIB` pointing at a `library/`
   folder that does not exist, the `papercut_find_chrome` name, and the unbound `PAPERCUT_PY`.
+  `--doctor` now counts every style's PRELUDE.lgv, not just papercut's.
 
 ## 0.1.0: first public release
 

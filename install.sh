@@ -206,9 +206,13 @@ doctor() {
   for f in kit/paper/camera.tsx public/bg/backdrops/backdrops.json public/bg/textures/felt-fibre.mp4; do
     [ -e "$ROOT/style/papercut/remotion/$f" ] && ok "library: papercut/$f" || { bad "library file missing: papercut/$f"; L_STD=0; }
   done
-  for s in papercut; do
-    [ -f "$ROOT/style/$s/kyfram/PRELUDE.lgv" ] && ok "kyfram: style/$s/PRELUDE.lgv" || miss "kyfram: style/$s/PRELUDE.lgv missing (the kyfram engine cannot render this style)"
+  local nk=0 ns=0 s
+  for s in style/*/; do
+    s=$(basename "$s"); ns=$((ns+1))
+    if [ -f "$ROOT/style/$s/kyfram/PRELUDE.lgv" ]; then nk=$((nk+1));
+    else miss "kyfram: style/$s/PRELUDE.lgv missing (the kyfram engine cannot render this style)"; fi
   done
+  [ "$nk" -gt 0 ] && ok "kyfram: $nk/$ns styles ship a PRELUDE.lgv"
   local level="none (skills not installed)"
   if [ $L_SKILLS = 1 ]; then level="Minimal"; [ $L_STD = 1 ] && level="Standard" && [ $L_FULL = 1 ] && level="Full"; fi
   say "Install level: $level"

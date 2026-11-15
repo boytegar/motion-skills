@@ -21,6 +21,22 @@ def die(msg):
     sys.exit(f'kyfram_qa: {msg}')
 
 
+def total(plan):
+    # build_vo.py writes a top-level durationInFrames; a hand-written plan may not.
+    if 'durationInFrames' in plan:
+        return plan['durationInFrames']
+    return sum(sc['durationInFrames'] for sc in plan['scenes'])
+
+
+def fill_from(plan):
+    # scenes are sequential in the concat; build_vo.py writes "from" explicitly.
+    at = 0
+    for sc in plan['scenes']:
+        sc.setdefault('from', at)
+        at += sc['durationInFrames']
+    return plan
+
+
 def main():
     args = sys.argv[1:]
     if not args:
@@ -36,14 +52,23 @@ def main():
 
     if not os.path.isfile('src/plan.json'):
         die('src/plan.json missing: run core/tools/build_vo.py first')
-    plan = json.load(open('src/plan.json'))
+    plan = fill_from(json.load(open('src/plan.json')))
     if not os.path.isdir(CACHE):
         die(f'no rendered segments in {CACHE}: run core/tools/render.sh first')
 
-    lo, hi = 0, plan['durationInFrames'] - 1
+    lo, hi = 0, total(plan) - 1
+    # NAME a scene id and leave the range out: default to that scene's own frames.
+    # Remotion's --frames is a global timeline range, so an explicit range always wins.
+    if not rng:
+        for sc in plan['scenes']:
+            if sc['id'] == name:
+                lo, hi = sc['from'], sc['from'] + sc['durationInFrames'] - 1
+                print(f'  {name}: frames {lo}-{hi} (its own span; pass FROM-TO for a global range)',
+                      file=sys.stderr)
+                break
     if rng:
         a, _, b = rng.partition('-')
-        lo, hi = int(a), (int(b) if b else plan['durationInFrames'] - 1)
+        lo, hi = int(a), (int(b) if b else total(plan) - 1)
 
     outdir = f'out/qa/{name}'
     subprocess.run(['rm', '-rf', outdir], check=True)
