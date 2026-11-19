@@ -1,15 +1,15 @@
 ---
 name: motion-hook
-description: Write or fix the hook of a papercut reel. Produces the SAY / WRITE / SHOW / ALIGN block, five variants scored with the hook check, the frame-0 cover title and the motion out of the hook. Use for "write a hook for...", or when a reel's first three seconds lose people.
+description: Write or fix the hook of a short video. Produces the SAY / WRITE / SHOW / ALIGN block, five variants scored with the hook check, the frame-0 cover title and the motion out of the hook. Use for "write a hook for...", or when a video's first three seconds lose people.
 ---
 
-# Papercut hook
+# Hook
 
-The hook is the most important step. A reel's hook is three separate, explicit layers, and none may be skipped or left implied. Write all of them before anything else in the script.
+The hook is the most important step. A video's hook is three separate, explicit layers, and none may be skipped or left implied. Write all of them before anything else in the script.
 
 ## Preflight
 
-- Install: Minimal is enough. No library needed.
+- Install: **plan only** is enough. No library needed.
 - Read the BRIEF at the top of `episodes/NN-slug/research/facts.md` (topic, format, audience, CTA) and the facts list, so every claim can be checked. If there is no BRIEF, run `motion-strategy` first.
 - Read `SERIES.md` for the audience level and regions.
 
@@ -51,7 +51,7 @@ What you show, what you write and what you say all point at one idea. They diffe
 
 ## The frame-0 title (`episode.json` "hook")
 
-Every reel opens on its hook. The `hook` key in `episode.json` puts the cover title on screen from frame 0 (`build_vo.py` writes it into `plan.json`) and holds the banner back until the title leaves.
+Every video opens on its hook. The `hook` key in `episode.json` puts the cover title on screen from frame 0 (the timing step writes it into `src/plan.json`) and holds the banner back until the title leaves.
 
 ```
 "hook": {"lines": [["AI", "LEAKED"], ["13,000+"]], "hot": ["13,000+"], "until": "yes", "size": 108, "top": 220}

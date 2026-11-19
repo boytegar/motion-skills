@@ -1,23 +1,23 @@
 ---
 name: motion-voice
-description: Voice a papercut reel and time it to the picture. Three paths, local Qwen3-TTS, your own recording or another TTS, or a placeholder voice. Covers delivery rules, voice.json, captions and scene timing. Use for "set up the voice", "re-voice this", "time the script".
+description: Voice a short video and time it to the picture. Three paths, local Qwen3-TTS, your own recording or another TTS, or a placeholder voice. Covers delivery rules, voice.json, captions and scene timing. Use for "set up the voice", "re-voice this", "time the script".
 ---
 
-# Papercut voice
+# Voice
 
 Every later stage needs two things in the narration folder: `voice/final_narrator/<id>.wav` (one WAV per script line) and `timing_narrator.js` (a start and end for every word). This skill produces them by one of three paths, then builds the captions and the scene plan. The full reference for the scripts is `$MOTION_LIB/core/voice/README.md`.
 
 ## Preflight
 
 - Library: `$MOTION_LIB`, else the `MOTION_LIB=` line in `~/.config/motion-explainer/config.env`, else ask once. Export it, and `. "$MOTION_LIB/env.sh"` loads `ASR_PY`, `QWEN_TTS_PY` and the other config values into the shell.
-- A scaffolded project (`motion-build`, step 1) with `narration/script.json` and `video/episode.json` holding `scenes`. `new_episode.sh` copies `build_timing.py` into `narration/`.
+- An episode folder (`motion-strategy`, step 5) with `narration/script.json` and `video/episode.json`. Copy `build_timing.py` into `narration/` (`cp $MOTION_LIB/core/voice/build_timing.py narration/`).
 - If the user already has a TTS installed, use it as it is and don't rebuild it (path B, or A if it is Qwen3-TTS). Ask once which one and where it runs. Otherwise ask which path, and say what it needs:
 
-| Path | Needs | Install mode |
+| Path | Needs | Planning mode |
 |---|---|---|
-| A. Local Qwen3-TTS | the voice venv from `$MOTION_LIB/core/voice/setup_tts.sh` (model download 2.3-4.2 GB) | Full |
-| B. Your own recording or another TTS | an ASR backend (mlx-whisper or faster-whisper) and librosa + numpy for the pitch pass, in the Python that `ASR_PY` and `QWEN_TTS_PY` name | Full, or those packages by hand |
-| C. Placeholder | ffmpeg; macOS for `--say` | Standard |
+| A. Local Qwen3-TTS | the voice venv from `$MOTION_LIB/core/voice/setup_tts.sh` (model download 2.3-4.2 GB) | plan + real voiceover |
+| B. Your own recording or another TTS | an ASR backend (mlx-whisper or faster-whisper) and librosa + numpy for the pitch pass, in the Python that `ASR_PY` and `QWEN_TTS_PY` name | plan + real voiceover, or those packages by hand |
+| C. Placeholder | ffmpeg; macOS for `--say` | plan + audio files |
 
 If the path needs more than the install has, run `./install.sh --doctor` and hand over to `motion-setup`. Without ASR, `build_timing.py` only estimates 2.75 words a second, so captions drift against real audio.
 
@@ -55,7 +55,7 @@ From the `narration/` folder:
 python3 $MOTION_LIB/core/tools/placeholder_vo.py [--wps 3.0] [--say [VOICE]]
 ```
 
-It writes silent WAVs (or the macOS `say` voice with `--say`) and `timing_narrator.js` from `script.json` alone, spreading word times by word length. `--wps 3.5` to `4` approximates the target pace (default 3.0). The reel can be built and timed first and re-voiced later: swap the WAVs, rerun `finalize.sh`, rerun `build_vo.py`, and the word cues follow.
+It writes silent WAVs (or the macOS `say` voice with `--say`) and `timing_narrator.js` from `script.json` alone, spreading word times by word length. `--wps 3.5` to `4` approximates the target pace (default 3.0). The video can be timed first and re-voiced later: swap the WAVs, rerun `finalize.sh`, rerun `build_vo.py`, and the word cues follow.
 
 ## Delivery rules
 
@@ -76,10 +76,10 @@ python3 $MOTION_LIB/core/tools/build_vo.py     # public/vo/voiceover.wav, public
 python3 $MOTION_LIB/core/tools/timing_md.py    # Timing section of STORYBOARD.md
 ```
 
-`captions.json` is a Remotion `Caption[]`; scene boundaries come from the word timestamps; the composition length is `plan.json`'s `durationInFrames`. `build_vo.py` flags any scene under 1.2 s. With no library, transcribe the WAV with the Remotion captions skill (whisper.cpp) or any speech-to-text tool that returns word timestamps.
+`captions.json` is one entry per spoken word with millisecond start and end; scene boundaries come from the word timestamps; the video's length is `plan.json`'s `durationInFrames`. Both files are plain data, readable by any engine. `build_vo.py` flags any scene under 1.2 s. With no library, transcribe the WAV with any speech-to-text tool that returns word timestamps.
 
-Captions are one torn tag per word, pages of 1-3 words, at 3.5-4 words a second (`$MOTION_LIB/style/$MOTION_STYLE/docs/style-guide.md`, sections 11 and 13).
+Captions are one tag per word, pages of 1-3 words, at 3.5-4 words a second (`$MOTION_LIB/style/$MOTION_STYLE/docs/style-guide.md`, sections 11 and 13). How a tag is drawn is the style's and the engine's business, not this stage's.
 
 ## Hand-off
 
-Next is `motion-build` (stubs, scenes, sound, render). It reads `src/plan.json` and the Timing section of `video/STORYBOARD.md`. Any later voice change reruns `build_vo.py` and `timing_md.py`; the scene cache then re-renders everything.
+Next is `motion-build`, which finalises `episode.json`, the cue list and `HANDOFF.md`. It reads `src/plan.json` and the Timing section of `video/STORYBOARD.md`. Any later voice change reruns `build_vo.py` and `timing_md.py`, and the plan — not any engine's scene code — is what moves.

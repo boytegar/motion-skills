@@ -1,9 +1,9 @@
 ---
 name: motion-script
-description: Turn a link into a papercut reel script. Researches a sourced facts list, writes the 75-95 word script on the 10-beat spine, a banner fact track, a staging table with one set per banner, and the humour pass. Use for "write the script", "research this repo for a reel".
+description: Turn a link into a script for a short vertical video. Researches a sourced facts list, writes the 75-95 word script on the 10-beat spine, a banner fact track, a staging table with one set per banner, and the humour pass. Use for "write the script", "research this repo for a video".
 ---
 
-# Papercut script
+# Script
 
 Research, script, banner track, staging and gags are written together, because each one feeds the others. The full system, with the phrase bank and two staged examples, is `references/storytelling.md`. Gag and format banks: `references/comedy.md`.
 
@@ -14,14 +14,14 @@ Every beat runs three tracks that do different jobs:
 
 ## Preflight
 
-- Install: Minimal is enough. Resolve `$MOTION_LIB` only if you want the backdrop sheet (`style/$MOTION_STYLE/remotion/public/bg/backdrops/_sheet.jpg`) when choosing sets. Each image costs about 0.7-1.5k tokens, so open only what the step needs.
+- Install: **plan only** is enough. Resolve `$MOTION_LIB` only if you want the style's backdrop sheet when choosing sets (`style/$MOTION_STYLE/`, wherever its kit keeps `bg/backdrops/_sheet.jpg`; the papercut style has it under `remotion/`). Each image costs about 0.7-1.5k tokens, so open only what the step needs.
 - Needs the BRIEF at the top of `episodes/NN-slug/research/facts.md` and the HOOK block at the top of `episodes/NN-slug/video/STORYBOARD.md`. Missing one: run `motion-strategy` or `motion-hook` first.
 - Research needs web fetch or search, and any browser tool for screenshots. Without them, ask the user for screenshots and facts.
 
 ## 1. Research and rough UI
 
 - Collect facts from the source with a source for each: name, maker, numbers, price, requirements, limitations, competitor numbers. Mark anything uncertain.
-- Grab the key screens (2-4), real labels and button text, the accent colour and hero images. The video rebuilds a rough version of the UI as papercut props, not a screen recording (`references/storytelling.md` section 5).
+- Grab the key screens (2-4), real labels and button text, the accent colour and hero images. The video rebuilds a rough version of the UI as stylised props, not a screen recording (`references/storytelling.md` section 5).
 - Confirm the role framing from the BRIEF. Never invent product behaviour. See the role-framing note in `$MOTION_LIB/style/$MOTION_STYLE/docs/frame-breakdown.md`.
 - Write the list to `research/facts.md` under the BRIEF. Every number in the script, banners and UI must trace back to it.
 
@@ -78,7 +78,7 @@ One row per banner, written into `STORYBOARD.md` under the HOOK block:
 ## 6. Humour pass (after the script, before staging is final)
 
 Add the GAG column. The voiceover stays straight; only the picture is silly.
-1. One format for the whole reel.
+1. One format for the whole video.
 2. One gag per banner that acts out the point, from `references/comedy.md`.
 3. A costume prop per idea. The mascot's own item stays on and gets one prop on top.
 4. One struggling-mascot beat, on the catch line.

@@ -1,131 +1,110 @@
 ---
 name: motion-build
-description: Build and render a papercut episode from a storyboard with the library. Scaffolds the project, builds scenes with parallel agents, assets and audio, renders the mp4, then harvests reusables. Use for "build the reel", "scaffold an episode", "rebuild scene 4", "render it".
+description: Turn a finished storyboard and voice timing into a build-ready plan folder, then stop. Finalises episode.json, builds the scene plan, the caption track and the sound cue list, writes the HANDOFF.md contract, and ends the pipeline. Engine-agnostic: it names no renderer and runs none. Use for "finalise the plan", "build the handoff", "re-plan scene 4", "what does the builder need".
 ---
 
-# Papercut build
+# Plan and handoff
 
-Build every episode on the library instead of writing a Remotion project from scratch. Read `$MOTION_LIB/core/README.md` once.
+This stage ends the planning pipeline. It produces every file a builder needs and then **stops**: it writes no scene code, runs no renderer, and produces no still. Building the folder belongs to the user's engine, outside this skill set.
+
+Read `$MOTION_LIB/core/README.md` once for what the shared tools do.
 
 ## Preflight
 
-- Install: **Standard** or Full. Needs the library, node 20+, npm, ffmpeg, Python tools (numpy, Pillow, soundfile) and Chrome or Chromium for the audio render. Probe with the commands in `motion-explainer`; if something is missing, run `./install.sh --doctor` and hand over to `motion-setup`.
-- Library: `$MOTION_LIB`, else the `MOTION_LIB=` line in `~/.config/motion-explainer/config.env`, else ask once. With no library at all, build from the sketches in `$MOTION_LIB/style/$MOTION_STYLE/remotion/RECIPES.md`.
-- Load the Remotion best-practices skill first only for the remotion engine (`remotion-best-practices`, from the Remotion plugin, or `npx skills add remotion-dev/skills -g -y -a <your harness id>`; `install.sh --mode standard` does this) and follow its routing for markup, captions and the Studio. For `kyfram`, load the `kyfram` skill instead.
-- Needs `video/STORYBOARD.md` and `narration/script.json` from the earlier stages.
-- Smoke test of the whole toolchain: `$MOTION_LIB/core/tools/selftest.sh` builds `examples/hello-reel/` in a throwaway folder and renders one still.
+- Install: **plan + audio files** for the caption track and the cue list (ffmpeg, python3, numpy/Pillow/soundfile). Probe with the commands in `motion-explainer`; if something is missing, run `./install.sh --doctor` and hand over to `motion-setup`.
+- Library: `$MOTION_LIB`, else the `MOTION_LIB=` line in `~/.config/motion-explainer/config.env`, else ask once.
+- Needs `video/STORYBOARD.md`, `narration/script.json`, `narration/timing_narrator.js` and the per-line WAVs from the earlier stages.
+- No renderer is loaded, installed or probed here. If the user has none, that is not a blocker: say so in one line in `HANDOFF.md`.
 
-## 1. Scaffold & Verify Engine
+## 1. Verify the episode folder
 
-The episode project should already be scaffolded from the intake / `motion-strategy` stage. Verify `video/episode.json` for the recorded `engine`:
-
-- If not yet scaffolded, ask the user (`remotion`, `fframes` or `kyfram`) and run:
-  ```
-  $MOTION_LIB/new_episode.sh <series-dir> NN-slug CompId [out-name] --engine remotion|fframes|kyfram
-  ```
-- Preview commands from `video/`:
-  - **fframes**: `cargo run --release -- preview` (or install CLI: `cargo install --locked cargo-fframes`)
-  - **kyfram**: render once, then `kyfram view out/cache/kyfram/build/<Scene>.lgv` (the compiled script: preludes + generated header + your scene)
-  - **remotion**: `npx remotion studio` (or `npm run dev`)
-
-- **fframes**: episode project is a Rust crate (`media/`, `src/main.rs`). Render with `cargo run --release -- render` or `$MOTION_LIB/core/tools/render.sh`.
-- **kyfram**: episode project is `.lgv` scripts (`scenes/`, `media/fonts/`, `src/plan.json`). Render with `$MOTION_LIB/core/tools/render.sh` (it caches per scene and concats). Invoke the `kyfram` skill first.
-- **remotion**: React project (`src/`, `package.json`). Render with `npx remotion render <CompId> out/<out>.mp4` or `render.sh`.
-
-## 2. Plan: `episode.json`, voice, timing
-
-From the storyboard, fill `video/episode.json`:
-- `scenes`: `[["S01Hook", "l1_hook", 0], ["S02Name", "l2_name", "called"], ...]` (scene id, narration line id, first word as an index or the exact word).
-- `banners`: `{"S01Hook": "TAKEAWAY IN CAPS"}`. `hook`: see `motion-hook`. `cuts`: the Camera / Cut table's cut column. `bed`, `whipScene`, `cutSfx`, `gaps` (extra beat after a line, in seconds).
-
-Then run `motion-voice` through its timing step (it ends with `build_vo.py` and `timing_md.py`). Then, from `video/`:
+The folder was created by `motion-strategy` and holds no renderer:
 
 ```
-python3 $MOTION_LIB/core/tools/stubs.py        # generates multi-file scene stubs based on engine
+episodes/NN-slug/
+  research/facts.md
+  narration/script.json  narration/voice/final_narrator/*.wav  narration/timing_narrator.js
+  video/STORYBOARD.md  video/episode.json  video/src/  video/public/vo/  video/tools/
 ```
 
-`build_vo.py` flags any scene under 1.2 s; merge it into a neighbour. `timing_md.py` writes the Timing section of `STORYBOARD.md` (absolute frames and word cues), so agents never open `plan.json`.
+If a piece is missing, name the stage that owns it and stop: `motion-strategy` for the folder and BRIEF, `motion-hook` for the HOOK block, `motion-script` for `script.json` and the staging table, `motion-storyboard` for the Camera/Cut table and scene blocks, `motion-voice` for the takes and `timing_narrator.js`. Never fill a gap by guessing.
 
-## 3. Assets
+## 2. Fill `episode.json`
 
-Follow `$MOTION_LIB/style/$MOTION_STYLE/docs/asset-prompts.md`: an image tool (anything that outputs transparent PNGs) for backgrounds and complex static props, code for characters, all text, tags, gauges, buttons and UI. No text inside generated images. With no image tool, build every prop in code with the paper filter; the style holds up. Backdrops: use the library's `<Backdrop>` set (`style/$MOTION_STYLE/remotion/public/bg/backdrops/_sheet.jpg`); generate a new one only when an episode needs a place the library lacks. The proof screenshot: `node $MOTION_LIB/core/tools/capture.mjs <url> public/proof/x.png`, shown with the kit's `RealShot`.
+From `STORYBOARD.md`, into `video/episode.json`:
 
-## 4. Scenes (Strict Multi-file Architecture)
+- `scenes`: `[["S01Hook", "l1_hook", 0], ["S02Name", "l2_name", "called"], ...]` — scene id, narration line id, and the first word as an index or the exact word.
+- `banners`: `{"S01Hook": "TAKEAWAY IN CAPS"}`, one per scene, from the staging table.
+- `hook`: from the HOOK block, see `motion-hook`.
+- `cuts`: `{"S04Name": {"kind": "tearAway"}}` from the Camera/Cut table (no entry means a hard cut).
+- `bed`, `cutSfx`, `gaps` (an extra beat after a named line, in seconds).
 
-**NEVER put all scenes in one file.** Each scene must live in its own isolated file to allow parallel agent work, independent testing, and clean git diffs.
+Keep `style`, `width`, `height`, `fps` and `comp` as they are. **Never write an `engine` key**: the plan is engine-neutral, and the choice is recorded only in `HANDOFF.md`.
 
-Check `engine` from `video/episode.json`:
+## 3. Build the plan files
 
-### For Remotion (`engine: "remotion"`)
-- **File Structure**:
-  - `src/scenes/<Scene>.tsx` (e.g. `S01Hook.tsx`, `S02Name.tsx`) — exactly **one file per scene**.
-  - `src/scenes/<Scene>.parts.tsx` (optional) — for private sub-components of that scene only.
-  - `src/scenes/index.ts` — registry array `SCENES` automatically managed by `stubs.py`. Never inline scene bodies here.
-1. Build `S01Hook` yourself first in `src/scenes/S01Hook.tsx`, from the HOOK block. It is the reference scene the agents match (cue constants, the camera, clamped `interpolate`).
-2. Hand the rest to scene agents in parallel, grouped by scene (2-3 scenes each). The brief is `style/$MOTION_STYLE/remotion/AGENT_BRIEF.md`.
-3. File ownership: an agent writes only `src/scenes/<Scene>.tsx`, an optional `<Scene>.parts.tsx` and `tools/cue_sheet.d/<Scene>.json`. Never edit other scenes or `index.ts`.
-4. Agents read `style/$MOTION_STYLE/remotion/CATALOG.md` and `$MOTION_LIB/core/audio/CATALOG.md`.
-
-### For fframes (`engine: "fframes"`)
-- **File Structure**:
-  - `src/scenes/<scene_snake>.rs` (e.g. `s01_hook.rs`, `s02_name.rs`) — exactly **one file per scene**, defining its struct and `impl Scene for <Scene>`.
-  - `src/scenes/mod.rs` — automatically registers all scene modules via `stubs.py` (`pub mod s01_hook; pub use s01_hook::*;`).
-  - `src/main.rs` / `lib.rs` — only mounts the scenes via `Video::define_scenes()`. Never write scene drawing code inside `main.rs`.
-1. Build `s01_hook.rs` first as the reference scene.
-2. Hand remaining scenes to agents in parallel (each agent owns only `src/scenes/<scene_snake>.rs`).
-3. Read `style/$MOTION_STYLE/fframes/src/` for available camera, set, and prop structs instead of TSX components.
-
-### For kyfram (`engine: "kyfram"`)
-- **File Structure**:
-  - `scenes/<Scene>.lgv` (e.g. `S01Hook.lgv`) — exactly **one script per scene**, shapes only.
-  - The renderer prepends `$MOTION_LIB/core/kyfram/lgv/core.lgv`, `style/$MOTION_STYLE/kyfram/PRELUDE.lgv`
-    and a generated header (`SCENE_ID`, `BANNER`, `DUR`, `FPSR`, `CAPS`, and the `scene()` call), so a scene
-    never calls `scene()`, never hard-codes its duration or caption cues, and never re-declares a helper.
-1. Invoke the `kyfram` skill. Build `S01Hook.lgv` yourself first as the reference scene, and verify it with
-   `bash $MOTION_LIB/core/tools/render.sh` plus `bash $MOTION_LIB/core/tools/qa.sh hook 0-<N> 6 0.3 6`.
-2. Hand remaining scenes to agents in parallel (each agent owns only `scenes/<Scene>.lgv`), with the
-   `kyfram` skill named in the brief.
-3. Agents read `style/$MOTION_STYLE/kyfram/PRELUDE.lgv` for tokens and furniture (`drawRoom`, `drawHero`,
-   `drawBanner`, `drawCaptions`), and `out/cache/kyfram/build/<Scene>.lgv` after a render for the exact
-   compiled script.
-4. SFX and bed wiring follow the remotion flow below; `render.sh --voice` muxes
-   `public/vo/voiceover.wav` into the mp4 once that file exists.
-
-Build rules: 1080x1920, 30 fps, scenes chained in the kit's transition series. Global layers: VO and music `<Audio>`, the taped banner with `<Boil>`, `<WordTagCaptions>`, `<GrainOverlay>`. Every prop is wrapped in `<Paper>`, entrances use `<PopIn>`, each scene runs inside its storyboard camera. No CSS animations. Keep the bottom 20% clear. Neighbouring scenes never share a backdrop. The default hero is a boxy orange critter (token `C.hero` `#D67354`, shade `C.heroLo` `#A9553B`, alias `you`); accessories and name pills tell the cast apart.
-
-## 5. Sound
-
-Pick SFX by name from `$MOTION_LIB/core/audio/sfx/*.js` and the bed by preset from `$MOTION_LIB/core/audio/beds/*.json`. For **kyfram**, invoke the `kyfram` skill first and write per-scene SFX rows in `tools/cue_sheet.d/<Scene>.json`; it owns the same shared sound pipeline as fframes and Remotion. From `video/`:
+From `video/`:
 
 ```
-python3 $MOTION_LIB/core/tools/cues.py && node $MOTION_LIB/core/audio/render.mjs
+python3 $MOTION_LIB/core/tools/build_vo.py     # public/vo/voiceover.wav, public/vo/captions.json, src/plan.json
+python3 $MOTION_LIB/core/tools/timing_md.py    # the Timing section of STORYBOARD.md
 ```
 
-`cues.py` merges the agents' rows into `tools/cues.json` and prints a note if air sounds exceed one per 2.5 s. `render.mjs` writes `public/audio/music.wav` and `fx.wav`.
-
-## 6. Render
-
-Preview: `cargo run --release -- preview` (fframes), `npx remotion studio` (remotion) or `kyfram view out/cache/kyfram/build/<Scene>.lgv` (kyfram). Render only when asked, always through the wrapper — it picks the engine from `episode.json`:
+Then write the per-scene SFX rows from the storyboard's `SFX:` lines into `tools/cue_sheet.d/<Scene>.json` as `[word_prefix, nth_match, sfx_name, offset_frames]`, and merge them:
 
 ```
-$MOTION_LIB/core/tools/render.sh        # -> out/<out>.mp4
+python3 $MOTION_LIB/core/tools/cues.py         # tools/cues.json
 ```
 
-Flags: `--workers N` (default 3), `--conc N`, `--force`, `--keep`. Each scene is cached, so after a fix only the changed scene re-renders; a change to the kit, plan, voice or captions re-renders everything. The first run downloads Remotion's headless Chrome, and `out/cache` takes several GB of ProRes.
+`build_vo.py` flags any scene under 1.2 s: merge that scene into a neighbour and rerun rather than letting the builder cope with it. `cues.py` prints a note when air sounds exceed one per 2.5 s; treat it as a note, fix the loud spots, and keep the count under budget.
 
-To fix or rebuild one scene: edit `src/scenes/<Scene>.tsx`, check it with `motion-qa`, then run `render.sh` again.
+The plan is now complete and engine-independent: `src/plan.json` (scene frames, word cues, duration), `public/vo/captions.json` (one entry per word, milliseconds), `public/vo/voiceover.wav`, `tools/cues.json` (every sound cue with its time).
 
-## 7. Harvest (after the episode)
+## 4. Write `HANDOFF.md`
 
+The contract the builder reads. It is a description of the folder, not a recommendation: you record whatever engine the user already works with, and you never pick one for them. Ask once, in one line, if you don't know it, then write the file by hand in this shape:
+
+```md
+# HANDOFF
+
+## Ask for
+`@<engine>` with this folder as the working directory: build each scene from `src/plan.json`,
+mix `tools/cues.json`, render to `out/`.
+
+## Canvas
+- Style, size, fps, total frames, scene count, hook title frames.
+
+## Scenes
+| Scene | Line | From (f) | Dur (f) | Dur (s) | Cut in | Banner |
+
+## Files
+| Path | What |   (mark anything missing)
+
+## Sound
+Bed preset, cue list path, the SFX and bed catalogs.
+
+## Rules the build must keep
+- Scene boundaries are frames in `src/plan.json`; never retime a scene by editing a shape.
+- One caption tag per word, from `public/vo/captions.json`.
+- Every sound fires at a cue time from `tools/cues.json`.
+- The storyboard's camera and cut per scene are the plan, not a suggestion.
 ```
-python3 $MOTION_LIB/core/tools/harvest.py .       # from video/; read-only report
-python3 $MOTION_LIB/core/tools/catalog.py         # regenerate both catalogs
-```
 
-Promote kit fixes, reusable components, new SFX and recurring beats as `library/HARVEST.md` describes, and add an entry to `library/CHANGELOG.md`.
+Name exactly one engine, the one the user says they use — for example `@remotion`, `@fframes` or `@kyfram`. If they have none, write `Ask for: an engine skill` and say so in the reply. Do not compare engines, do not suggest one, do not scaffold for one.
 
-- When a move looks stiff or muddy, check `$MOTION_LIB/style/$MOTION_STYLE/docs/motion-principles.md` for the matching principle and its kit helper.
+## 5. Stop
+
+Report the folder, the scene count, the total duration, the cue count, and the engine named in `HANDOFF.md`. Do not scaffold, do not preview, do not render.
+
+## Gate
+
+- [ ] `episode.json` has scenes, banners, hook and cuts, and no `engine` key.
+- [ ] `src/plan.json`, `public/vo/captions.json`, `public/vo/voiceover.wav` and `tools/cues.json` all exist.
+- [ ] No scene under 1.2 s; air sounds within budget.
+- [ ] `HANDOFF.md` names one engine and lists every file, marking any gap.
+- [ ] No scene code written, no renderer run, no still claimed.
+- [ ] No engine recommended, compared or installed.
 
 ## Hand-off
 
-Next is `motion-qa`, which reads stills from the project and `STORYBOARD.md`. Run it per scene while building and once on the whole reel before the final render. After posting, `motion-strategy` runs the autopsy.
+This is the end of the plan. The engine named in `HANDOFF.md` owns scaffolding, scene code, assets that need its runtime, the render and every visual QA pass. After the video is posted, `motion-strategy` runs the autopsy.
