@@ -20,7 +20,7 @@ Reuse the style and the storytelling, not the worked examples' content. Every pr
 
 - **Library.** Resolve `$MOTION_LIB`, else the `MOTION_LIB=` line in `${XDG_CONFIG_HOME:-~/.config}/motion-explainer/config.env`, else ask once. Never hard-code a machine path. Stages 1 to 4 need no library.
 - **Install mode.** Probe it before promising a stage (see Planning modes below).
-- **Series.** Find the series folder (it holds `episodes/`). Read `agents.md` first when present (the chosen style), then `SERIES.md` (audience, voice, palette). If `agents.md` also names an engine, that is a note about the user's tooling: record it in `HANDOFF.md` when you get there, and let it change nothing in the plan.
+- **Series.** Find the series folder (it holds `episodes/`). Read `agents.md` first when present (the chosen style), then `SERIES.md` (audience, voice, palette, mascot, keyword log). **A series with no `SERIES.md` starts at `motion-strategy` step 0**, which interviews the user and writes the file; no other skill creates it. If `agents.md` also names an engine, that is a note about the user's tooling: record it in `HANDOFF.md` when you get there, and let it change nothing in the plan.
 
 ## Run modes (ask first)
 
@@ -46,7 +46,7 @@ Write the answers as the BRIEF block at the top of `episodes/NN-slug/research/fa
 
 | # | Stage | Skill | Reads | Writes |
 |---|---|---|---|---|
-| 1 | Strategy & folder | `motion-strategy` | `SERIES.md`, the source | BRIEF in `research/facts.md`, the episode folder tree |
+| 1 | Series setup & strategy | `motion-strategy` | `SERIES.md` (writes it if missing), the source | `SERIES.md` when absent, BRIEF in `research/facts.md`, the episode folder tree |
 | 2 | Hook | `motion-hook` | BRIEF | HOOK block at the top of `video/STORYBOARD.md` |
 | 3 | Script | `motion-script` | BRIEF, HOOK | `research/facts.md`, `narration/script.json`, staging table in `video/STORYBOARD.md` |
 | 4 | Storyboard | `motion-storyboard` | `script.json`, `STORYBOARD.md` | Camera/Cut table, scene blocks, SFX plan in `video/STORYBOARD.md` |
@@ -71,7 +71,7 @@ The pipeline lives in files, not in chat. Each stage reads the files above and w
 
 ```
 <series>/
-  SERIES.md                  optional: audience, voice, palette, mascot, keyword log
+  SERIES.md                  written by motion-strategy step 0: audience, language, regions, voice, look, funnel, evidence
   voice/voice.json           optional: voice settings (copy library/voice/voice.example.json)
   video-assets/              optional: overlay textures and props
   research/analytics/        optional: competitor studies and autopsies

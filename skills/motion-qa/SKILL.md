@@ -50,7 +50,7 @@ Ask the engine for 4-6 timestamps per check, or use its own still command. For a
 - [ ] The HOOK block (SAY / WRITE / SHOW / ALIGN) is on screen exactly as written: frame 0 shows the SHOW moment mid-action with the WRITE title on it, and the first VO line is SAY.
 - [ ] At most one page turn or tear, a tape pull or whip into the CTA, and every transition has its SFX.
 - [ ] Humour pass visible on screen: one format throughout, a costume prop per idea, one struggling beat, the frame-0 prop returns changed in the CTA set, every gag reads in under 1 s and never covers the banner, the captions or the key number.
-- [ ] Vocabulary in the VO and banners matches the audience level in `SERIES.md`.
+- [ ] Vocabulary in the VO and banners matches the audience level and language in `SERIES.md`.
 - [ ] Voiceover, captions and events are in sync at every cut.
 
 A failed **plan fidelity** item is a renderer bug or a plan bug: decide which, then fix the plan through the owning motion skill or send the scene back to the engine. A failed **style** or **content** item is a scene fix in the engine's own files.

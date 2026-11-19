@@ -11,7 +11,7 @@ The hook is the most important step. A video's hook is three separate, explicit 
 
 - Install: **plan only** is enough. No library needed.
 - Read the BRIEF at the top of `episodes/NN-slug/research/facts.md` (topic, format, audience, CTA) and the facts list, so every claim can be checked. If there is no BRIEF, run `motion-strategy` first.
-- Read `SERIES.md` for the audience level and regions.
+- Read `SERIES.md` for the audience level, language and regions. If it is missing, stop: `motion-strategy` step 0 writes it, and no other skill may.
 
 ## The HOOK block
 

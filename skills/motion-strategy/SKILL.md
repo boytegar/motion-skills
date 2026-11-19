@@ -1,6 +1,6 @@
 ---
 name: motion-strategy
-description: Decide what a short video should be. Picks the topic, one familiar format, the audience level, the comment-keyword funnel and caption, studies competitor videos, and runs the post-publish autopsy. Use before any hook or script, or when reviewing how a posted video did.
+description: Set up a series and decide what a short video should be. Writes SERIES.md when the series has none (audience, language, regions, voice, look, funnel), picks the topic and one familiar format, sets the comment-keyword funnel and caption, studies competitor videos, and runs the post-publish autopsy. Start here before any hook or script; come back when reviewing how a posted video did.
 ---
 
 # Strategy
@@ -10,8 +10,64 @@ These notes decide what a video says and why it holds attention. The other plann
 ## Preflight
 
 - Install: **plan only** is enough. No library needed.
-- Find the series folder and read its `SERIES.md` first. Then read `agents.md` when it exists: it supplies the initialized default style, so do not ask for it again. `SERIES.md` holds the audience (who, level, regions to aim for and avoid), voice, palette and mascot notes, the visual style, the keyword log and what has worked so far. If `SERIES.md` is missing, ask the user for those fields and write the file.
+- Find the series folder (it holds `episodes/`). Read `agents.md` when it exists: it supplies the initialized default style, so do not ask for it again. Then read `SERIES.md`. **If `SERIES.md` is missing, stop and run step 0 first** — no other skill in this set creates it.
 - For a competitor study: `yt-dlp`, `ffmpeg` and any speech-to-text tool. For an autopsy: the platform's insights numbers from the user.
+
+## 0. Init the series (only when `SERIES.md` is missing)
+
+`SERIES.md` holds the decisions that outlive one episode, so every later stage reads it instead of re-asking. This stage owns it: no installer writes it and no other skill may. Do this before step 1 and do not continue until the file exists.
+
+Ask for these in one call (your agent's question tool). Never invent an answer: a guessed audience level poisons every script written after it. Anything the user leaves open goes in as `TBD` with the open question next to it, and the gate below still passes.
+
+| Field | What it decides | Read by |
+|---|---|---|
+| **Audience** | who it is for, their level, and the feeling to leave them with | `motion-hook`, `motion-script`, `motion-qa` |
+| **Language** | the one the VO, banners and captions are written in | `motion-script`, `motion-voice` |
+| **Regions** | which to aim for and which to avoid | `motion-hook`, this skill's topic step |
+| **Voice** | tone, person, contractions, words to avoid | `motion-script`, `motion-voice` |
+| **Palette** | base colours and the accent, taken from the style guide | `motion-storyboard` |
+| **Mascot** | the recurring character, its own prop and its costume rule | `motion-script` (gags), `motion-storyboard` |
+| **Style** | one style folder name; `agents.md` wins when both exist | every stage |
+| **CTA convention** | the keyword shape and how the freebie is delivered | `motion-script`, this skill's funnel step |
+| **Keyword log** | keywords already used, so they never repeat | this skill's funnel step |
+| **What worked** | formats, topics and hooks that earned attention, with numbers | this skill's topic step |
+
+Write `<series>/SERIES.md` in this shape:
+
+```md
+# SERIES: <name>
+
+## Audience
+Who: <who it is for>
+Level: <how much they already know>
+Language: <one language>
+Regions: aim <...>; avoid <...>
+Feeling: <what they should feel at the end>
+
+## Voice
+<tone, person, contractions, words to avoid>
+
+## Look
+Style: `<style folder>`
+Palette: base <...>; accent <...>
+Mascot: <who, its own prop, its costume rule>
+
+## Funnel
+CTA: comment <KEYWORD> -> <freebie>, delivered by <tool>
+Keywords used: <KEYWORD> (<episode>, <date>)
+
+## Evidence
+Worked: <format / topic / hook> — <numbers, date>
+Failed: <what, and why>
+```
+
+The file records no engine and no path into any renderer. The engine is a tooling note that lives in `HANDOFF.md`, and it never changes what the series or the plan says.
+
+Two fields need care:
+- **Style** comes from `agents.md` when both exist; `agents.md` wins, and step 0 must not offer a different one.
+- **Palette** is read off `$MOTION_LIB/style/$MOTION_STYLE/docs/style-guide.md` (section 5) rather than invented. If there is no library yet, ask the user and mark it `TBD`.
+
+Re-run step 0 only to fill a `TBD` or to change a decision deliberately. Every other stage reads the file and never edits it; the autopsy appends to `## Evidence` and nothing else.
 
 ## 1. Topic
 
@@ -27,7 +83,7 @@ Pick one familiar real-world format for the whole video before writing a word: c
 
 ## 3. Audience level
 
-Write at the level `SERIES.md` sets. There is no default audience. The feeling to leave behind: you're not behind, and now you know something most people don't.
+Write at the level step 0 recorded in `SERIES.md`. There is no default audience. If the file says `TBD`, ask now and write the answer back before scripting; a later stage must never guess. The feeling to leave behind: you're not behind, and now you know something most people don't.
 
 ## 4. Funnel and caption
 
@@ -35,6 +91,7 @@ Write at the level `SERIES.md` sets. There is no default audience. The feeling t
 - Deliver the freebie by DM with whatever comment-to-DM tooling the account allows. Keep sends slow and spaced, because platforms rate-limit bursts.
 - Caption: the hook as the first line, a follow line so the DM lands, "READ BELOW" with the useful part written out, one send prompt ("Send this to the friend who..."), 3-5 hashtags.
 - Shares matter most to the algorithm. A funny or useful video gets sent.
+- Reuse no keyword: check `Keywords used` in `SERIES.md` first, then append the new one there when the episode ships.
 
 ## 5. Write the BRIEF and create the episode folder
 
@@ -48,7 +105,7 @@ Role:     <who or what does the work vs who advises or approves>
 Mode:     open-source drop | news launch / worth-it | feature unlock
 Format:   <the one familiar format>
 Audience: <level, copied from SERIES.md>
-Style:    <style folder name, from agents.md or the user>
+Style:    <style folder, from agents.md else SERIES.md "Look">
 CTA:      <KEYWORD> -> <the freebie>
 Length:   22-30 s
 ```
@@ -81,17 +138,19 @@ Method, setup and the subagent prompt: `references/competitor-analysis.md`.
 - At about 2 h and 24 h collect views, skip rate, average watch time, the retention curve, likes, comments, saves, shares, follows, traffic source, top countries and ages.
 - Read them in this order: hook, topic, format, audience, timing. Fix the earliest thing that failed before touching later ones.
 - If most viewers are gone by 3-5 s, or the skip rate is clearly worse than your own median, the hook failed. Run `motion-hook`.
-- Write `research/analytics/YYYY-MM-DD-autopsy.md` and update `SERIES.md` with what changed.
+- Write `research/analytics/YYYY-MM-DD-autopsy.md`, then update only the `## Evidence` section of `SERIES.md` with what changed. The series file is step 0's; keep its shape, and change audience, voice or palette only when the numbers say so.
 
 ## Gate
 
-- [ ] `SERIES.md` read; audience, regions and voice respected.
+- [ ] `SERIES.md` exists and was read; audience, language, regions and voice respected.
+- [ ] Every step-0 field is filled or explicitly `TBD`; no field was guessed.
 - [ ] Topic has a demand signal, a usable outcome and a freebie by DM.
 - [ ] One format named in a line.
-- [ ] Style recorded in the BRIEF; no engine named.
+- [ ] Style recorded in the BRIEF; no engine named anywhere.
 - [ ] Vocabulary and the DM match the audience level.
+- [ ] Keyword absent from `Keywords used`.
 - [ ] BRIEF written in `facts.md`; episode folder and `video/episode.json` created.
 
 ## Hand-off
 
-Next is `motion-hook`. It reads the BRIEF in `episodes/NN-slug/research/facts.md` and writes the HOOK block at the top of `episodes/NN-slug/video/STORYBOARD.md`. The episode folder exists and holds no renderer.
+Next is `motion-hook`. It reads the BRIEF in `episodes/NN-slug/research/facts.md` and `SERIES.md` for the audience level and regions, then writes the HOOK block at the top of `episodes/NN-slug/video/STORYBOARD.md`. The episode folder exists and holds no renderer.
