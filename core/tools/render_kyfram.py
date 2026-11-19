@@ -53,9 +53,9 @@ def run(cmd, cwd=None):
     return r
 
 
-def header(ep, scene, fps):
+def header(ep, scene, fps, hook=None):
     from kyfram_header import header as build
-    return build(ep, scene, scene['durationInFrames'], fps)
+    return build(ep, scene, scene['durationInFrames'], fps, hook=hook)
 
 
 def frame_count(path):
@@ -113,7 +113,7 @@ def main():
         code = b'\n'.join(l.split(b'//', 1)[0] for l in body.split(b'\n'))
         if b'scene(' in code:
             die(f'{src}: remove the scene(...) call; the renderer emits it from src/plan.json')
-        head = header(ep, sc, fps).encode()
+        head = header(ep, sc, fps, hook=plan.get('hook') if sc is scenes[0] else None).encode()
         key = sha(body, head, prelude_sha, canvas_key)[:12]
         path = f'{CACHE}/seg/{name}-{key}.mp4'
         files.append(path)

@@ -12,3 +12,5 @@ episodes
 agents.md
 design.md
 SERIES.md
+target
+Cargo.lock

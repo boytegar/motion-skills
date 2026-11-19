@@ -1,55 +1,63 @@
 ---
 name: motion-qa
-description: Check a papercut reel's stills against the style DNA and the storyboard. Renders contact sheets at a few timestamps, runs the full checklist, then writes the delivery summary. Use for "QA the reel", "check my scenes look like paper", "is this ready to post".
+description: Check a built video against the plan and the style DNA. Engine-side: run it after your renderer produces stills, in the engine's own project. Compares frames to the storyboard, the scene frames and the captions, runs the checklist, and writes the delivery summary. Use for "QA the video", "check my scenes match the style", "is this ready to post".
 ---
 
-# Papercut QA
+# QA
 
-Compare stills for style, not content, against the Style DNA and the storyboard. Run it per scene while building and once on the whole reel before the final render.
+**Engine-side skill.** It is not part of the planning pipeline: it runs after an engine has produced stills, and it checks what that engine produced against what the plan asked for. It never plans, never scaffolds, and never chooses a renderer. Any engine can use it; the only engine-specific thing in it is your still command.
 
 ## Preflight
 
-- Install: **Standard** or Full. Stills need a scaffolded project with Remotion, and the contact sheets need Python with numpy and Pillow (`$MOTION_PY`). Missing pieces: `./install.sh --doctor`, then `motion-setup`.
-- A `kyfram` project needs no Remotion: invoke the `kyfram` skill before inspecting or fixing Kyfram scene output. `qa.sh` lifts its stills out of the cached per-scene segments (`core/tools/kyfram_qa.py`), so render once with `core/tools/render.sh` before QA. Everything below applies unchanged.
+- Install: **plan + audio files**. Stills come from the render project; the contact sheets need Python with numpy and Pillow (`$MOTION_PY`). Missing pieces: `./install.sh --doctor`, then `motion-setup`.
+- A built project plus its plan folder: `video/src/plan.json`, `video/public/vo/captions.json`, `video/tools/cues.json`, `video/STORYBOARD.md`, `video/HANDOFF.md`.
 - Library: `$MOTION_LIB`, else the `MOTION_LIB=` line in `~/.config/motion-explainer/config.env`, else ask once.
-- Read first: Style DNA in `$MOTION_LIB/style/$MOTION_STYLE/docs/style-guide.md` section 2, and the backdrop sheet `style/$MOTION_STYLE/remotion/public/bg/backdrops/_sheet.jpg`. Each image costs about 0.7-1.5k tokens, so open only what the step needs.
+- Read first: the Style DNA in `$MOTION_LIB/style/$MOTION_STYLE/docs/style-guide.md` section 2, and the backdrop sheet if the style ships one (`style/$MOTION_STYLE/`, wherever its kit keeps `bg/backdrops/_sheet.jpg`; the papercut style has it under `remotion/`). Each image costs about 0.7-1.5k tokens, so open only what the step needs.
 - For density, `$MOTION_LIB/style/$MOTION_STYLE/docs/frame-breakdown.md` ("Pacing stats" at the end): scenes average 2.8 s, 2-4 discrete visual events per scene, one every 0.4-0.8 s on a stressed word, a new caption page about every 0.6 s. Copy the density, not the content.
 
-## 1. Render stills
+The engine named in `HANDOFF.md` owns the still command, the preview, and any fix inside a scene file. Ask it for stills; this skill reads them.
 
-From the project's `video/` folder:
+## 1. Get stills
 
-```
-$MOTION_LIB/core/tools/qa.sh NAME FROM-TO NTH [SCALE=0.3] [COLS=9]
-```
+Ask the engine for 4-6 timestamps per check, or use its own still command. For a scene, take about one still per quarter of its length in frames, read from `src/plan.json`.
 
-- Use 4-6 timestamps per check. For a scene, NTH is about its length in frames divided by 4. Leave `FROM-TO` out for the whole reel and raise NTH.
-- The output is `out/qa/NAME_0.jpg` (and `_1`, `_2` for longer ranges), at most 45 frames per sheet. Read the sheet; keep sheets small.
-- One QA command per scene, and never two renders at once. Keep fixes to two rounds per scene.
-- Check against the storyboard: the scene's frame 0, its key events on their words, nothing clipped, nothing covering the banner or caption bands.
+- One pass per scene, never two renders at once. Keep fixes to two rounds per scene.
+- Check against the plan: the scene's frame 0, its key events on their words, nothing clipped, nothing covering the banner or caption bands.
 
 ## 2. Checklist
 
+**Plan fidelity — compare the frame to the plan, not to taste:**
+
+- [ ] Every scene starts and ends on its `src/plan.json` frame and runs the stated duration.
+- [ ] The banner text matches `episode.json` `banners` and never repeats the VO under it.
+- [ ] Captions match `public/vo/captions.json`: one tag per word, pages of 1-3, in the 68-80% band.
+- [ ] Every scene has the camera move and the cut-in its storyboard row names.
+- [ ] Every sound in `tools/cues.json` has a visible cause at its frame, and none is doubled.
+
+**Style DNA — the chosen style's look (papercut's checklist shown; swap in the style's own tokens and re-read its guide before judging):**
+
 - [ ] Every object reads as paper: grain, rough edge, drop shadow, stacked-piece shading, no outlines or gradients.
 - [ ] The world camera moves smoothly. Only the banner and labels boil (stepped, subtle).
-- [ ] The banner is fixed in position and taped, 3-7 words, one fact each, never repeats the VO. The banners alone read as a fact sheet.
+- [ ] The banner is fixed in position and taped, 3-7 words, one fact each; the banners alone read as a fact sheet.
 - [ ] Every set illustrates a concrete word in its VO line, numbers are physical props, and there is one callback set before the CTA.
-- [ ] Every number and UI label traces to the facts list. The script has at least one honest limitation and a feature stack of exactly three.
-- [ ] Captions: one tag per word, tilted, popping on onset, pages of 1-3, in the 68-80% band, never on a face.
 - [ ] Saturation only on characters, captions and signals.
 - [ ] A visual event on every stressed word, with ambient motion always running.
-- [ ] Cuts on banner changes (sets 1.5-3 s in tours and news, up to 5 s in a metaphor beat), bottom 20% clear.
-- [ ] **The HOOK block (SAY / WRITE / SHOW / ALIGN) is on screen exactly as written:** frame 0 shows the SHOW moment mid-action with the WRITE title on it, and the first VO line is SAY.
-- [ ] Every scene has a camera move, at most one page turn or tear, a tape pull or whip into the CTA, and every transition has its SFX.
-- [ ] Humour pass visible on screen: one format throughout, a costume prop per idea, one struggling beat, the frame-0 prop returns changed in the CTA set, and every gag reads in under 1 s and never covers the banner, the captions or the key number.
-- [ ] Vocabulary in the VO and banners matches the audience level in `SERIES.md`.
-- [ ] Voiceover, captions and events are in sync (scrub the Studio at every cut).
+- [ ] Cuts on banner changes, bottom 20% clear.
 
-For a failed item, fix the scene file (or the kit in the library, never `src/lib/` in the project) and re-run the one scene. Rebuild a scene with `motion-build`.
+**Content — the story:**
+
+- [ ] Every number and UI label traces to the facts list. The script has at least one honest limitation and a feature stack of exactly three.
+- [ ] The HOOK block (SAY / WRITE / SHOW / ALIGN) is on screen exactly as written: frame 0 shows the SHOW moment mid-action with the WRITE title on it, and the first VO line is SAY.
+- [ ] At most one page turn or tear, a tape pull or whip into the CTA, and every transition has its SFX.
+- [ ] Humour pass visible on screen: one format throughout, a costume prop per idea, one struggling beat, the frame-0 prop returns changed in the CTA set, every gag reads in under 1 s and never covers the banner, the captions or the key number.
+- [ ] Vocabulary in the VO and banners matches the audience level and language in `SERIES.md`.
+- [ ] Voiceover, captions and events are in sync at every cut.
+
+A failed **plan fidelity** item is a renderer bug or a plan bug: decide which, then fix the plan through the owning motion skill or send the scene back to the engine. A failed **style** or **content** item is a scene fix in the engine's own files.
 
 ## 3. Deliver
 
-Open the Studio preview, list the scenes with timings, and say what is placeholder: voice, music, SFX, assets. If the voice is a placeholder, say how to re-voice it (`motion-voice`). After posting, the numbers go to `motion-strategy` for the autopsy.
+List the scenes with timings, and say what is placeholder: voice, music, SFX, assets. If the voice is a placeholder, say how to re-voice it (`motion-voice`). After posting, the numbers go to `motion-strategy` for the autopsy.
 
 ## Principles pass
 
@@ -57,4 +65,8 @@ Scrub one scene at 5 fps and check against `$MOTION_LIB/style/$MOTION_STYLE/docs
 
 ## Hand-off
 
-Fixes go back to `motion-build` (scene or sound) or `motion-voice` (sync). A clean pass ends the reel: render with `$MOTION_LIB/core/tools/render.sh` when the user asks.
+A plan bug goes back to `motion-storyboard` or `motion-voice` through `motion-build`, which rewrites the plan files. A scene bug goes back to the engine. A clean pass ends the episode; the render is the engine's call, when the user asks.
+
+## Pipeline note
+
+`motion-qa` is not one of the planning stages that `motion-explainer` routes. It is a checklist plus a delivery summary any engine can run after it renders.
