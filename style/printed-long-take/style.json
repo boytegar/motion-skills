@@ -1,0 +1,22 @@
+{
+  "name": "printed-long-take",
+  "title": "Scratchboard Long Take",
+  "tagline": "Only ink, paper and one red",
+  "description": "Only ink, paper and one red. Fits: journeys; wildlife; landscapes. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "status": "docs-only",
+  "source": {
+    "repo": "https://github.com/lemomo-ai/lemo-opuscar",
+    "style": "styles/printed-long-take",
+    "credit": "Lemo-Opuscar by Lemomo (LemoLab)",
+    "licence": "CC BY-NC 4.0",
+    "modified": "file layout only; style content unchanged"
+  },
+  "category": "Print & Printmaking",
+  "cn": "刮版画长镜头",
+  "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
+  "engines": [],
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "shadow-puppet",
+  "title": "Shadow Puppetry",
+  "tagline": "A white cloth screen; behind it, flat puppets cut from translucent dyed hide, lit by an oil lamp",
+  "description": "A white cloth screen; behind it, flat puppets cut from translucent dyed hide, lit by an oil lamp. Fits: myths & folklore; heritage; festivals. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "status": "docs-only",
+  "source": {
+    "repo": "https://github.com/lemomo-ai/lemo-opuscar",
+    "style": "styles/shadow-puppet",
+    "credit": "Lemo-Opuscar by Lemomo (LemoLab)",
+    "licence": "CC BY-NC 4.0",
+    "modified": "file layout only; style content unchanged"
+  },
+  "category": "Traditional Crafts",
+  "cn": "皮影戏",
+  "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
+  "engines": [],
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  }
+}

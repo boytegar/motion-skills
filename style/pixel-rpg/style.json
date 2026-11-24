@@ -1,0 +1,22 @@
+{
+  "name": "pixel-rpg",
+  "title": "16-bit Pixel RPG",
+  "tagline": "320×180 native pixels, scaled ×6 nearest-neighbour to 1080p; everything, text included, lives in the framebuffer",
+  "description": "320×180 native pixels, scaled ×6 nearest-neighbour to 1080p; everything, text included, lives in the framebuffer. Fits: game trailers; recaps; nostalgia. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "status": "docs-only",
+  "source": {
+    "repo": "https://github.com/lemomo-ai/lemo-opuscar",
+    "style": "styles/pixel-rpg",
+    "credit": "Lemo-Opuscar by Lemomo (LemoLab)",
+    "licence": "CC BY-NC 4.0",
+    "modified": "file layout only; style content unchanged"
+  },
+  "category": "Games",
+  "cn": "16-bit 像素 RPG",
+  "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
+  "engines": [],
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "ascii-crt",
+  "title": "CRT ASCII Terminal",
+  "tagline": "Never fake it with an image plus an \"ASCII filter\"",
+  "description": "Never fake it with an image plus an \"ASCII filter\". Fits: developer tools; sci-fi; tech brands. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "status": "docs-only",
+  "source": {
+    "repo": "https://github.com/lemomo-ai/lemo-opuscar",
+    "style": "styles/ascii-crt",
+    "credit": "Lemo-Opuscar by Lemomo (LemoLab)",
+    "licence": "CC BY-NC 4.0",
+    "modified": "file layout only; style content unchanged"
+  },
+  "category": "Film & Tape",
+  "cn": "CRT 字符终端",
+  "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
+  "engines": [],
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "instruction-manual",
+  "title": "Instruction Manual Art",
+  "tagline": "One angle: true isometric, orthographic",
+  "description": "One angle: true isometric, orthographic. Fits: assembly and set-up guides; safety instructions; product onboarding. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "status": "docs-only",
+  "source": {
+    "repo": "https://github.com/lemomo-ai/lemo-opuscar",
+    "style": "styles/instruction-manual",
+    "credit": "Lemo-Opuscar by Lemomo (LemoLab)",
+    "licence": "CC BY-NC 4.0",
+    "modified": "file layout only; style content unchanged"
+  },
+  "category": "Line Diagrams",
+  "cn": "说明书插画",
+  "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
+  "engines": [],
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  }
+}

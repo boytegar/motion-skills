@@ -1,0 +1,22 @@
+{
+  "name": "stick-explainer",
+  "title": "Stick-figure Explainer",
+  "tagline": "The people are the diagram",
+  "description": "The people are the diagram. Fits: science explainers; networks & social ideas; data comparisons. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "status": "docs-only",
+  "source": {
+    "repo": "https://github.com/lemomo-ai/lemo-opuscar",
+    "style": "styles/stick-explainer",
+    "credit": "Lemo-Opuscar by Lemomo (LemoLab)",
+    "licence": "CC BY-NC 4.0",
+    "modified": "file layout only; style content unchanged"
+  },
+  "category": "Sketch & Board",
+  "cn": "火柴人讲解",
+  "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
+  "engines": [],
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  }
+}

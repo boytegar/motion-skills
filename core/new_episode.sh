@@ -47,6 +47,16 @@ fi
 [ -f "$MOTION_STYLES/$STYLE/style.json" ] || { echo "unknown style '$STYLE' (have: $(motion_styles | tr '\n' ' '))" >&2; exit 2; }
 S=$MOTION_STYLES/$STYLE
 
+# A docs-only pack (Lemo-Opuscar import) has no engine to scaffold. Say so plainly instead of
+# failing later with "no engine resolved".
+if ! motion_renderable "$STYLE"; then
+  echo "style '$STYLE' is docs-only (no engine), so it cannot be scaffolded for rendering." >&2
+  echo "  script and storyboard with it: $MOTION_STYLES/$STYLE/docs/style-guide.md" >&2
+  echo "  renderable styles: $(motion_styles_renderable | tr '\n' ' ')" >&2
+  echo "  to render it, port an engine into $S and add it to \"engines\" in style.json" >&2
+  exit 2
+fi
+
 # --- engine: explicit, else configured default, else the style's first engine ---
 if [ -z "$ENGINE" ]; then
   ENGINE=$(motion_engine_default "$STYLE" 2>/dev/null || true)

@@ -79,6 +79,21 @@ fi
 export MOTION_STYLES
 motion_styles() { local d; for d in "$MOTION_STYLES"/*/; do [ -f "$d/style.json" ] && basename "$d"; done; }
 
+# motion_renderable STYLE: true when the style ships engine code, so it can actually be built.
+# Imported style packs (Lemo-Opuscar) carry rules but no engine: they script and storyboard,
+# they do not render. Marked by "status": "docs-only" or by an empty "engines" array.
+motion_renderable() {
+  local sj="$MOTION_STYLES/${1:-}/style.json"
+  [ -f "$sj" ] || return 1
+  python3 - "$sj" <<'PY'
+import json, sys
+d = json.load(open(sys.argv[1]))
+sys.exit(0 if d.get("engines") and d.get("status") != "docs-only" else 1)
+PY
+}
+# motion_styles_renderable: only the styles that can be built (the chooser's default list).
+motion_styles_renderable() { local s; for s in $(motion_styles); do motion_renderable "$s" && echo "$s"; done; }
+
 # motion_style_of EPISODE_DIR [STYLE]: print the style name the episode uses: an explicit name,
 # else episode.json "style", else $MOTION_STYLE. Fail 1 if none is set, 2 if it does not exist.
 motion_style_of() {

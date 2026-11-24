@@ -1,0 +1,22 @@
+{
+  "name": "map-explainer",
+  "title": "3D Map Explainer",
+  "tagline": "The ground is real data",
+  "description": "The ground is real data. Fits: news and geopolitics; energy, trade and shipping; rivers, borders and terrain. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "status": "docs-only",
+  "source": {
+    "repo": "https://github.com/lemomo-ai/lemo-opuscar",
+    "style": "styles/map-explainer",
+    "credit": "Lemo-Opuscar by Lemomo (LemoLab)",
+    "licence": "CC BY-NC 4.0",
+    "modified": "file layout only; style content unchanged"
+  },
+  "category": "Data & Maps",
+  "cn": "立体地图解说",
+  "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
+  "engines": [],
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  }
+}

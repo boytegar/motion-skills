@@ -1,0 +1,22 @@
+{
+  "name": "hd-2d",
+  "title": "2.5D Pixel Art",
+  "tagline": "A 3D miniature set of boxes and cylinders wrapped in pixel-art textures, populated by flat 2D pixel sprites that receive light and cast",
+  "description": "A 3D miniature set of boxes and cylinders wrapped in pixel-art textures, populated by flat 2D pixel sprites that receive light and cast. Fits: game trailers; fantasy; story films. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "status": "docs-only",
+  "source": {
+    "repo": "https://github.com/lemomo-ai/lemo-opuscar",
+    "style": "styles/hd-2d",
+    "credit": "Lemo-Opuscar by Lemomo (LemoLab)",
+    "licence": "CC BY-NC 4.0",
+    "modified": "file layout only; style content unchanged"
+  },
+  "category": "Games",
+  "cn": "2.5D 像素",
+  "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
+  "engines": [],
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  }
+}
