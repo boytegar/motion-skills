@@ -1,0 +1,22 @@
+{
+  "name": "isometric-picture-book",
+  "title": "Isometric People Scene",
+  "tagline": "One real place, full bleed",
+  "description": "One real place, full bleed. Fits: everyday rules; queues; comparisons. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "status": "docs-only",
+  "source": {
+    "repo": "https://github.com/lemomo-ai/lemo-opuscar",
+    "style": "styles/isometric-picture-book",
+    "credit": "Lemo-Opuscar by Lemomo (LemoLab)",
+    "licence": "CC BY-NC 4.0",
+    "modified": "file layout only; style content unchanged"
+  },
+  "category": "3D & Miniature",
+  "cn": "等距小人场景",
+  "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
+  "engines": [],
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "engraving",
+  "title": "Copperplate Engraving",
+  "tagline": "Tone is made of lines, never of fills",
+  "description": "Tone is made of lines, never of fills. Fits: museum labels; science explainers; brand heritage. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "status": "docs-only",
+  "source": {
+    "repo": "https://github.com/lemomo-ai/lemo-opuscar",
+    "style": "styles/engraving",
+    "credit": "Lemo-Opuscar by Lemomo (LemoLab)",
+    "licence": "CC BY-NC 4.0",
+    "modified": "file layout only; style content unchanged"
+  },
+  "category": "Print & Printmaking",
+  "cn": "铜版画",
+  "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
+  "engines": [],
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  }
+}

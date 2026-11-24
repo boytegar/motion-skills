@@ -50,25 +50,40 @@ fi
 STYLE_CHOICE="${MOTION_STYLE:-}"
 
 if [ -z "$STYLE_CHOICE" ] || [ "$YES" = 0 ]; then
+  # Renderable styles first, then the docs-only imports, so a long tagline and an
+  # added "[docs only]" note never push the readable list out of shape.
+  REND=(); DOCS=()
+  for s in "${STYLES[@]}"; do if motion_renderable "$s"; then REND+=("$s"); else DOCS+=("$s"); fi; done
+
   echo "${B}Available styles:${N}"
   idx=1
-  for s in "${STYLES[@]}"; do
-    tl="$(python3 -c "import json,sys; print(json.load(open(sys.argv[1])).get('tagline',''))" "$MOTION_STYLES/$s/style.json" 2>/dev/null || echo "")"
+  for s in "${REND[@]}"; do
+    tl="$(python3 -c "import json,sys; print(json.load(open(sys.argv[1])).get('tagline','')[:84])" "$MOTION_STYLES/$s/style.json" 2>/dev/null || echo "")"
     printf '  %2d) %-22s %s\n' "$idx" "$s" "$tl"
     idx=$((idx+1))
   done
+  if [ "${#DOCS[@]}" -gt 0 ]; then
+    echo "${B}  docs-only imports (rules and prompts; script and storyboard, no render):${N}"
+    for s in "${DOCS[@]}"; do
+      tl="$(python3 -c "import json,sys; print(json.load(open(sys.argv[1])).get('tagline','')[:84])" "$MOTION_STYLES/$s/style.json" 2>/dev/null || echo "")"
+      printf '  %2d) %-22s %s\n' "$idx" "$s" "$tl"
+      idx=$((idx+1))
+    done
+  fi
   echo
   if [ "$YES" = 1 ]; then
-    STYLE_CHOICE="${STYLES[0]}"
+    # never auto-select something that cannot render
+    STYLE_CHOICE="${REND[0]}"
     printf '  auto-selected: %s\n' "$STYLE_CHOICE"
   else
+    ORDERED=("${REND[@]}" "${DOCS[@]}")   # the numbered order printed above
     default_idx=1
-    for i in "${!STYLES[@]}"; do [ "${STYLES[$i]}" = "${MOTION_STYLE:-}" ] && default_idx=$((i+1)) && break; done
+    for i in "${!ORDERED[@]}"; do [ "${ORDERED[$i]}" = "${MOTION_STYLE:-}" ] && default_idx=$((i+1)) && break; done
     printf 'Choose style [%d]: ' "$default_idx"
     read -r c
     c="${c:-$default_idx}"
-    if [[ "$c" =~ ^[0-9]+$ ]] && [ "$c" -ge 1 ] && [ "$c" -le "${#STYLES[@]}" ]; then
-      STYLE_CHOICE="${STYLES[$((c-1))]}"
+    if [[ "$c" =~ ^[0-9]+$ ]] && [ "$c" -ge 1 ] && [ "$c" -le "${#ORDERED[@]}" ]; then
+      STYLE_CHOICE="${ORDERED[$((c-1))]}"
     else
       echo "invalid choice: $c" >&2; exit 2
     fi
@@ -77,6 +92,18 @@ fi
 
 STYLE_JSON="$MOTION_STYLES/$STYLE_CHOICE/style.json"
 [ -f "$STYLE_JSON" ] || { echo "unknown style '$STYLE_CHOICE'" >&2; exit 2; }
+
+# A docs-only pack (Lemo-Opuscar import) has rules but no engine: it can be scripted and
+# storyboarded, it cannot be rendered. init.sh writes agents.md/design.md naming an engine,
+# so it must stop here rather than emit a config that cannot build.
+if ! motion_renderable "$STYLE_CHOICE"; then
+  echo "style '$STYLE_CHOICE' is docs-only: it ships rules but no engine, so it cannot be rendered." >&2
+  echo "  usable for scripting: motion-strategy, motion-hook, motion-script, motion-storyboard" >&2
+  echo "  read:  $MOTION_STYLES/$STYLE_CHOICE/docs/style-guide.md" >&2
+  echo "  renderable styles: $(motion_styles_renderable | tr '\n' ' ')" >&2
+  echo "  to render it, port an engine into $MOTION_STYLES/$STYLE_CHOICE and add it to \"engines\" in its style.json" >&2
+  exit 2
+fi
 
 # ------------------------------------------------------------------ engine
 ENGINES=(); while IFS= read -r e; do ENGINES+=("$e"); done < <(

@@ -1,0 +1,22 @@
+{
+  "name": "hardcore-info",
+  "title": "Line-Art Cutaway",
+  "tagline": "Everything is line on paper",
+  "description": "Everything is line on paper. Fits: hardware explainers; product engineering; science education. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "status": "docs-only",
+  "source": {
+    "repo": "https://github.com/lemomo-ai/lemo-opuscar",
+    "style": "styles/hardcore-info",
+    "credit": "Lemo-Opuscar by Lemomo (LemoLab)",
+    "licence": "CC BY-NC 4.0",
+    "modified": "file layout only; style content unchanged"
+  },
+  "category": "Line Diagrams",
+  "cn": "线稿剖面图解",
+  "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
+  "engines": [],
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  }
+}

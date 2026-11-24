@@ -116,7 +116,7 @@ confirm() {  # confirm "question" default(y|n)
   case "$(printf '%s' "$a" | tr 'A-Z' 'a-z')" in y|yes) return 0 ;; n|no) return 1 ;; *) [ "$2" = y ] ;; esac
 }
 
-SKILL_NAMES() { for d in "$ROOT"/skills/*/ "$ROOT"/style/*/; do [ -f "${d}SKILL.md" ] && basename "$d"; done; }
+SKILL_NAMES() { for d in "$ROOT"/skills/*/ "$ROOT"/style/*/; do [ -f "${d}SKILL.md" ] && ! grep -q '"status": *"docs-only"' "${d}style.json" 2>/dev/null && basename "$d"; done; }
 ver_ge() { [ "$(printf '%s\n%s\n' "$2" "$1" | sort -V | head -1)" = "$2" ]; }   # ver_ge have need
 
 # The scene agent is written as a copy per harness, so the model is the user's choice and each format is right.
@@ -206,13 +206,14 @@ doctor() {
   for f in kit/paper/camera.tsx public/bg/backdrops/backdrops.json public/bg/textures/felt-fibre.mp4; do
     [ -e "$ROOT/style/papercut/remotion/$f" ] && ok "library: papercut/$f" || { bad "library file missing: papercut/$f"; L_STD=0; }
   done
-  local nk=0 ns=0 s
+  local nk=0 ns=0 nd=0 s
   for s in style/*/; do
     s=$(basename "$s"); ns=$((ns+1))
     if [ -f "$ROOT/style/$s/kyfram/PRELUDE.lgv" ]; then nk=$((nk+1));
+    elif grep -q '"status": *"docs-only"' "$ROOT/style/$s/style.json" 2>/dev/null; then nd=$((nd+1));  # imported rules-only pack: nothing to render
     else miss "kyfram: style/$s/PRELUDE.lgv missing (the kyfram engine cannot render this style)"; fi
   done
-  [ "$nk" -gt 0 ] && ok "kyfram: $nk/$ns styles ship a PRELUDE.lgv"
+  [ "$nk" -gt 0 ] && ok "kyfram: $nk/$ns styles ship a PRELUDE.lgv${nd:+ ($nd docs-only imports, not renderable)}"
   local level="none (skills not installed)"
   if [ $L_SKILLS = 1 ]; then level="Minimal"; [ $L_STD = 1 ] && level="Standard" && [ $L_FULL = 1 ] && level="Full"; fi
   say "Install level: $level"

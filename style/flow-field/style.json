@@ -1,0 +1,22 @@
+{
+  "name": "flow-field",
+  "title": "Flow-field Wind Lines",
+  "tagline": "Every line is a streamline of a real field",
+  "description": "Every line is a streamline of a real field. Fits: storms, monsoons and other weather; ocean currents and river floods; any flow measured against a threshold. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "status": "docs-only",
+  "source": {
+    "repo": "https://github.com/lemomo-ai/lemo-opuscar",
+    "style": "styles/flow-field",
+    "credit": "Lemo-Opuscar by Lemomo (LemoLab)",
+    "licence": "CC BY-NC 4.0",
+    "modified": "file layout only; style content unchanged"
+  },
+  "category": "Light & Lines",
+  "cn": "流场风线",
+  "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
+  "engines": [],
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  }
+}

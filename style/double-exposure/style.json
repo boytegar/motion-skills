@@ -1,0 +1,22 @@
+{
+  "name": "double-exposure",
+  "title": "Double Exposure",
+  "tagline": "Animal silhouette × landscape",
+  "description": "Animal silhouette × landscape. Fits: brand and city films; documentary and series openings; music video intros. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "status": "docs-only",
+  "source": {
+    "repo": "https://github.com/lemomo-ai/lemo-opuscar",
+    "style": "styles/double-exposure",
+    "credit": "Lemo-Opuscar by Lemomo (LemoLab)",
+    "licence": "CC BY-NC 4.0",
+    "modified": "file layout only; style content unchanged"
+  },
+  "category": "Film & Tape",
+  "cn": "双重曝光",
+  "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
+  "engines": [],
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  }
+}

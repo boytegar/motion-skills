@@ -1,0 +1,22 @@
+{
+  "name": "firefly-pointillism",
+  "title": "Firefly Pointillism",
+  "tagline": "Black is more than half the frame",
+  "description": "Black is more than half the frame. Fits: picture-book stories; many becoming one; night and nature lyric. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "status": "docs-only",
+  "source": {
+    "repo": "https://github.com/lemomo-ai/lemo-opuscar",
+    "style": "styles/firefly-pointillism",
+    "credit": "Lemo-Opuscar by Lemomo (LemoLab)",
+    "licence": "CC BY-NC 4.0",
+    "modified": "file layout only; style content unchanged"
+  },
+  "category": "Light & Lines",
+  "cn": "萤火光点",
+  "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
+  "engines": [],
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  }
+}

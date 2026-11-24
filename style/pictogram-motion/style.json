@@ -1,0 +1,22 @@
+{
+  "name": "pictogram-motion",
+  "title": "Pictogram Motion",
+  "tagline": "The grid pattern: big discs and half-discs spanning square cells, about half the cells carrying a small motif, all in five tones of one",
+  "description": "The grid pattern: big discs and half-discs spanning square cells, about half the cells carrying a small motif, all in five tones of one. Fits: public services and city stories; brand and event identity films; explainers told through signs and objects. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "status": "docs-only",
+  "source": {
+    "repo": "https://github.com/lemomo-ai/lemo-opuscar",
+    "style": "styles/pictogram-motion",
+    "credit": "Lemo-Opuscar by Lemomo (LemoLab)",
+    "licence": "CC BY-NC 4.0",
+    "modified": "file layout only; style content unchanged"
+  },
+  "category": "Graphic & Type",
+  "cn": "象形运动图形",
+  "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
+  "engines": [],
+  "docs": {
+    "styleGuide": "docs/style-guide.md",
+    "stylePrompt": "docs/style-prompt.md"
+  }
+}
