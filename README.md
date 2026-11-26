@@ -4,7 +4,7 @@ Skills untuk membuat video vertical explainer (~20–45 s) dari sebuah link — 
 
 Pipeline ini **plan-only dan engine-agnostic**: skill di sini menulis brief, hook, script, storyboard, timing suara, dan kontrak handoff. Skill di sini **tidak** menulis kode scene, tidak memilih renderer, dan tidak merender. Rendering milik engine pilihanmu (`remotion`, `fframes`, `kyfram`) di luar skill set ini.
 
-- Style: 110+ style di `style/` (papercut, sketchbook, blueprint, news-package, …). Default diambil dari `agents.md` series.
+- Style: 109 style di `style/` (papercut, sketchbook, blueprint, news-package, …). Lihat [STYLE-GALLERY.md](STYLE-GALLERY.md) untuk contoh visual semua style. Default diambil dari `agents.md` series.
 - Canvas default: `1080x1920`, 30 fps.
 - Bahasa dokumen & skill: mengikuti `SERIES.md`.
 
@@ -91,7 +91,9 @@ File adalah state. Tiap stage baca file stage sebelumnya dan tulis file miliknya
 |-------|--------|
 | `motion-explainer` | Entry point. Tentukan run mode (**full reel / script only / storyboard-only / style prompt / fix one scene**), intake brief, lalu serahkan ke stage 1. Kasih style prompt portable untuk tool lain. |
 | `style/<nama>/SKILL.md` | Satu skill per style (papercut, sketchbook, blueprint, …). Isi: Style DNA, palet, font, gerak, caption, audio. Docs-only style (`"status": "docs-only"`) dipakai untuk plan saja, belum ada engine. |
+| `motion-style-extract` | Video acuan → style pack baru di `style/<nama>/`. Ukur klip (`core/tools/style_ref.py ingest`: canvas, cut rate, gerak, palet, zona), baca sheet, tulis `SKILL.md` + `style-guide.md` + `style-prompt.md` + token, lalu gate `lint` / `probe`. |
 | `kyfram` (engine) | Skill engine, bukan planning. DSL `.lgv`: `scene` / `shape` / `text` / `group` / `camera`, easing, retiming = edit angka. Wajib dipanggil kalau engine = `kyfram`. |
+| [STYLE-GALLERY.md](STYLE-GALLERY.md) | Contoh visual tiap style (`sample.png` / `poster.jpg`), dikelompokkan per kategori, plus status renderable vs docs-only. Pilih style dari sini sebelum masuk stage 1. |
 
 ---
 
@@ -103,6 +105,7 @@ File adalah state. Tiap stage baca file stage sebelumnya dan tulis file miliknya
 | **Script only** | 1→3 | `script.json` + staging table |
 | **Storyboard only** | `motion-storyboard` dari script lama | `STORYBOARD.md` |
 | **Style prompt** | bagikan blok dari `style/<s>/docs/style-prompt.md` | — |
+| **Style dari video** | `motion-style-extract` ( ingest → baca → scaffold → mold → lint ) | `style/<nama>/` siap dipakai stage lain |
 | **Fix/rebuild satu scene** | `motion-build` (re-plan) → `motion-qa` | — |
 
 ---

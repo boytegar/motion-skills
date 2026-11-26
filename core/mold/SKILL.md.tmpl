@@ -1,0 +1,62 @@
+---
+name: STYLE_NAME
+description: Render in the STYLE_TITLE style — TAGLINE Use when the user asks for SEARCH_TERMS.
+---
+
+TAGLINE
+
+A style pack of the motion-explainer library: portable rules plus tokens, no engine attached. `style.json` carries the canvas, palette and fonts so every renderer (Remotion, fframes, Kyfram, or an outside tool) reads one source; `docs/style-guide.md` carries the rules. A pack with `"engines": []` scripts, storyboards and prompts fine, and cannot scaffold a project until someone writes an engine kit into it.
+
+## The DNA
+
+The six rules that make any topic read as this style. Everything else in `docs/style-guide.md` is a default you may change.
+
+1. LOOK_RULE_1
+2. LOOK_RULE_2
+3. LOOK_RULE_3
+4. LOOK_RULE_4
+5. MOTION_RULE
+6. TYPE_RULE
+
+## Measured from the reference (`style_ref.py`)
+
+Canvas CANVAS · shots median MEDIAN_SHOT · CUT_RATE · motion MOTION · saturation SATURATION
+
+The reference's rhythm and tonality, not a target to hit exactly: what a later episode compares against to tell drift from choice.
+
+## Tokens
+
+In `style.json` → `extra.tokens`, one role each. Read them from there, never from this file.
+
+| token | hex | role |
+|---|---|---|
+| `bg` | `FULL_BG` | TODO |
+| `ink` | `FULL_INK` | TODO |
+| `cream` | `FULL_CREAM` | TODO |
+| `hero` | `FULL_HERO` | TODO |
+| `cap` | `FULL_CAP` | TODO |
+| `tag` | `FULL_TAG` | TODO |
+
+Fonts: `extra.fonts` (`display`, `text`) by family description; ship a file only when you have the licence.
+
+## The gate
+
+```sh
+$MOTION_PY $MOTION_LIB/tools/style_ref.py lint ../STYLE_NAME
+$MOTION_PY $MOTION_LIB/tools/style_ref.py probe ../STYLE_NAME path/to/one-still.png
+```
+
+`lint` must pass before an episode leans on this pack. `probe` runs once any renderer produces a still: a token it cannot find in the frame means that renderer ignored the palette.
+
+## Files
+
+| file | what it gives |
+|---|---|
+| `docs/style-guide.md` | the authority: look, colour, type, motion, beat, signature move, traps |
+| `docs/style-prompt.md` | the same DNA as copy-paste blocks for another agent or generator |
+| `style.json` | manifest: canvas, tokens, fonts, status, engines, reference numbers |
+
+## Traps
+
+- TRAP_1
+- TRAP_2
