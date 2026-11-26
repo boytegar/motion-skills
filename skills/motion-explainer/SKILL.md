@@ -27,7 +27,7 @@ Reuse the style and the storytelling, not the worked examples' content. Every pr
 1. **Full plan**, idea to a build-ready folder: stages 1 to 6, then the handoff.
 2. **Script only**: strategy, hook, script (stop after the staging table).
 3. **Storyboard from an existing script**: `motion-storyboard`. Ask for the script, the facts and the HOOK block.
-4. **Style prompt for another tool**: give the right block from `$MOTION_LIB/style/$MOTION_STYLE/docs/style-prompt.md` and stop.
+4. **Style prompt for another tool**: give the right block from `$MOTION_LIB/style/$MOTION_STYLE/docs/style-prompt.md` and stop. When the user points at a video instead of naming a style, that is a new pack: hand to `motion-style-extract`.
 5. **Re-plan or re-check one scene**: `motion-storyboard` for the block, then `motion-build`.
 
 ## Intake (ask only what is missing)
@@ -35,7 +35,7 @@ Reuse the style and the storytelling, not the worked examples' content. Every pr
 - **Source**: usually a link (repo, product site, announcement). Everything else is researched from it.
 - **The one claim** the video proves, and the topic.
 - **Role framing**: who or what does the work, who advises or approves. Confirm it with the user and never invent product behaviour.
-- **Style**: read the series `agents.md` first when it exists — it is the initialized source of truth and must not be asked again. Else ask which style folder to plan for.
+- **Style**: read the series `agents.md` first when it exists — it is the initialized source of truth and must not be asked again. Else ask which style folder to plan for. A reference video named as the look means `motion-style-extract` writes the pack first; plan against the pack, not the video.
 - **CTA keyword** and what the viewer gets (the deliverable).
 - **Length**: default 22-30 s.
 - **Audience level** (from `SERIES.md`) and any accent colour or mascot.

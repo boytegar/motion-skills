@@ -1,0 +1,71 @@
+# STYLE_TITLE style guide
+
+Where this came from: reference `REFERENCE`, measured with `style_ref.py`. Numbers marked *(measured)* are from that analysis; the rest is the rule that reproduces them.
+
+| field | reference (measured) |
+|---|---|
+| canvas | CANVAS |
+| shot length | MEDIAN_SHOT |
+| cut rate | CUT_RATE |
+| motion | MOTION |
+| saturation share | SATURATION |
+| content box | CONTENT_BOX |
+| text bands | TEXT_BANDS |
+
+This is a style system, not a recreation spec. It says how to make **any** topic look and move this way. Colours, fonts and props below are defaults; swap them while the rules hold.
+
+## Look
+
+The medium, in one paragraph: what the material is, how it behaves, what it refuses.
+
+Then the non-negotiables, as a numbered list. Aim for six. Each one a test an agent can run on a still:
+
+1. …
+2. …
+
+**Building blocks.** The primitives, the silhouette discipline, the scale floor (smallest legible detail at this canvas), and where light comes from.
+
+**Depth.** How this medium fakes layering: overlap, shadow, scale, tone — say which, and what it never uses.
+
+**Surface.** The texture recipe, at what opacity, applied to what.
+
+## Colour
+
+The palette as a table, each role with its token name and what it is allowed to colour. The hexes here mirror `style.json` → `extra.tokens`, which is the machine copy any renderer reads; when they disagree, `style.json` wins.
+
+| token | hex | role |
+|---|---|---|
+| `bg` | `FULL_BG` | backmost field, never subject |
+| `ink` | `FULL_INK` | line and text |
+| `cream` | `FULL_CREAM` | light material |
+| `hero` | `FULL_HERO` | the recurring character |
+| `cap` | `FULL_CAP` | captions |
+| `tag` | `FULL_TAG` | emphasis and state |
+
+Coverage measured from the reference: top colours and their share of the frame. State the rule that keeps the frame calm (how much of the frame a saturated colour may own).
+
+## Type
+
+Two or three roles, each with a family description, weight, case and size band at this canvas. Name the fallback when the exact family is unavailable. Say what type never does.
+
+## Motion
+
+- Timing constants at the pack's fps: entrance, settle, hold, exit.
+- What is rigid and what is redrawn.
+- The camera rule: what moves, how fast, what never shakes.
+- Ambient motion that runs even on a still beat.
+- Event density: how many discrete visual events per second the reference averages *(measured)*, and where they land (on stressed words).
+
+## Beat
+
+The beat sheet that the reference's cut rhythm implies: how a scene opens, what changes, how long it holds, how it cuts. Name the recurring furniture (a fixed bar, a corner mark, a caption band) and where it sits in canvas percentages.
+
+Give the zones as a table: top mark, stage, captions, keep-clear.
+
+## Signature move
+
+The one thing a viewer would name if asked what this style is. Describe it so it can be reproduced without the reference: what appears, from where, over how long, with what sound. Add one secondary move.
+
+## Traps
+
+The seductive-but-wrong readings of this style. Each one: the mistake, why it looks right at a glance, and the check that catches it.

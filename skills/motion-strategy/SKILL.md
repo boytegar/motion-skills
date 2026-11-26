@@ -27,7 +27,7 @@ Ask for these in one call (your agent's question tool). Never invent an answer: 
 | **Voice** | tone, person, contractions, words to avoid | `motion-script`, `motion-voice` |
 | **Palette** | base colours and the accent, taken from the style guide | `motion-storyboard` |
 | **Mascot** | the recurring character, its own prop and its costume rule | `motion-script` (gags), `motion-storyboard` |
-| **Style** | one style folder name; `agents.md` wins when both exist | every stage |
+| **Style** | one style folder name; `agents.md` wins when both exist. A reference video instead of a name means `motion-style-extract` turns it into a pack first | every stage |
 | **CTA convention** | the keyword shape and how the freebie is delivered | `motion-script`, this skill's funnel step |
 | **Keyword log** | keywords already used, so they never repeat | this skill's funnel step |
 | **What worked** | formats, topics and hooks that earned attention, with numbers | this skill's topic step |
