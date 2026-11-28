@@ -9,5 +9,9 @@ if [ $# -lt 2 ]; then echo "usage: $0 VOICE.json NARRATION_DIR" >&2; exit 2; fi
 L=$(dirname "$(rp "${BASH_SOURCE[0]}")"); N=$(rp "$2")
 # env.sh fills QWEN_TTS_PY etc. from the config file that voice/setup_tts.sh writes (variables already set win)
 if [ -f "$L/../env.sh" ]; then . "$L/../env.sh"; fi
+# TTS_PROVIDER (or just TTS_URL) in the config file routes to the hosted API instead of the local model
+if [ -n "${TTS_PROVIDER:-}" ] || [ -n "${TTS_URL:-}" ]; then
+  exec "${MOTION_PY:-python3}" -u "$L/tts_provider.py" "$(rp "$1")" "$N/script.json" "$N/voice/takes/narrator"
+fi
 if [ -n "${QWEN_TTS_HOME:-}" ]; then export PYTHONPATH="$QWEN_TTS_HOME${PYTHONPATH:+:$PYTHONPATH}"; fi
 exec "${QWEN_TTS_PY:-python3}" -u "$L/narrate.py" "$(rp "$1")" "$N/script.json" "$N/voice/takes/narrator"

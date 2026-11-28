@@ -2,6 +2,60 @@
 
 These scripts turn `narration/script.json` into one WAV per line plus a timing file with a start and end for every word. `tools/build_vo.py` then joins the lines into the reel's voiceover and cuts the scenes on the words. If you record the narration yourself or use another TTS, you can skip this folder. All the rest of the library needs is `voice/final_narrator/<id>.wav` and `timing_narrator.js` in the narration folder (the format `build_timing.py` writes). `tools/placeholder_vo.py` writes both from the script alone, with silence or the macOS `say` voice, so you can build and time a reel before any real voice exists.
 
+## Hosted TTS and pace sync
+
+The `.env` file (`${MOTION_CONFIG:-~/.config/motion-explainer/config.env}`) picks the voice engine. A commented template with every key ships as `core/config.env.example`:
+
+```sh
+mkdir -p ~/.config/motion-explainer
+cp $MOTION_LIB/core/config.env.example ~/.config/motion-explainer/config.env
+chmod 600 ~/.config/motion-explainer/config.env     # it holds an API key
+``` With `TTS_PROVIDER` or `TTS_URL` set, `narrate.sh` routes to `tts_provider.py` and talks to a hosted API instead of loading Qwen3-TTS locally; the output WAVs have the same shape (`<id>_<k>.wav`, 48 kHz mono PCM), so `finalize.sh`, `pace.py` and `build_vo.py` do not care where the audio came from.
+
+```sh
+# ~/.config/motion-explainer/config.env   (see core/config.env.example)
+TTS_PROVIDER=openai
+TTS_API_KEY=sk-...
+TTS_MODEL=gpt-4o-mini-tts
+TTS_VOICE=alloy
+TTS_SPEED=1.0            # 0.25-4.0, the pace knob on the API side
+TTS_LANG=en              # language tag, where the API takes one
+PACE_TARGET=3.3          # wps the local pace report judges lines against
+```
+
+`TTS_URL` is the endpoint knob, and the only one needed for a custom server:
+
+| Setting | What it means |
+|---|---|
+| `TTS_URL=https://gw.example.com/v1/audio/speech` with `TTS_PROVIDER=openai` | OpenAI-compatible gateway / proxy / self-hosted (Ollama, vLLM, Azure-style path); the vendor URL is replaced, the OpenAI request body and `Authorization: Bearer` stay |
+| `TTS_URL=https://gw.example.com/tts/{voice}` with `TTS_PROVIDER=elevenlabs` | ElevenLabs-compatible server; `{voice}` is substituted, `xi-api-key` is sent |
+| `TTS_URL=...` with no `TTS_PROVIDER` | provider defaults to `custom`: JSON body from `TTS_PAYLOAD`, auth from `TTS_AUTH` |
+| `TTS_PROVIDER=custom` + `TTS_URL` | same, spelled out |
+| neither set | local Qwen3-TTS, exactly as before |
+
+```sh
+# any JSON endpoint, most general
+TTS_PROVIDER=custom
+TTS_URL=http://localhost:8000/v1/audio/speech
+TTS_AUTH=bearer          # none | bearer | <header name>
+TTS_API_KEY=local
+TTS_PAYLOAD={"text": "{text}", "voice": "{voice}", "model": "{model}", "speed": {speed}}
+TTS_FORMAT=mp3
+
+# or just point the OpenAI shape at another host
+TTS_PROVIDER=openai
+TTS_URL=https://gateway.internal/v1/audio/speech
+TTS_API_KEY=sk-gw
+```
+
+With no `TTS_URL`, `openai` and `elevenlabs` use their vendor URLs. `{voice}` and `{model}` in `TTS_URL` are substituted; `TTS_CUSTOM_URL` still works as an alias of `TTS_URL`.
+
+`tts_provider.py` writes one WAV per line. A hosted voice is deterministic, so `takes_per_line` collapses to the one take. Missing key, unknown voice or a rate limit exits with a readable message (`HTTP 401 key rejected`, …) instead of a traceback.
+
+After the finals exist, `finalize.sh` runs `core/tools/pace.py`: it reads each WAV's energy envelope, cuts it at the voiced threshold, keeps pauses of 140 ms or more as gaps, and lays the words over the speech spans by length. That yields a words-per-second figure per line and `voice/pace_<ROLE>.json`, which `build_timing.py` prefers over ASR and over the 2.75 wps estimate. The caption track therefore follows the real delivery rate — a slow or paused line gets a slow, gappy cue track instead of an evenly spread one — and no ASR install is needed. The pass prints slow and fast lines against `PACE_TARGET`; feed the difference into `TTS_SPEED` (or `tempo` for local voices, needs `rubberband`) and re-run.
+
+`build_timing.py` resolves in this order: pace file (`PACE`, default `voice/pace_<ROLE>.json`) → ASR json → estimate. The mode is printed, and `build_vo.py` stays unchanged: it reads the timing file, writes `captions.json` and the per-scene word cues.
+
 It is the least tested part of the library. It was written on an Apple Silicon Mac with 24 GB of memory against Qwen3-TTS and mlx-whisper. The CUDA path in `narrate.py` and the faster-whisper path in `asr.py` were added later and have not been run on real hardware.
 
 ## Setup
@@ -16,21 +70,25 @@ Models. The default is `Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice` (about 4.2 GB), wh
 
 | Script | What it does | Reads | Writes |
 |---|---|---|---|
-| `narrate.sh` / `narrate.py` | Generates `takes_per_line` takes (default 3) for every script line. Seed for take k is `SEED_BASE + 31k`. | `voice.json`, `<narration>/script.json` | `<narration>/voice/takes/narrator/<id>_<k>.wav` |
+| `narrate.sh` / `narrate.py` | Generates `takes_per_line` takes (default 3) for every script line. Seed for take k is `SEED_BASE + 31k`. With `TTS_PROVIDER` in the `.env`, `narrate.sh` execs `tts_provider.py` instead. | `voice.json`, `<narration>/script.json` | `<narration>/voice/takes/narrator/<id>_<k>.wav` |
+| `tts_provider.py` | Hosted TTS (`openai`, `elevenlabs`, or any `custom` JSON endpoint): one WAV per line, 48 kHz mono. Key and model come from the `.env`. | `voice.json`, `script.json`, `TTS_*` env | `<narration>/voice/takes/narrator/<id>_<k>.wav` |
+| `tools/pace.py` | Rates each final WAV's own energy envelope: words per second per line plus a per-word time curve that keeps the pauses. Needs no ASR. | final WAVs, `script.json`, optional ASR json | `voice/pace_<ROLE>.json`, a report on stdout |
 | `asr.py` | Transcribes WAVs with word timestamps. | WAV files | JSON on stdout: `{path: {text, words: [{w, s, e}], dur}}` |
 | `analyze.py` | Median pitch, pitch spread, voiced fraction, peak and RMS per WAV. | WAV files | a table on stdout |
 | `pick.py` | Picks one take per line. A take passes if its ASR text matches the script (ratio at least `asr_match`) and its median pitch is inside `median_pitch_hz`. Among passing takes it prefers the closest ASR match, then the shorter take with the wider pitch spread. | script, ASR JSON, pitch table, optional `NUM.json` | `picks_<ROLE>.json` `{id: take}` |
 | `finalize.sh` | Runs the chain below. | `voice.json`, narration folder, takes folder | everything under `voice/` and `timing_<ROLE>.js` |
-| `build_timing.py` | Aligns the ASR words to the script text and writes the timing file. Without ASR it estimates 2.75 words a second. | `script.json`, ASR JSON, env `CHOSEN` | `timing_<ROLE>.js` (env `TIMING_OUT`) |
+| `build_timing.py` | Writes the timing file from the pace json (preferred), else the ASR words aligned to the script, else a 2.75 wps estimate. | `script.json`, pace json (`PACE`), ASR JSON, env `CHOSEN` | `timing_<ROLE>.js` (env `TIMING_OUT`) |
 | `split_take.py` | Splits one whole-script take into per-line files at the middle of each pause, with no seam. | the take, `script.json`, `asr.py` output for the take | `voice/final_<ROLE>/<id>.wav`, `chosen_<ROLE>.json`, `asr_<ROLE>_final.json` |
 | `setup_tts.sh` | Builds the venv, downloads the model, runs a one-line smoke test. | none | venv, config file |
 
 `finalize.sh VOICE.json NARRATION_DIR TAKES_DIR [NUM.json]` does this in order.
 
+0. With `TTS_PROVIDER` set in the `.env`, the takes are fixed, so `picks_<ROLE>.json` is `{line: 0}` and steps 1-2 are skipped.
 1. `asr.py` and `analyze.py` over every take. Their stderr goes to `voice/finalize_<ROLE>.log`.
 2. `pick.py` chooses a take per line. Put corrections in `voice/picks_override.json` as `{"l3_name": 2}`, listen, and rerun with `SKIP_PICK=1`.
 3. Each chosen take is trimmed of leading and trailing silence (below -45 dB), high-passed at 70 Hz, loudness-normalised to -16 LUFS and resampled to 48 kHz mono. If `tempo` is not 1.0, Rubber Band stretches it first and keeps the pitch.
-4. `asr.py` runs again on the finished lines, and `build_timing.py` (if it is in the narration folder; `new_episode.sh` copies it there) writes `timing_<ROLE>.js`.
+4. `pace.py` reads the finished lines, writes `voice/pace_<ROLE>.json` and prints each line's pace, flagging lines more than 12% off `PACE_TARGET`. If `pace.py` is missing, `asr.py` runs on the finals instead.
+5. `build_timing.py` (if it is in the narration folder; `new_episode.sh` copies it there) writes `timing_<ROLE>.js` from the pace json.
 
 `NUM.json` maps a numeral in the script to how it is spoken, for example `{"13,000": "thirteen thousand"}`, so the ASR comparison doesn't fail on digits.
 

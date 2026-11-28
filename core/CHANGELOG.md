@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+Hosted TTS and caption sync.
+
+- `voice/tts_provider.py`: hosted narration through `openai`, `elevenlabs` or a `custom` JSON endpoint. Settings come from the motion config file (`.env`): `TTS_PROVIDER`, `TTS_API_KEY`, `TTS_MODEL`, `TTS_VOICE`, `TTS_SPEED`, `TTS_LANG`, plus `TTS_URL`, `TTS_AUTH`, `TTS_PAYLOAD`, `TTS_FORMAT`, `TTS_TIMEOUT`.
+- `TTS_URL` works on its own: it overrides the vendor endpoint for `openai`/`elevenlabs` (gateways, proxies, self-hosted) and selects `custom` by itself when `TTS_PROVIDER` is empty. `{voice}` and `{model}` are substituted; `TTS_CUSTOM_URL` is an alias. `narrate.sh` and `finalize.sh` gate on `TTS_PROVIDER` or `TTS_URL`. Replies are decoded with ffmpeg into the 48 kHz mono WAV the pipeline reads.
+- `voice/narrate.sh` execs `tts_provider.py` when `TTS_PROVIDER` is set; otherwise the local Qwen3-TTS path is unchanged.
+- `voice/finalize.sh` skips the ASR + pitch take picker for a hosted voice (one fixed take per line) and runs the pace pass after the finals.
+- `tools/pace.py`: per-line words per second plus a per-word timing curve measured from the audio's energy envelope (stdlib only, no ASR). Pauses of 140 ms or more stay wordless, so captions follow the real delivery rate. Writes `voice/pace_<ROLE>.json` and flags lines off `PACE_TARGET` (default 3.3).
+- `voice/build_timing.py` resolves timing from the pace json first, then ASR, then the estimate, and prints which it used.
+- `env.sh` exports `PACE_TARGET` and documents the `TTS_*` block.
+- `core/config.env.example`: commented template for `${MOTION_CONFIG:-~/.config/motion-explainer/config.env}`, with one block per voice engine (OpenAI, gateway, ElevenLabs, custom URL, local Qwen3-TTS) and the pacing keys.
+
 ## 2.0.0 — plan-only
 # Plan-only cut
 

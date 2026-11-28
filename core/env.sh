@@ -37,6 +37,17 @@ _pc_read_cfg() {   # fill unset variables from a key=value file
 _pc_read_cfg "$_pc_legacy_cfg"
 _pc_read_cfg "$_pc_cfg"
 
+# Voice engine and sync choices, all optional (see voice/README.md).
+#   TTS_PROVIDER  unset + no TTS_URL -> local Qwen3-TTS; openai | elevenlabs | custom -> core/voice/tts_provider.py
+#   TTS_URL       the endpoint to POST to (also selects the provider when TTS_PROVIDER is empty):
+#                 with openai/elevenlabs it replaces the vendor URL, with custom it is required
+#   TTS_API_KEY   key for the hosted provider (or TTS_<PROVIDER>_KEY)
+#   TTS_MODEL, TTS_VOICE, TTS_SPEED, TTS_LANG, TTS_FORMAT, TTS_AUTH, TTS_PAYLOAD, TTS_TIMEOUT
+#   PACE_TARGET   words per second the pace report (core/tools/pace.py) judges lines against
+: "${PACE_TARGET:=3.3}"
+export PACE_TARGET
+motion_tts_hosted() { [ -n "${TTS_PROVIDER:-}" ] || [ -n "${TTS_URL:-}" ]; }   # true when narrate.sh should use the API
+
 # a MOTION_LIB from the config file that no longer exists (moved or deleted checkout) is ignored
 if [ -n "${MOTION_LIB:-}" ] && [ ! -d "$MOTION_LIB" ]; then unset MOTION_LIB; fi
 if [ -z "${MOTION_LIB:-}" ] && [ -n "${BASH_SOURCE[0]:-}" ]; then

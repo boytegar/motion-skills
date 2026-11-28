@@ -87,7 +87,7 @@ These keep an agent's context small.
 
 ## Environment variables
 
-The scripts read these. `env.sh` supplies the defaults and also loads `KEY=value` lines from `${MOTION_CONFIG:-~/.config/motion-explainer/config.env}`; anything already set in your shell wins.
+The scripts read these. `env.sh` supplies the defaults and also loads `KEY=value` lines from `${MOTION_CONFIG:-~/.config/motion-explainer/config.env}`; anything already set in your shell wins. A commented template for that file is `core/config.env.example` (copy it, `chmod 600` it, uncomment one provider block).
 
 | Variable | Meaning | Default |
 |---|---|---|
@@ -99,7 +99,13 @@ The scripts read these. `env.sh` supplies the defaults and also loads `KEY=value
 | `QWEN_TTS_MODEL` | Model repo for custom-voice mode when `voice.json` has no `model` key. | `Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice` |
 | `ASR_PY` | Python with `mlx-whisper` or `faster-whisper`, for `voice/asr.py`. | `python3` |
 | `FASTER_WHISPER_MODEL` | Model name when `asr.py` uses faster-whisper. | `large-v3-turbo` |
-| `MOTION_CONFIG` | Path of the config file. | `~/.config/motion-explainer/config.env` |
+| `MOTION_CONFIG` | Path of the config file (the `.env` the voice settings live in). | `~/.config/motion-explainer/config.env` |
+| `TTS_PROVIDER` | `openai`, `elevenlabs` or `custom` makes `voice/narrate.sh` call `voice/tts_provider.py` instead of the local model. Unset picks `custom` when `TTS_URL` is set, else local Qwen3-TTS. | unset |
+| `TTS_URL` | Endpoint to POST to. Also selects the provider when `TTS_PROVIDER` is empty. With `openai`/`elevenlabs` it replaces the vendor URL; `custom` requires it. `{voice}` and `{model}` in the URL are substituted. | unset (vendor URL) |
+| `TTS_API_KEY` | Key for the hosted provider (`TTS_<PROVIDER>_KEY` also works). | unset |
+| `TTS_MODEL`, `TTS_VOICE`, `TTS_SPEED`, `TTS_LANG` | Hosted provider model, voice, pace (0.25-4.0) and language. | provider defaults, `1.0` |
+| `TTS_AUTH`, `TTS_PAYLOAD`, `TTS_FORMAT`, `TTS_TIMEOUT` | `custom` provider: auth (`none`, `bearer`, or a header name), JSON body template with `{text}` `{voice}` `{model}` `{lang}` `{speed}`, response format, timeout. | `none`, `{"text": "{text}", "voice": "{voice}", "model": "{model}"}`, `mp3`, `90` |
+| `PACE_TARGET` | Words per second the pace report (`tools/pace.py`) judges each line against. | `3.3` |
 
 The voice scripts take more (`ROLE`, `SCRIPT`, `SKIP_PICK`, `ONLY`, `TAKES`, `SEED_BASE`, and the usual Hugging Face variables). They are listed in `voice/README.md`.
 

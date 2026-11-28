@@ -80,7 +80,7 @@ File adalah state. Tiap stage baca file stage sebelumnya dan tulis file miliknya
 | 2 | `motion-hook` | Tulis 3 lapis hook (SAY / WRITE / SHOW / ALIGN), 5 varian diskor 6 pertanyaan, judul cover frame-0, motion keluar dari hook. | BRIEF | HOOK block di `video/STORYBOARD.md` | plan only |
 | 3 | `motion-script` | Riset fakta bersumber, script 75–95 kata di 10-beat spine, track banner (10–18 banner), staging table (set/prop/UI/mascot/gag per banner), humour pass. | BRIEF, HOOK | `narration/script.json`, `facts.md`, staging table | plan only |
 | 4 | `motion-storyboard` | Camera / Cut table per scene (bahasa efek, bukan sintaks builder), scene block per frame per kata stressed, SFX plan, proof beat, callback. | `script.json`, staging table | tabel + scene blocks + SFX di `STORYBOARD.md` | plan only |
-| 5 | `motion-voice` | Voiceover + timing. 3 jalur: Qwen3-TTS lokal, rekaman/ASR sendiri, placeholder. Hasil: 1 WAV per baris, `timing_narrator.js`, `captions.json`, `src/plan.json`. | `script.json`, `voice/voice.json` | `narration/voice/final_narrator/*.wav`, `timing_narrator.js`, `public/vo/captions.json`, `src/plan.json` | plan + audio |
+| 5 | `motion-voice` | Voiceover + timing. 4 jalur: TTS hosted dari `.env` (`TTS_PROVIDER`), Qwen3-TTS lokal, rekaman/ASR sendiri, placeholder. Pace tiap baris diukur dari audionya (`core/tools/pace.py`) supaya caption ikut kecepatan suara. Hasil: 1 WAV per baris, `timing_narrator.js`, `captions.json`, `src/plan.json`. | `script.json`, `voice/voice.json` | `narration/voice/final_narrator/*.wav`, `timing_narrator.js`, `public/vo/captions.json`, `src/plan.json` | plan + audio |
 | 6 | `motion-build` | Tutup pipeline. Finalkan `episode.json` (scenes/banners/hook/cuts/bed), cue list SFX, `HANDOFF.md` berisi kontrak untuk builder. **Stop — tidak render.** | `STORYBOARD.md`, `script.json`, timing, WAV | `episode.json`, `plan.json`, `captions.json`, `voiceover.wav`, `tools/cues.json`, `HANDOFF.md` | plan + audio |
 | 7 | `motion-qa` | **Builder-side.** Bandingkan still hasil render vs storyboard, frame scene, caption, checklist style DNA, tulis delivery summary. Tidak pernah plan/scaffold/pilih renderer. | stills + `plan.json`, `captions.json`, `cues.json`, `HANDOFF.md` | daftar fix, delivery summary | plan + audio |
 | 8 | `motion-strategy` (autopsy) | Masukkan angka platform 2 h/24 h ke `research/analytics/`, diagnosis dari hook → topik → format → audience → timing, update `## Evidence` di `SERIES.md`. | insights platform | `analytics/YYYY-MM-DD-autopsy.md` | plan only |
@@ -180,9 +180,11 @@ Stage 5 (voice) dari folder `episode/narration`:
 ```sh
 cp $MOTION_LIB/core/voice/voice.example.json ../../voice/voice.json
 $MOTION_LIB/core/voice/narrate.sh ../../voice/voice.json .
-$MOTION_LIB/core/voice/finalize.sh ../../voice/voice.json . voice/takes/narrator
+$MOTION_LIB/core/voice/finalize.sh ../../voice/voice.json . voice/takes/narrator   # + pace + timing
 python3 $MOTION_LIB/core/tools/placeholder_vo.py --wps 3.5    # jalur cepat tanpa TTS
 ```
+
+TTS hosted: salin template `core/config.env.example` ke `~/.config/motion-explainer/config.env` (`chmod 600`), lalu isi `TTS_PROVIDER=openai|elevenlabs|custom` (atau cukup `TTS_URL` untuk server sendiri) + `TTS_API_KEY` (opsional `TTS_MODEL`, `TTS_VOICE`, `TTS_SPEED`, `TTS_LANG`, `PACE_TARGET`). `TTS_URL` mengganti endpoint vendor, dan tanpa `TTS_PROVIDER` otomatis jadi provider `custom`. `narrate.sh` membaca file itu dan otomatis memakai `core/voice/tts_provider.py` alih-alih model lokal; tanpa `TTS_PROVIDER`, jalur Qwen3-TTS lokal tetap.
 
 Stage 6 (build) dari `episode/video`:
 
