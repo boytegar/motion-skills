@@ -14,7 +14,7 @@ Every beat runs three tracks that do different jobs:
 
 ## Preflight
 
-- Install: **plan only** is enough. Resolve `$MOTION_LIB` only if you want the style's backdrop sheet when choosing sets (`style/$MOTION_STYLE/`, wherever its kit keeps `bg/backdrops/_sheet.jpg`; the papercut style has it under `remotion/`). Each image costs about 0.7-1.5k tokens, so open only what the step needs.
+- Install: **plan only** is enough. Resolve `$MOTION_LIB` only if you want the style's backdrop sheet when choosing sets (the style's own pack under `style/$MOTION_STYLE/`, when it ships one). Each image costs about 0.7-1.5k tokens, so open only what the step needs.
 - Needs the BRIEF at the top of `episodes/NN-slug/research/facts.md`, the HOOK block at the top of `episodes/NN-slug/video/STORYBOARD.md`, and `SERIES.md` for the audience level, language and regions. Missing the BRIEF or HOOK: run `motion-strategy` or `motion-hook` first. Missing `SERIES.md`: `motion-strategy` step 0 writes it.
 - Research needs web fetch or search, and any browser tool for screenshots. Without them, ask the user for screenshots and facts.
 

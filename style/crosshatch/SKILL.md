@@ -5,7 +5,7 @@ description: Render a reel in the Crosshatch style: a sketchy ink line that boil
 
 Sketchy ink line that boils on 2s, crosshatch and pencil shading on cream paper and navy night worlds.
 
-This is one style of the motion-explainer library. It ships the same three engines every style ships: a Remotion engine, an fframes engine, and a kyfram prelude (`kyfram/PRELUDE.lgv`), with a `style.json` manifest tying them together. The pipeline skills (`motion-explainer`, `motion-script`, `motion-storyboard`, `motion-build`, `motion-qa`) all take the style name as `$MOTION_STYLE`, so nothing else in the workflow changes when you pick this one.
+This is one style of the motion-explainer library. It ships the docs and tokens: `docs/style-guide.md` for the visual authority, `docs/style-prompt.md` for portable prompts, and a `style.json` manifest with the canvas, palette, fonts and audio roots. The pipeline skills (`motion-explainer`, `motion-hook`, `motion-script`, `motion-storyboard`, `motion-build`, `motion-qa`) all take the style name as `$MOTION_STYLE`, so nothing else in the workflow changes when you pick this one.
 
 ## When to use it
 
@@ -23,7 +23,7 @@ Palette: day ink `#3a2417`, paper `#f4ecd9`, cream `#efe5cf`, wood `#d6a466`, ye
 
 ## Kit components
 
-Remotion, importable from `../lib/<file>` (the kit is synced into each project's `src/lib/`):
+Components the style calls for, named here so a plan can request them by name:
 
 | component | what it is |
 |---|---|
@@ -37,25 +37,6 @@ Remotion, importable from `../lib/<file>` (the kit is synced into each project's
 ## Nothing boils in a vacuum
 
 docs/style-guide.md names the day and night palettes, the texture pucks and the motion habits. Read the guide before drawing anything: the two worlds are not interchangeable.
-
-## Engines
-
-| engine | path | entry |
-|---|---|---|
-| remotion | `remotion/` | `template/`, `kit/`, `sync_kit.sh`, `CATALOG.md`, `AGENT_BRIEF.md` |
-| fframes | `fframes/` | `Cargo.toml`, `src/` (lib, tokens, kit, look, video, main), `tools/ff.sh` |
-
-Registered engines: `remotion`, `fframes`.
-
-## Scaffold an episode
-
-```sh
-# from the library root, with MOTION_LIB resolved
-./core/new_episode.sh <series-dir> 01-slug Episode out-name --style crosshatch --engine remotion
-./core/new_episode.sh <series-dir> 01-slug Episode out-name --style crosshatch --engine fframes
-```
-
-Or name the style in a series `SERIES.md` / `episode.json` as `"style": "crosshatch"` and let `motion_style_of` pick it up.
 
 ## QA for this style
 
@@ -71,8 +52,5 @@ Check these on every contact sheet before calling a scene done; the rest of the 
 
 - `docs/style-guide.md`
 - `docs/style-prompt.md`
-- `remotion/CATALOG.md`
-- `remotion/AGENT_BRIEF.md`
-- `remotion/RECIPES.md`
 - `style.json`: the manifest (canvas, engine list, doc paths, audio roots)
 - `sample.png`: one representative frame

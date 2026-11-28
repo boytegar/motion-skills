@@ -2,7 +2,7 @@
   "name": "newsreel",
   "title": "1920s Newsreel",
   "tagline": "Archive in a projected gate",
-  "description": "Archive in a projected gate. Fits: history stories; fads & eras; anniversaries. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "description": "Archive in a projected gate. Fits: history stories; fads & eras; anniversaries.",
   "status": "docs-only",
   "source": {
     "repo": "https://github.com/lemomo-ai/lemo-opuscar",
@@ -14,7 +14,6 @@
   "category": "Edit & Documentary",
   "cn": "1920s 新闻影片",
   "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
-  "engines": [],
   "docs": {
     "styleGuide": "docs/style-guide.md",
     "stylePrompt": "docs/style-prompt.md"

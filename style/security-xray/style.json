@@ -2,7 +2,7 @@
   "name": "security-xray",
   "title": "Security X-ray",
   "tagline": "Transmission, not rendering",
-  "description": "Transmission, not rendering. Fits: airport and customs screening; parcel and cargo inspection; product internals. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "description": "Transmission, not rendering. Fits: airport and customs screening; parcel and cargo inspection; product internals.",
   "status": "docs-only",
   "source": {
     "repo": "https://github.com/lemomo-ai/lemo-opuscar",
@@ -14,7 +14,6 @@
   "category": "Instruments & Evidence",
   "cn": "安检 X 光",
   "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
-  "engines": [],
   "docs": {
     "styleGuide": "docs/style-guide.md",
     "stylePrompt": "docs/style-prompt.md"

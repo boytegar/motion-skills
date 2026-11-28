@@ -1,7 +1,7 @@
 # Dialogue timeline for two-speaker videos: place each speaker's final line WAVs on one track with
 # per-line gaps, cut interrupted lines partway through a word, and write per-frame "talking" flags for mouth flaps.
 # No dialogue template ships with the library; this is for projects that bring their own scenes.
-#   usage (from the Remotion project; needs numpy + soundfile, so use $MOTION_PY if python3 lacks them):
+#   usage (from the episode's video/ folder; needs numpy + soundfile, so use $MOTION_PY if python3 lacks them):
 #     python3 dialogue_timeline.py timing.json
 #   timing.json:
 #     {"dialogue": "../narration/dialogue.json",                       # [{id, speaker, text, cut?: "word"}]

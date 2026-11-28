@@ -2,8 +2,8 @@
 #   {"narration": "../narration", "timing": "timing_narrator.js", "fps": 30, "start": 0.2, "gap": 0.22, "hold": 2.3,
 #    "scenes": [["S01Hook", "l1_hook", 0], ["S02Yes", "l1_hook", "and"], ...]}   (first word: index or exact word)
 #    "hook": {...}   (optional, see below)
-#   out: public/vo/voiceover.wav, public/vo/captions.json (Remotion Caption[]), src/plan.json
-#   usage (from the Remotion project dir): python3 $MOTION_LIB/tools/build_vo.py
+#   out: public/vo/voiceover.wav, public/vo/captions.json (one entry per word), src/plan.json
+#   usage (from the episode's video/ dir): python3 $MOTION_LIB/tools/build_vo.py
 import json, os, subprocess, wave
 EP = json.load(open("episode.json"))
 SRC = EP.get("narration", "../narration")

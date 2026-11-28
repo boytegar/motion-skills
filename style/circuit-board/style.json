@@ -2,7 +2,7 @@
   "name": "circuit-board",
   "title": "Circuit Board",
   "tagline": "A top-down board in every frame: copper pour with clearances cut around everything, traces with 0/45/90° runs and mitred corners, gold pads",
-  "description": "A top-down board in every frame: copper pour with clearances cut around everything, traces with 0/45/90° runs and mitred corners, gold pads. Fits: energy; supply chains; devices. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "description": "A top-down board in every frame: copper pour with clearances cut around everything, traces with 0/45/90° runs and mitred corners, gold pads. Fits: energy; supply chains; devices.",
   "status": "docs-only",
   "source": {
     "repo": "https://github.com/lemomo-ai/lemo-opuscar",
@@ -14,7 +14,6 @@
   "category": "Light & Lines",
   "cn": "电路板",
   "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
-  "engines": [],
   "docs": {
     "styleGuide": "docs/style-guide.md",
     "stylePrompt": "docs/style-prompt.md"

@@ -338,7 +338,7 @@ def probe(argv):
 
 
 REQUIRED = ["SKILL.md", "style.json", "docs/style-guide.md", "docs/style-prompt.md"]
-FIELDS = ["name", "title", "tagline", "description", "canvas", "engines", "docs"]
+FIELDS = ["name", "title", "tagline", "description", "canvas", "docs"]
 
 
 def lint(argv):
@@ -354,8 +354,8 @@ def lint(argv):
             except ValueError as e:
                 raise SystemExit("style_ref: style.json is not valid JSON: %s" % e)
         bad += ["style.json missing field %s" % k for k in FIELDS if k not in m]
-        if not m.get("engines") and m.get("status") not in ("docs-only", "draft"):
-            bad.append('engines is empty, so status must be "docs-only" or "draft" (got %r)' % m.get("status"))
+        if m.get("engines"):
+            print("style_ref lint: note: engines is a leftover build field; this pack set is plan-only")
         if not ((m.get("extra") or {}).get("tokens")):
             msg = "no extra.tokens: probe has nothing to compare against"
             if m.get("status") == "draft":
@@ -372,8 +372,8 @@ def lint(argv):
             if head not in text:
                 bad.append("style-guide.md has no %s section" % head)
     for e in ("remotion", "fframes", "kyfram"):
-        if os.path.isdir(os.path.join(d, e)) and e not in ((json.load(open(os.path.join(d, "style.json"))).get("engines")) or []):
-            print("style_ref: note: %s/ exists but is not registered in engines" % e)
+        if os.path.isdir(os.path.join(d, e)):
+            print("style_ref: note: %s/ exists but this pack set ships no build code" % e)
     if bad:
         print("\n".join("style_ref lint: " + b for b in bad))
         raise SystemExit(1)

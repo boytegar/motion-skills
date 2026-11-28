@@ -8,9 +8,7 @@
 #   MOTION_PY         python with numpy + Pillow + soundfile (timing, QA sheets, mix)  default: python3
 #   QWEN_TTS_PY       python with qwen-tts installed (core/voice/narrate)              default: python3
 #   ASR_PY            python with an ASR backend (core/voice/asr)                      default: python3
-#   CARGO             cargo that builds the fframes engine                             default: cargo
 #   MOTION_STYLE      default style folder name under style/ (none by default: ask the user)
-#   MOTION_ENGINE     default episode engine: remotion, fframes or kyfram (none by default: ask the user)
 #   MOTION_CONFIG     config file path   default: ${XDG_CONFIG_HOME:-~/.config}/motion-explainer/config.env
 #
 # Installers before the rename wrote papercut-explainer/config.env with PAPERCUT_* keys. That file is
@@ -46,8 +44,8 @@ if [ -z "${MOTION_LIB:-}" ] && [ -n "${BASH_SOURCE[0]:-}" ]; then
 fi
 export MOTION_LIB
 
-: "${MOTION_PY:=python3}"; : "${QWEN_TTS_PY:=python3}"; : "${ASR_PY:=python3}"; : "${CARGO:=cargo}"
-export MOTION_PY QWEN_TTS_PY ASR_PY CARGO MOTION_ENGINE
+: "${MOTION_PY:=python3}"; : "${QWEN_TTS_PY:=python3}"; : "${ASR_PY:=python3}"
+export MOTION_PY QWEN_TTS_PY ASR_PY
 # names older scripts and older skill text still read
 export MOTION_LIB="$MOTION_LIB" MOTION_PY="$MOTION_PY" MOTION_CONFIG="$_pc_cfg"
 
@@ -56,16 +54,6 @@ motion_config_set() {
   mkdir -p "$(dirname "$_pc_cfg")"; touch "$_pc_cfg"
   { grep -v "^$1=" "$_pc_cfg" || true; printf '%s=%s\n' "$1" "$2"; } > "$_pc_cfg.tmp"
   mv "$_pc_cfg.tmp" "$_pc_cfg"
-}
-
-# motion_find_chrome: print the Chrome or Chromium binary the audio render would use (same list as core/audio/render.mjs); fail if none.
-motion_find_chrome() {
-  local p
-  for p in "${CHROME_PATH:-}" "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" /Applications/Chromium.app/Contents/MacOS/Chromium \
-           /usr/bin/google-chrome /usr/bin/google-chrome-stable /usr/bin/chromium /usr/bin/chromium-browser; do
-    if [ -n "$p" ] && [ -e "$p" ]; then printf '%s\n' "$p"; return 0; fi
-  done
-  return 1
 }
 
 # motion_styles: every style under style/ that ships a style.json, one name per line.
@@ -79,21 +67,6 @@ fi
 export MOTION_STYLES
 motion_styles() { local d; for d in "$MOTION_STYLES"/*/; do [ -f "$d/style.json" ] && basename "$d"; done; }
 
-# motion_renderable STYLE: true when the style ships engine code, so it can actually be built.
-# Imported style packs (Lemo-Opuscar) carry rules but no engine: they script and storyboard,
-# they do not render. Marked by "status": "docs-only" or by an empty "engines" array.
-motion_renderable() {
-  local sj="$MOTION_STYLES/${1:-}/style.json"
-  [ -f "$sj" ] || return 1
-  python3 - "$sj" <<'PY'
-import json, sys
-d = json.load(open(sys.argv[1]))
-sys.exit(0 if d.get("engines") and d.get("status") != "docs-only" else 1)
-PY
-}
-# motion_styles_renderable: only the styles that can be built (the chooser's default list).
-motion_styles_renderable() { local s; for s in $(motion_styles); do motion_renderable "$s" && echo "$s"; done; }
-
 # motion_style_of EPISODE_DIR [STYLE]: print the style name the episode uses: an explicit name,
 # else episode.json "style", else $MOTION_STYLE. Fail 1 if none is set, 2 if it does not exist.
 motion_style_of() {
@@ -103,24 +76,4 @@ motion_style_of() {
   [ -n "$want" ] || return 1
   [ -f "$MOTION_STYLES/$want/style.json" ] || { echo "unknown style '$want' (have: $(motion_styles | tr '\n' ' '))" >&2; return 2; }
   echo "$want"
-}
-
-# motion_engine_default [STYLE]: print the configured engine, otherwise the style's first engine.
-# Fails if no configured/default engine is valid for the selected style.
-motion_engine_default() {
-  local want="${MOTION_ENGINE:-}" style="${1:-}" have
-  [ -n "$style" ] || return 1
-  [ -f "$MOTION_STYLES/$style/style.json" ] || return 2
-  if [ -z "$want" ]; then
-    want="$(python3 -c "import json,sys; print(json.load(open(sys.argv[1])).get('engines',['remotion'])[0])" "$MOTION_STYLES/$style/style.json")"
-  fi
-  have="$(python3 -c "import json,sys; print(' '.join(json.load(open(sys.argv[1])).get('engines',['remotion'])))" "$MOTION_STYLES/$style/style.json")"
-  case " $have " in *" $want "*) printf '%s\n' "$want" ;; *) return 3 ;; esac
-}
-
-# motion_engine_of ENGINE_DIR: the engine the episode.json in ENGINE_DIR (the project folder) names,
-# which is in engine/ folder: remotion, fframes or kyfram. Default remotion.
-motion_engine_of() {
-  local ep="$1/episode.json"
-  [ -f "$ep" ] && python3 -c "import json,sys;print(json.load(open(sys.argv[1])).get('engine','remotion'))" "$ep" 2>/dev/null || echo remotion
 }

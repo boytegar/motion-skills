@@ -5,7 +5,7 @@ description: Render in the STYLE_TITLE style — TAGLINE Use when the user asks 
 
 TAGLINE
 
-A style pack of the motion-explainer library: portable rules plus tokens, no engine attached. `style.json` carries the canvas, palette and fonts so every renderer (Remotion, fframes, Kyfram, or an outside tool) reads one source; `docs/style-guide.md` carries the rules. A pack with `"engines": []` scripts, storyboards and prompts fine, and cannot scaffold a project until someone writes an engine kit into it.
+A style pack of the motion-explainer library: portable rules plus tokens, no build attached. `style.json` carries the canvas, palette and fonts so any tool reads one source; `docs/style-guide.md` carries the rules. It scripts, storyboards and prompts from day one.
 
 ## The DNA
 
@@ -54,7 +54,7 @@ $MOTION_PY $MOTION_LIB/tools/style_ref.py probe ../STYLE_NAME path/to/one-still.
 |---|---|
 | `docs/style-guide.md` | the authority: look, colour, type, motion, beat, signature move, traps |
 | `docs/style-prompt.md` | the same DNA as copy-paste blocks for another agent or generator |
-| `style.json` | manifest: canvas, tokens, fonts, status, engines, reference numbers |
+| `style.json` | manifest: canvas, tokens, fonts, status, reference numbers |
 
 ## Traps
 

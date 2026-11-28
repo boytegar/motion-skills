@@ -2,7 +2,7 @@
   "name": "cel-anime-80s",
   "title": "80s Cel Anime",
   "tagline": "Background painting: soft airbrushed gradients, glowing windows, wet reflections; painted once at load (colour + emissive pair), then only",
-  "description": "Background painting: soft airbrushed gradients, glowing windows, wet reflections; painted once at load (colour + emissive pair), then only. Fits: music videos; game trailers; nostalgia. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "description": "Background painting: soft airbrushed gradients, glowing windows, wet reflections; painted once at load (colour + emissive pair), then only. Fits: music videos; game trailers; nostalgia.",
   "status": "docs-only",
   "source": {
     "repo": "https://github.com/lemomo-ai/lemo-opuscar",
@@ -14,7 +14,6 @@
   "category": "Cartoons",
   "cn": "80 年代赛璐璐动画",
   "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
-  "engines": [],
   "docs": {
     "styleGuide": "docs/style-guide.md",
     "stylePrompt": "docs/style-prompt.md"

@@ -59,12 +59,12 @@ Pack layout, and what each file is for:
 | file | content |
 |---|---|
 | `SKILL.md` | description with the trigger words, the six DNA rules, measured numbers, the token table, the gate, traps |
-| `style.json` | manifest: `name`, `title`, `tagline`, `description`, `canvas`, `status`, `engines`, `docs`, `extra.tokens`, `extra.fonts`, `extra.reference`, `extra.probe` |
+| `style.json` | manifest: `name`, `title`, `tagline`, `description`, `canvas`, `status`, `docs`, `extra.tokens`, `extra.fonts`, `extra.reference`, `extra.probe` |
 | `docs/style-guide.md` | the authority: Look, Colour, Type, Motion, Beat, Signature move, Traps |
 | `docs/style-prompt.md` | the same DNA as standalone copy-paste blocks |
 | `extra.tokens` / `extra.fonts` / `canvas` | the engine-free token layer every renderer reads; no engine folder is written |
 
-Set `"status": "draft"` and leave `"engines": []` until an engine has a working kit. Scripting and storyboarding work at `draft`; `new_episode.sh` refuses to scaffold a draft, which is the intended gate rather than a bug to work around.
+Set `"status": "draft"` until the docs and tokens hold. Scripting and storyboarding work at `draft`; the pack is plan-ready before it is build-ready.
 
 **Done when** every TODO is gone, `docs/style-guide.md` carries all seven sections with rules that hold on two different frames, and `docs/style-prompt.md` block A alone is enough for another agent to produce a still in this style.
 
@@ -76,13 +76,13 @@ Set `"status": "draft"` and leave `"engines": []` until an engine has a working 
 
 `lint` failing on `extra.tokens` means the colours are still placeholders. Fill them in `style.json` from `probe.palette`, one role each, and mirror the same hexes in the guide's Colour table.
 
-`probe` needs a rendered still, so it runs once some renderer produces one — after an engine kit for this pack exists, or against a still the user draws elsewhere:
+`probe` needs a rendered still, so it runs once something produces one — a builder the user already has, or a still drawn elsewhere:
 
 ```sh
 "$MOTION_PY" "$MOTION_LIB/tools/style_ref.py" probe "$MOTION_LIB/style/<name>" <one-still.png>
 ```
 
-A token that `probe` cannot find means that renderer is not drawing with the pack's palette — fix the renderer, not the token. The pack stays engine-free: when an engine kit is written for it, register the engine in `engines` and set `status` away from `draft`.
+A token that `probe` cannot find means whatever drew that still is not using the pack's palette — fix the drawing, not the token. The pack itself stays free of any builder.
 
 ## 5. Hand back
 
@@ -97,5 +97,5 @@ A token that `probe` cannot find means that renderer is not drawing with the pac
 - **Describing the reference's subject instead of its style.** "Explains planets" is content; "flat torn paper, stacked shade, one fact per beat" is style. Rewrite any rule that would die with a topic change.
 - **Trusting the sheet for timing.** Cut rate and shot length are measured; the sheet samples one frame per shot and flattens rhythm. Use `probe.cuts`.
 - **Copying the reference's palette wholesale.** Keep the roles, not every hex; a pack needs a small set with rules, or later episodes drift frame to frame.
-- **Building an engine before the docs hold.** A kit written over an unfinished guide is a one-off, not a style. Docs and tokens first, gate, then let an engine read the pack.
-- **Writing an engine into the pack to make it reusable.** Portability comes from tokens in `style.json` plus rules in the guide; engine folders belong to whoever renders it, not to the extraction.
+- **Building before the docs hold.** A kit written over an unfinished guide is a one-off, not a style. Docs and tokens first, gate, then let a builder read the pack.
+- **Writing build code into the pack to make it reusable.** Portability comes from tokens in `style.json` plus rules in the guide; build code belongs to whoever builds, not to the extraction.

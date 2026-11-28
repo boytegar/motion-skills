@@ -2,7 +2,7 @@
   "name": "microgame",
   "title": "Microgame Frenzy",
   "tagline": "A microgame = a shouted command word + 2.5–4 s + one action + one result",
-  "description": "A microgame = a shouted command word + 2.5–4 s + one action + one result. Fits: game trailers; onboarding; social shorts. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "description": "A microgame = a shouted command word + 2.5–4 s + one action + one result. Fits: game trailers; onboarding; social shorts.",
   "status": "docs-only",
   "source": {
     "repo": "https://github.com/lemomo-ai/lemo-opuscar",
@@ -14,7 +14,6 @@
   "category": "Games",
   "cn": "微游戏快闪",
   "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
-  "engines": [],
   "docs": {
     "styleGuide": "docs/style-guide.md",
     "stylePrompt": "docs/style-prompt.md"

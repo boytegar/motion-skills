@@ -2,7 +2,7 @@
 
 Skills untuk membuat video vertical explainer (~20–45 s) dari sebuah link — repo, halaman produk, atau pengumuman — sampai **plan siap-build**.
 
-Pipeline ini **plan-only dan engine-agnostic**: skill di sini menulis brief, hook, script, storyboard, timing suara, dan kontrak handoff. Skill di sini **tidak** menulis kode scene, tidak memilih renderer, dan tidak merender. Rendering milik engine pilihanmu (`remotion`, `fframes`, `kyfram`) di luar skill set ini.
+Pipeline ini **plan-only**: skill di sini menulis brief, hook, script, storyboard, timing suara, dan kontrak handoff. Skill di sini **tidak** menulis kode scene dan tidak merender. Folder plan diserahkan ke builder pilihanmu lewat `HANDOFF.md`, di luar skill set ini.
 
 - Style: 109 style di `style/` (papercut, sketchbook, blueprint, news-package, …). Lihat [STYLE-GALLERY.md](STYLE-GALLERY.md) untuk contoh visual semua style. Default diambil dari `agents.md` series.
 - Canvas default: `1080x1920`, 30 fps.
@@ -47,14 +47,14 @@ Pipeline ini **plan-only dan engine-agnostic**: skill di sini menulis brief, hoo
         └─────────────────────────────────────────────────────────────────────────────┘
                                     │ HANDOFF.md
                                     ▼
-        ┌─────────────────── ENGINE (skill terpisah) ───────────────────┐
-        │  kyfram / remotion / fframes                                  │
-        │  scaffold → scene code (.lgv / tsx / rs) → mix → render → mp4 │
+        ┌───────────── BUILDER (di luar skill set ini) ──────────────────┐
+        │  engine, tool, atau orang yang build folder ini                │
+        │  scene code → mix → render → mp4                              │
         └───────────────────────────────────────────────────────────────┘
                                     │ masih + stills
                                     ▼
                        ┌────────────────────────────┐
-                       │ 7. motion-qa               │  engine-side (stills)
+                       │ 7. motion-qa               │  builder-side (stills)
                        │   frame vs storyboard      │
                        └────────────────────────────┘
                                     │ video sudah posting
@@ -79,10 +79,10 @@ File adalah state. Tiap stage baca file stage sebelumnya dan tulis file miliknya
 | 1 | `motion-strategy` | Owner `SERIES.md` (step 0). Pilih topik + satu format familiar (kontes, sidang, pitch show…), funnel keyword komentar, caption, studi kompetitor, autopsy pasca-posting. Tulis BRIEF + scaffold folder episode. | link/sumber, `SERIES.md` | `SERIES.md`, `research/facts.md` (BRIEF), `video/episode.json` identitas | plan only |
 | 2 | `motion-hook` | Tulis 3 lapis hook (SAY / WRITE / SHOW / ALIGN), 5 varian diskor 6 pertanyaan, judul cover frame-0, motion keluar dari hook. | BRIEF | HOOK block di `video/STORYBOARD.md` | plan only |
 | 3 | `motion-script` | Riset fakta bersumber, script 75–95 kata di 10-beat spine, track banner (10–18 banner), staging table (set/prop/UI/mascot/gag per banner), humour pass. | BRIEF, HOOK | `narration/script.json`, `facts.md`, staging table | plan only |
-| 4 | `motion-storyboard` | Camera / Cut table per scene (bahasa efek, bukan sintaks engine), scene block per frame per kata stressed, SFX plan, proof beat, callback. | `script.json`, staging table | tabel + scene blocks + SFX di `STORYBOARD.md` | plan only |
+| 4 | `motion-storyboard` | Camera / Cut table per scene (bahasa efek, bukan sintaks builder), scene block per frame per kata stressed, SFX plan, proof beat, callback. | `script.json`, staging table | tabel + scene blocks + SFX di `STORYBOARD.md` | plan only |
 | 5 | `motion-voice` | Voiceover + timing. 3 jalur: Qwen3-TTS lokal, rekaman/ASR sendiri, placeholder. Hasil: 1 WAV per baris, `timing_narrator.js`, `captions.json`, `src/plan.json`. | `script.json`, `voice/voice.json` | `narration/voice/final_narrator/*.wav`, `timing_narrator.js`, `public/vo/captions.json`, `src/plan.json` | plan + audio |
-| 6 | `motion-build` | Tutup pipeline. Finalkan `episode.json` (scenes/banners/hook/cuts/bed), cue list SFX, `HANDOFF.md` berisi kontrak untuk engine. **Stop — tidak render.** | `STORYBOARD.md`, `script.json`, timing, WAV | `episode.json`, `plan.json`, `captions.json`, `voiceover.wav`, `tools/cues.json`, `HANDOFF.md` | plan + audio |
-| 7 | `motion-qa` | **Engine-side.** Bandingkan still hasil render vs storyboard, frame scene, caption, checklist style DNA, tulis delivery summary. Tidak pernah plan/scaffold/pilih renderer. | stills + `plan.json`, `captions.json`, `cues.json`, `HANDOFF.md` | daftar fix, delivery summary | plan + audio |
+| 6 | `motion-build` | Tutup pipeline. Finalkan `episode.json` (scenes/banners/hook/cuts/bed), cue list SFX, `HANDOFF.md` berisi kontrak untuk builder. **Stop — tidak render.** | `STORYBOARD.md`, `script.json`, timing, WAV | `episode.json`, `plan.json`, `captions.json`, `voiceover.wav`, `tools/cues.json`, `HANDOFF.md` | plan + audio |
+| 7 | `motion-qa` | **Builder-side.** Bandingkan still hasil render vs storyboard, frame scene, caption, checklist style DNA, tulis delivery summary. Tidak pernah plan/scaffold/pilih renderer. | stills + `plan.json`, `captions.json`, `cues.json`, `HANDOFF.md` | daftar fix, delivery summary | plan + audio |
 | 8 | `motion-strategy` (autopsy) | Masukkan angka platform 2 h/24 h ke `research/analytics/`, diagnosis dari hook → topik → format → audience → timing, update `## Evidence` di `SERIES.md`. | insights platform | `analytics/YYYY-MM-DD-autopsy.md` | plan only |
 
 ### Router & style
@@ -90,10 +90,9 @@ File adalah state. Tiap stage baca file stage sebelumnya dan tulis file miliknya
 | Skill | Fungsi |
 |-------|--------|
 | `motion-explainer` | Entry point. Tentukan run mode (**full reel / script only / storyboard-only / style prompt / fix one scene**), intake brief, lalu serahkan ke stage 1. Kasih style prompt portable untuk tool lain. |
-| `style/<nama>/SKILL.md` | Satu skill per style (papercut, sketchbook, blueprint, …). Isi: Style DNA, palet, font, gerak, caption, audio. Docs-only style (`"status": "docs-only"`) dipakai untuk plan saja, belum ada engine. |
+| `style/<nama>/SKILL.md` | Satu skill per style (papercut, sketchbook, blueprint, …). Isi: Style DNA, palet, font, gerak, caption, audio, plus daftar komponen yang bisa diminta plan. |
 | `motion-style-extract` | Video acuan → style pack baru di `style/<nama>/`. Ukur klip (`core/tools/style_ref.py ingest`: canvas, cut rate, gerak, palet, zona), baca sheet, tulis `SKILL.md` + `style-guide.md` + `style-prompt.md` + token, lalu gate `lint` / `probe`. |
-| `kyfram` (engine) | Skill engine, bukan planning. DSL `.lgv`: `scene` / `shape` / `text` / `group` / `camera`, easing, retiming = edit angka. Wajib dipanggil kalau engine = `kyfram`. |
-| [STYLE-GALLERY.md](STYLE-GALLERY.md) | Contoh visual tiap style (`sample.png` / `poster.jpg`), dikelompokkan per kategori, plus status renderable vs docs-only. Pilih style dari sini sebelum masuk stage 1. |
+| [STYLE-GALLERY.md](STYLE-GALLERY.md) | Contoh visual tiap style (`sample.png` / `poster.jpg`), dikelompokkan per kategori. Pilih style dari sini sebelum masuk stage 1. |
 
 ---
 
@@ -101,7 +100,7 @@ File adalah state. Tiap stage baca file stage sebelumnya dan tulis file miliknya
 
 | Mode | Stage yang jalan | Berhenti di |
 |------|------------------|-------------|
-| **Full reel** | 1→8 | mp4 (build dilakukan engine) |
+| **Full reel** | 1→8 | mp4 (build dilakukan builder pilihanmu) |
 | **Script only** | 1→3 | `script.json` + staging table |
 | **Storyboard only** | `motion-storyboard` dari script lama | `STORYBOARD.md` |
 | **Style prompt** | bagikan blok dari `style/<s>/docs/style-prompt.md` | — |
@@ -137,7 +136,7 @@ File adalah state. Tiap stage baca file stage sebelumnya dan tulis file miliknya
 
 ```
 <series>/
-  agents.md                 engine + style default (dibuat sekali, WAJIB dibaca dulu)
+  agents.md                 style default (dibuat sekali, WAJIB dibaca dulu)
   design.md                 style DNA, canvas, palette, audience
   SERIES.md                 audience, bahasa, voice, palette, mascot, keyword log
   voice/voice.json          setting voice (copy dari core/voice/voice.example.json)
@@ -153,10 +152,10 @@ File adalah state. Tiap stage baca file stage sebelumnya dan tulis file miliknya
       src/plan.json         durasi scene + kata cue (dibuat build_vo.py)
       public/vo/            voiceover.wav + captions.json
       tools/cues.json       semua sound cue + waktu
-      HANDOFF.md            kontrak untuk engine
+      HANDOFF.md            kontrak untuk builder
 ```
 
-Engine (contoh kyfram) menambah: `video/scenes/*.lgv`, `video/media/fonts/`, `out/*.mp4`.
+Builder pilihanmu menambah artefak build-nya sendiri (`video/scenes/*`, `out/*.mp4`, dst).
 
 ---
 
@@ -193,15 +192,15 @@ python3 $MOTION_LIB/core/tools/timing_md.py  # section Timing di STORYBOARD.md
 python3 $MOTION_LIB/core/tools/cues.py       # tools/cues.json
 ```
 
-Lalu serahkan `HANDOFF.md` ke engine: `@kyfram` / `@remotion` / `@fframes`. Build, render, QA stills → `motion-qa`.
+Lalu serahkan `HANDOFF.md` ke builder yang kamu pakai. Setelah ada still hasil render → `motion-qa`.
 
 ---
 
 ## 7. Aturan lintas stage
 
-- **`agents.md` menang.** Kalau ada, engine + style tidak ditanyakan lagi.
+- **`agents.md` menang.** Kalau ada, style tidak ditanyakan lagi.
 - **`SERIES.md` hanya ditulis `motion-strategy` step 0.** Stage lain cuma baca; autopsy hanya menambah `## Evidence`.
-- **Tidak ada nama engine di plan.** Engine hanya muncul di `HANDOFF.md`. Tidak ada key `"engine"` di `episode.json`.
+- **Tidak ada nama builder di plan.** Builder hanya muncul di `HANDOFF.md`. Tidak ada key `"engine"` di `episode.json`.
 - **Tidak ada kode scene / render di planning.** Render hanya kalau diminta.
 - **Reuse sebelum menulis:** komponen kit, props set, scene template, SFX/bed berdasarkan nama dari `core/audio/CATALOG.md`.
 - **Trap & batas:** 22–30 s, 75–95 kata, minimal satu limitasi jujur, stack fitur tepat 3, semua angka harus dari `facts.md`, maksimal satu page-turn/tear per video.
@@ -220,7 +219,7 @@ Lalu serahkan `HANDOFF.md` ke engine: `@kyfram` / `@remotion` / `@fframes`. Buil
 | Venv voice: "need Python 3.10–3.12" | install `uv` atau `python@3.12`, ulang komponen `tts` |
 | Scene < 1.2 s | merge ke scene tetangga, rerun `build_vo.py` |
 | Air SFX terlalu rapat | `cues.py` kasih catatan; target ≤ 1 per 2.5 s |
-| Butuh renderer | itu skill engine (`kyfram`/`remotion`/`fframes`), bukan di sini |
+| Butuh renderer | itu builder/renderer pilihanmu, bukan di sini |
 
 ---
 
@@ -230,5 +229,4 @@ Lalu serahkan `HANDOFF.md` ke engine: `@kyfram` / `@remotion` / `@fframes`. Buil
 - Library core & tools: `core/README.md`
 - Voice: `core/voice/README.md`
 - Init series: `INIT.md` · Harness: `harnesses.sh`
-- Engine kyfram: `core/kyfram/README.md` + `.agents/skills/kyfram/SKILL.md`
 - Style: `style/<nama>/docs/style-guide.md` (Style DNA = section 2), `docs/style-prompt.md`

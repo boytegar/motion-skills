@@ -2,7 +2,7 @@
   "name": "caption-news",
   "title": "Caption News",
   "tagline": "Sound-off first",
-  "description": "Sound-off first. Fits: social news; report explainers; data shorts. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "description": "Sound-off first. Fits: social news; report explainers; data shorts.",
   "status": "docs-only",
   "source": {
     "repo": "https://github.com/lemomo-ai/lemo-opuscar",
@@ -14,7 +14,6 @@
   "category": "Edit & Documentary",
   "cn": "字幕新闻",
   "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
-  "engines": [],
   "docs": {
     "styleGuide": "docs/style-guide.md",
     "stylePrompt": "docs/style-prompt.md"

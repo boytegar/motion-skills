@@ -3,6 +3,7 @@
   "title": "Bang Motion",
   "tagline": "Cinematic promo and explainer motion graphics: glowing horizon backgrounds, living grain, continuous camera drift, and anti-PPT pacing.",
   "description": "High-end motion design style ported from bang-motion. Multi-layer glowing horizon backgrounds, soft film grain, glassmorphic UI cards, kinetic editorial typography, and motivated 3D push-through transitions.",
+  "status": "docs-only",
   "canvas": {
     "width": 1080,
     "height": 1920,
@@ -17,11 +18,6 @@
     ],
     "keepClearBottom": 0.8
   },
-  "engines": [
-    "remotion",
-    "fframes",
-    "kyfram"
-  ],
   "audio": {
     "sfx": "../../core/audio/sfx",
     "beds": "../../core/audio/beds"
@@ -29,10 +25,5 @@
   "docs": {
     "styleGuide": "docs/style-guide.md",
     "stylePrompt": "docs/style-prompt.md"
-  },
-  "enginesDoc": {
-    "remotion": "remotion/README.md",
-    "fframes": "fframes/README.md",
-    "kyfram": "kyfram/PRELUDE.lgv"
   }
 }

@@ -5,16 +5,12 @@ description: Build animated line-art components in SVG and TypeScript — thin i
 
 # Line-art animation
 
-**In the motion-explainer library.** Everything below is the standalone line-art skill for building one SVG scene component. Inside this library the same look also ships as three engines, wired into the normal reel pipeline:
+**In the motion-explainer library.** Everything below is the standalone line-art skill for building one SVG scene component. Inside this library the same look also ships as a style pack the planning pipeline reads:
 
-- `style.json`: the manifest (`line-art-animation`, canvas 1080x1920 at 30 fps, engines `remotion`, `fframes` and `kyfram`)
-- `remotion/kit/`: `ParchmentStage`, `LineArtWalker`, `LineArtHouse`, `LineArtBanner`, `LineArtCaptions`, plus the original dependency-free modules in `kit/lib/` (`ink.ts`, `gait.ts`, `motion.ts`, `daynight.ts`)
-- `remotion/template/`, `remotion/sync_kit.sh`, `remotion/CATALOG.md`, `remotion/AGENT_BRIEF.md`
-- `fframes/`: `Cargo.toml`, `src/` (lib, tokens, kit, look, video, main), `tools/ff.sh`
-- `kyfram/PRELUDE.lgv`: palette tokens and the beat furniture (`drawBackdrop`, `drawBanner`, `drawCaptions`, `drawPanel`, `drawDot`, `drawFrame`) for `.lgv` scenes
+- `style.json`: the manifest (`line-art-animation`, canvas 1080x1920 at 30 fps)
 - `docs/style-guide.md`, `docs/style-prompt.md`
 
-Scaffold a reel with `./core/new_episode.sh <series-dir> 01-slug Episode out-name --style line-art-animation --engine remotion` (or `--engine fframes|kyfram`). The pipeline skills take the style name as `$MOTION_STYLE`, so nothing else changes.
+The pipeline skills take the style name as `$MOTION_STYLE`, so nothing else changes.
 
 Animated illustration components: everything is drawn with one thin pen on paper,
 built live in SVG from TypeScript, so it stays crisp at any size, responds to the

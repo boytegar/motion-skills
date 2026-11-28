@@ -2,7 +2,7 @@
   "name": "teardown",
   "title": "Exploded Teardown",
   "tagline": "The object is real and exact",
-  "description": "The object is real and exact. Fits: hardware launches; product pages; spec explainers. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "description": "The object is real and exact. Fits: hardware launches; product pages; spec explainers.",
   "status": "docs-only",
   "source": {
     "repo": "https://github.com/lemomo-ai/lemo-opuscar",
@@ -14,7 +14,6 @@
   "category": "Line Diagrams",
   "cn": "产品拆解",
   "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
-  "engines": [],
   "docs": {
     "styleGuide": "docs/style-guide.md",
     "stylePrompt": "docs/style-prompt.md"

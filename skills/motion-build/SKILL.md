@@ -90,11 +90,11 @@ Bed preset, cue list path, the SFX and bed catalogs.
 - The storyboard's camera and cut per scene are the plan, not a suggestion.
 ```
 
-Name exactly one engine, the one the user says they use — for example `@remotion`, `@fframes` or `@kyfram`. If they have none, write `Ask for: an engine skill` and say so in the reply. Do not compare engines, do not suggest one, do not scaffold for one.
+Name exactly one build target, the one the user says they use. If they have none, write `Ask for: a build target` and say so in the reply. Do not compare builders, do not suggest one, do not scaffold for one.
 
 ## 5. Stop
 
-Report the folder, the scene count, the total duration, the cue count, and the engine named in `HANDOFF.md`. Do not scaffold, do not preview, do not render.
+Report the folder, the scene count, the total duration, the cue count, and the build target named in `HANDOFF.md`. Do not scaffold, do not preview, do not render.
 
 ## Gate
 

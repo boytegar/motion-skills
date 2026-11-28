@@ -2,7 +2,7 @@
   "name": "game-show",
   "title": "Rhythm Game Show",
   "tagline": "Everything is on the grid",
-  "description": "Everything is on the grid. Fits: tech timelines; year in review; variety shows. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "description": "Everything is on the grid. Fits: tech timelines; year in review; variety shows.",
   "status": "docs-only",
   "source": {
     "repo": "https://github.com/lemomo-ai/lemo-opuscar",
@@ -14,7 +14,6 @@
   "category": "Games",
   "cn": "节奏综艺",
   "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
-  "engines": [],
   "docs": {
     "styleGuide": "docs/style-guide.md",
     "stylePrompt": "docs/style-prompt.md"

@@ -2,7 +2,7 @@
   "name": "scratch-film",
   "title": "Scratch Film",
   "tagline": "Black is the ground, light is a cut",
-  "description": "Black is the ground, light is a cut. Fits: things that happen in the dark; one mark to a whole system; small adventures told in light and shadow. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "description": "Black is the ground, light is a cut. Fits: things that happen in the dark; one mark to a whole system; small adventures told in light and shadow.",
   "status": "docs-only",
   "source": {
     "repo": "https://github.com/lemomo-ai/lemo-opuscar",
@@ -14,7 +14,6 @@
   "category": "Film & Tape",
   "cn": "胶片直刻",
   "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
-  "engines": [],
   "docs": {
     "styleGuide": "docs/style-guide.md",
     "stylePrompt": "docs/style-prompt.md"

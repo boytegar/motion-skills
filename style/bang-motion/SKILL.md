@@ -14,15 +14,12 @@ metadata:
 
 ---
 
-**In the motion-explainer library.** The body below is the standalone Bang Motion director's manual for a single self-contained `index.html` (HTML + CSS + GSAP). Inside this library the same look also ships as three engines, wired into the normal pipeline, so a reel can pick it up like any other style:
+**In the motion-explainer library.** The body below is the standalone Bang Motion director's manual for a single self-contained `index.html` (HTML + CSS + GSAP). Inside this library the same look also ships as a style pack the planning pipeline reads like any other style:
 
-- `style.json`: the manifest (`bang-motion`, canvas 1080x1920 at 30 fps, engines `remotion`, `fframes` and `kyfram`)
-- `remotion/`: `kit/` (`GlowHorizon`, `GrainyMeshBlob`, `GlassCard`, `KineticTitle`, `StatusPill`, `BangBanner`, `GlassCaptions`, `LivingGrain`), `template/`, `sync_kit.sh`, `CATALOG.md`, `AGENT_BRIEF.md`
-- `fframes/`: `Cargo.toml`, `src/` (lib, tokens, kit, look, video, main), `tools/ff.sh`
-- `kyfram/PRELUDE.lgv`: palette tokens and the beat furniture (`drawBackdrop`, `drawBanner`, `drawCaptions`, `drawPanel`, `drawDot`, `drawFrame`) for `.lgv` scenes
+- `style.json`: the manifest (`bang-motion`, canvas 1080x1920 at 30 fps)
 - `docs/style-guide.md` and `docs/style-prompt.md`: the compressed style sheet and the portable prompt
 
-Scaffold an episode with `./core/new_episode.sh <series-dir> 01-slug Episode out-name --style bang-motion --engine remotion` (or `--engine fframes|kyfram`). The pipeline skills take the style name as `$MOTION_STYLE`, so nothing else in the workflow changes.
+The pipeline skills take the style name as `$MOTION_STYLE`, so nothing else in the workflow changes.
 
 The style DNA, in one breath: one continuous world, a background of at least two layers (deep base plus a glowing horizon) that always moves, grain that offsets from `t` rather than random noise, a breathing camera instead of a static frame, motivated transitions rather than a single repeated wipe, and one statement per shot instead of a slide's worth of information.
 

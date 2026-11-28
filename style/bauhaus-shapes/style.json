@@ -2,7 +2,7 @@
   "name": "bauhaus-shapes",
   "title": "Bauhaus Shapes",
   "tagline": "Shapes are amounts",
-  "description": "Shapes are amounts. Fits: finance and economics explainers; mechanisms and principles; titles and chapter cards. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "description": "Shapes are amounts. Fits: finance and economics explainers; mechanisms and principles; titles and chapter cards.",
   "status": "docs-only",
   "source": {
     "repo": "https://github.com/lemomo-ai/lemo-opuscar",
@@ -14,7 +14,6 @@
   "category": "Graphic & Type",
   "cn": "包豪斯几何",
   "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
-  "engines": [],
   "docs": {
     "styleGuide": "docs/style-guide.md",
     "stylePrompt": "docs/style-prompt.md"

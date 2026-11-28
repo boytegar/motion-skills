@@ -1,5 +1,24 @@
 # Changelog
 
+## 2.0.0 — plan-only
+# Plan-only cut
+
+The library now ships planning only: no scene code, no renderer, no build tooling.
+
+- Removed every style's build kit: `style/<name>/{remotion,fframes,kyfram}/` for all ten styles that had one (about 5.6 GB).
+- Removed `core/kyfram/` and the kyfram tools (`render_kyfram.py`, `kyfram_header.py`, `kyfram_stubs.py`, `kyfram_qa.py`).
+- Removed the render and mix tools (`render.py`, `render.sh`, `qa.sh`, `stubs.py`, `mix.py`, `capture.mjs`, `selftest.sh`, `harvest.py`, `audio/render.mjs`).
+- `style.json` loses the `engines` and `enginesDoc` keys; every pack is `"status": "docs-only"` and plan-ready.
+- `env.sh` loses `MOTION_ENGINE`, `CARGO`, `motion_renderable*`, `motion_engine_*` and `motion_find_chrome`.
+- `new_episode.sh` scaffolds the plan folder only; `init.sh` asks for a style only.
+- `install.sh` loses the Remotion-skills, self-test-render and Chrome/kyfram checks.
+- `style_ref.py lint` no longer requires `engines`; `core/mold` follows.
+- The skills name no renderer: `HANDOFF.md` records whatever the user already builds with, and never picks one for them.
+
+---
+
+# Changelog
+
 ## Unreleased
 
 Kyfram engine (third engine, next to `remotion` and `fframes`).

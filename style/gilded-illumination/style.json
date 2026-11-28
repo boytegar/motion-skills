@@ -2,7 +2,7 @@
   "name": "gilded-illumination",
   "title": "Gilded Illumination",
   "tagline": "Flat pigment, firm line",
-  "description": "Flat pigment, firm line. Fits: fables and picture-book stories; holiday and festival shorts; brand and origin stories. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "description": "Flat pigment, firm line. Fits: fables and picture-book stories; holiday and festival shorts; brand and origin stories.",
   "status": "docs-only",
   "source": {
     "repo": "https://github.com/lemomo-ai/lemo-opuscar",
@@ -14,7 +14,6 @@
   "category": "Traditional Crafts",
   "cn": "金箔彩绘",
   "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
-  "engines": [],
   "docs": {
     "styleGuide": "docs/style-guide.md",
     "stylePrompt": "docs/style-prompt.md"

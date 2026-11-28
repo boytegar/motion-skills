@@ -3,6 +3,7 @@
   "title": "Sketchbook",
   "tagline": "Graphite pencil and vivid single accent on warm dot-grid sketchbook paper, hand lettering on 2s.",
   "description": "Notebook concept explainer. Hand-drawn wobbly graphite lines, quick scribble fills, dot-grid paper and smudges with continuous camera panning.",
+  "status": "docs-only",
   "canvas": {
     "width": 1080,
     "height": 1920,
@@ -17,11 +18,6 @@
     ],
     "keepClearBottom": 0.8
   },
-  "engines": [
-    "remotion",
-    "fframes",
-    "kyfram"
-  ],
   "audio": {
     "sfx": "../../core/audio/sfx",
     "beds": "../../core/audio/beds"
@@ -29,10 +25,5 @@
   "docs": {
     "styleGuide": "docs/style-guide.md",
     "stylePrompt": "docs/style-prompt.md"
-  },
-  "enginesDoc": {
-    "remotion": "remotion/README.md",
-    "fframes": "fframes/README.md",
-    "kyfram": "kyfram/PRELUDE.lgv"
   }
 }

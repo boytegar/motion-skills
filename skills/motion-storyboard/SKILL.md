@@ -14,9 +14,9 @@ Write the camera and cut vocabulary, not engine syntax: every row names an effec
 - Install: **plan only** is enough. With a library, read `style/$MOTION_STYLE/docs/style-guide.md` sections 4-6 (canvas, palette, fonts) and `$MOTION_LIB/core/audio/CATALOG.md` (SFX and bed names).
 - Resolve `$MOTION_LIB` from the environment, else the `MOTION_LIB=` line in `~/.config/motion-explainer/config.env`, else ask once.
 - Needs `narration/script.json` and `video/STORYBOARD.md` with the HOOK block and the staging table (banner, set, prop, UI moment, mascot, gag per row). Missing: run `motion-hook` and `motion-script`.
-- Backdrop sheet for choosing sets: the style's own, `style/$MOTION_STYLE/` wherever its kit keeps `bg/backdrops/_sheet.jpg` (the papercut style has it under `remotion/`). Open only what the step needs.
+- Backdrop sheet for choosing sets: the style's own, when its pack ships one under `style/$MOTION_STYLE/`; otherwise the set vocabulary in `docs/style-guide.md`. Open only what the step needs.
 
-Never inspect a renderer's source or catalogs here. The storyboard names an effect; how that effect is drawn is the engine's decision.
+Never inspect a builder's source or components here. The storyboard names an effect; how that effect is drawn is the builder's decision.
 
 ## 1. Global rules
 

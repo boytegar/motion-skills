@@ -12,7 +12,7 @@ description: Check a built video against the plan and the style DNA. Engine-side
 - Install: **plan + audio files**. Stills come from the render project; the contact sheets need Python with numpy and Pillow (`$MOTION_PY`). Missing pieces: `./install.sh --doctor`, then `motion-setup`.
 - A built project plus its plan folder: `video/src/plan.json`, `video/public/vo/captions.json`, `video/tools/cues.json`, `video/STORYBOARD.md`, `video/HANDOFF.md`.
 - Library: `$MOTION_LIB`, else the `MOTION_LIB=` line in `~/.config/motion-explainer/config.env`, else ask once.
-- Read first: the Style DNA in `$MOTION_LIB/style/$MOTION_STYLE/docs/style-guide.md` section 2, and the backdrop sheet if the style ships one (`style/$MOTION_STYLE/`, wherever its kit keeps `bg/backdrops/_sheet.jpg`; the papercut style has it under `remotion/`). Each image costs about 0.7-1.5k tokens, so open only what the step needs.
+- Read first: the Style DNA in `$MOTION_LIB/style/$MOTION_STYLE/docs/style-guide.md` section 2, and the backdrop sheet if the style pack ships one under `style/$MOTION_STYLE/`. Each image costs about 0.7-1.5k tokens, so open only what the step needs.
 - For density, `$MOTION_LIB/style/$MOTION_STYLE/docs/frame-breakdown.md` ("Pacing stats" at the end): scenes average 2.8 s, 2-4 discrete visual events per scene, one every 0.4-0.8 s on a stressed word, a new caption page about every 0.6 s. Copy the density, not the content.
 
 The engine named in `HANDOFF.md` owns the still command, the preview, and any fix inside a scene file. Ask it for stills; this skill reads them.

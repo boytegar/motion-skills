@@ -2,7 +2,7 @@
   "name": "lowpoly-island",
   "title": "Low-poly Isometric Island",
   "tagline": "A miniature world built from flat-shaded low-poly geometry (hexagonal tile columns, box buildings with prism roofs, cone and icosahedron",
-  "description": "A miniature world built from flat-shaded low-poly geometry (hexagonal tile columns, box buildings with prism roofs, cone and icosahedron. Fits: game trailers; world building; calm content. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "description": "A miniature world built from flat-shaded low-poly geometry (hexagonal tile columns, box buildings with prism roofs, cone and icosahedron. Fits: game trailers; world building; calm content.",
   "status": "docs-only",
   "source": {
     "repo": "https://github.com/lemomo-ai/lemo-opuscar",
@@ -14,7 +14,6 @@
   "category": "3D & Miniature",
   "cn": "低多边形等距",
   "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
-  "engines": [],
   "docs": {
     "styleGuide": "docs/style-guide.md",
     "stylePrompt": "docs/style-prompt.md"

@@ -5,7 +5,7 @@ description: Render a reel in the Pixel Art style: every picture drawn at a low 
 
 Low-res pixel art drawn at native raster grids and upscaled nearest-neighbour to 1080x1920.
 
-This is one style of the motion-explainer library. It ships the same three engines every style ships: a Remotion engine, an fframes engine, and a kyfram prelude (`kyfram/PRELUDE.lgv`), with a `style.json` manifest tying them together. The pipeline skills (`motion-explainer`, `motion-script`, `motion-storyboard`, `motion-build`, `motion-qa`) all take the style name as `$MOTION_STYLE`, so nothing else in the workflow changes when you pick this one.
+This is one style of the motion-explainer library. It ships the docs and tokens: `docs/style-guide.md` for the visual authority, `docs/style-prompt.md` for portable prompts, and a `style.json` manifest with the canvas, palette, fonts and audio roots. The pipeline skills (`motion-explainer`, `motion-hook`, `motion-script`, `motion-storyboard`, `motion-build`, `motion-qa`) all take the style name as `$MOTION_STYLE`, so nothing else in the workflow changes when you pick this one.
 
 ## When to use it
 
@@ -24,7 +24,7 @@ Palette: 16-colour PICO-8-style set: black `#000000`, dark blue `#1D2B53`, dark 
 
 ## Kit components
 
-Remotion, importable from `../lib/<file>` (the kit is synced into each project's `src/lib/`):
+Components the style calls for, named here so a plan can request them by name:
 
 | component | what it is |
 |---|---|
@@ -36,25 +36,6 @@ Remotion, importable from `../lib/<file>` (the kit is synced into each project's
 ## Nothing boils in a vacuum
 
 docs/style-guide.md carries the resolution table and the dithering recipes. Pick the internal resolution before drawing a single sprite.
-
-## Engines
-
-| engine | path | entry |
-|---|---|---|
-| remotion | `remotion/` | `template/`, `kit/`, `sync_kit.sh`, `CATALOG.md`, `AGENT_BRIEF.md` |
-| fframes | `fframes/` | `Cargo.toml`, `src/` (lib, tokens, kit, look, video, main), `tools/ff.sh` |
-
-Registered engines: `remotion`, `fframes`.
-
-## Scaffold an episode
-
-```sh
-# from the library root, with MOTION_LIB resolved
-./core/new_episode.sh <series-dir> 01-slug Episode out-name --style pixel --engine remotion
-./core/new_episode.sh <series-dir> 01-slug Episode out-name --style pixel --engine fframes
-```
-
-Or name the style in a series `SERIES.md` / `episode.json` as `"style": "pixel"` and let `motion_style_of` pick it up.
 
 ## QA for this style
 
@@ -70,7 +51,5 @@ Check these on every contact sheet before calling a scene done; the rest of the 
 
 - `docs/style-guide.md`
 - `docs/style-prompt.md`
-- `remotion/CATALOG.md`
-- `remotion/AGENT_BRIEF.md`
 - `style.json`: the manifest (canvas, engine list, doc paths, audio roots)
 - `sample.png`: one representative frame

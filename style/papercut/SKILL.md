@@ -1,11 +1,11 @@
 ---
 name: papercut
-description: Render a reel in the Papercut style: layered construction paper brought to life with paper grain, torn edges, stacked shade strips, drop shadows, rigid cut-out animation, a slow camera push, taped headline banners and word-by-word torn-tag captions. Use when the user says cut paper, papercraft, paper cutout, paper collage, construction paper, or asks for the default handcrafted explainer look.
+description: Plan a reel in the Papercut style: layered construction paper brought to life with paper grain, torn edges, stacked shade strips, drop shadows, rigid cut-out animation, a slow camera push, taped headline banners and word-by-word torn-tag captions. Use when the user says cut paper, papercraft, paper cutout, paper collage, construction paper, or asks for the default handcrafted explainer look.
 ---
 
 Layered construction paper: grain, torn edges, stacked shade strips, a slow camera push and stop-motion paper boil.
 
-This is one style of the motion-explainer library. It ships the same three engines every style ships: a Remotion engine, an fframes engine, and a kyfram prelude (`kyfram/PRELUDE.lgv`), with a `style.json` manifest tying them together. The pipeline skills (`motion-explainer`, `motion-script`, `motion-storyboard`, `motion-build`, `motion-qa`) all take the style name as `$MOTION_STYLE`, so nothing else in the workflow changes when you pick this one.
+This is one style of the motion-explainer library. It ships the docs and tokens: `docs/style-guide.md` for the visual authority, `docs/style-prompt.md` for portable prompts, and a `style.json` manifest with the canvas, palette, fonts and audio roots. The pipeline skills (`motion-explainer`, `motion-hook`, `motion-script`, `motion-storyboard`, `motion-build`, `motion-qa`) all take the style name as `$MOTION_STYLE`, so nothing else in the workflow changes when you pick this one.
 
 ## When to use it
 
@@ -23,7 +23,7 @@ Palette: cream `#DACEC0`, ink `#1C1B17`, tape `#C3B284`, hero `#D67354`, caption
 
 ## Kit components
 
-Remotion, importable from `../lib/<file>` (the kit is synced into each project's `src/lib/`):
+Components the style calls for, named here so a plan can request them by name:
 
 | component | what it is |
 |---|---|
@@ -43,30 +43,6 @@ Remotion, importable from `../lib/<file>` (the kit is synced into each project's
 
 docs/style-guide.md section 2 is the Style DNA. docs/frame-breakdown.md is a worked ~28 s example; copy its event density, not its content.
 
-## Engines
-
-| engine | path | entry |
-|---|---|---|
-| remotion | `remotion/` | `template/`, `kit/`, `sync_kit.sh`, `CATALOG.md`, `AGENT_BRIEF.md` |
-| fframes | `fframes/` | `Cargo.toml`, `src/` (lib, tokens, kit, look, video, main), `tools/ff.sh` |
-| kyfram | `kyfram/PRELUDE.lgv` | the tokens and furniture an `.lgv` scene may call (`drawRoom`, `drawHero`, `drawBanner`, `drawCaptions`); engine helpers come from `core/kyfram/lgv/core.lgv` |
-
-Registered engines: `remotion`, `fframes`, `kyfram`. Kyfram draws from the same primitives, so the
-Style DNA holds, minus the paper grain, torn edge and boil overlays that only the Remotion kit ships;
-there the paper read comes from stacked pieces, shadow tint and the token palette. Load the `kyfram`
-skill before writing a scene.
-
-## Scaffold an episode
-
-```sh
-# from the library root, with MOTION_LIB resolved
-./core/new_episode.sh <series-dir> 01-slug Episode out-name --style papercut --engine remotion
-./core/new_episode.sh <series-dir> 01-slug Episode out-name --style papercut --engine fframes
-./core/new_episode.sh <series-dir> 01-slug Episode out-name --style papercut --engine kyfram
-```
-
-Or name the style in a series `SERIES.md` / `episode.json` as `"style": "papercut"` and let `motion_style_of` pick it up.
-
 ## QA for this style
 
 Check these on every contact sheet before calling a scene done; the rest of the checklist in `motion-qa` still applies.
@@ -84,9 +60,5 @@ Check these on every contact sheet before calling a scene done; the rest of the 
 - `docs/motion-principles.md`
 - `docs/asset-prompts.md`
 - `docs/frame-breakdown.md`
-- `remotion/CATALOG.md`
-- `remotion/AGENT_BRIEF.md`
-- `remotion/RECIPES.md`
-- `kyfram/PRELUDE.lgv`, plus `core/kyfram/README.md` for the engine wiring
-- `style.json`: the manifest (canvas, engine list, doc paths, audio roots)
+- `style.json`: the manifest (canvas, doc paths, audio roots)
 - `sample.png`: one representative frame

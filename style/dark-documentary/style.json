@@ -2,7 +2,7 @@
   "name": "dark-documentary",
   "title": "Radar Sweep Documentary",
   "tagline": "Existence is scanned",
-  "description": "Existence is scanned. Fits: history of science and engineering; archaeology, sites and reconstructions; astronomy, deep space and survey. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "description": "Existence is scanned. Fits: history of science and engineering; archaeology, sites and reconstructions; astronomy, deep space and survey.",
   "status": "docs-only",
   "source": {
     "repo": "https://github.com/lemomo-ai/lemo-opuscar",
@@ -14,7 +14,6 @@
   "category": "Instruments & Evidence",
   "cn": "雷达扫描纪录片",
   "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
-  "engines": [],
   "docs": {
     "styleGuide": "docs/style-guide.md",
     "stylePrompt": "docs/style-prompt.md"

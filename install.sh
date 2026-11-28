@@ -7,15 +7,16 @@
 #   ./install.sh --uninstall             remove the skill links this script made
 #
 # Modes
-#   minimal   the skills only. Strategy, hook, script, storyboard and style prompts work; nothing renders.
-#   standard  minimal + everything needed to render silent reels: dependency check, Remotion skills,
-#             Python tools (numpy + Pillow + soundfile), a self-test render.
+#   minimal   the skills and the style packs. Strategy, hook, script, storyboard, style prompts
+#             and the handoff contract work; nothing is built or rendered.
+#   standard  minimal + the dependency check and the Python tools the plan stages use
+#             (numpy + Pillow + soundfile): placeholder voice, captions, scene plan, cue list.
 #   full      standard + local voiceover: Qwen3-TTS venv (~1.5 GB), model download (2.3-4.2 GB), word-timing ASR.
 #   custom    choose each component.
 #
 # Options
 #   --mode M              minimal | standard | full | custom
-#   --components a,b,c    with --mode custom: skills,deps,remotion-skills,pytools,tts,verify
+#   --components a,b,c    with --mode custom: skills,deps,pytools,tts
 #   --target T            which agent harnesses to install for: auto (default: every one found on this machine,
 #                         else claude) | all | a comma list, e.g. claude,codex,gemini. Names: see harnesses.sh
 #                         (claude opencode codex gemini cursor copilot amp goose cline roo kilo zed droid warp
@@ -116,7 +117,8 @@ confirm() {  # confirm "question" default(y|n)
   case "$(printf '%s' "$a" | tr 'A-Z' 'a-z')" in y|yes) return 0 ;; n|no) return 1 ;; *) [ "$2" = y ] ;; esac
 }
 
-SKILL_NAMES() { for d in "$ROOT"/skills/*/ "$ROOT"/style/*/; do [ -f "${d}SKILL.md" ] && ! grep -q '"status": *"docs-only"' "${d}style.json" 2>/dev/null && basename "$d"; done; }
+# every skill in skills/ plus every style pack that carries a SKILL.md: all of them are plan-only now
+SKILL_NAMES() { for d in "$ROOT"/skills/*/ "$ROOT"/style/*/; do [ -f "${d}SKILL.md" ] && basename "$d"; done; }
 ver_ge() { [ "$(printf '%s\n%s\n' "$2" "$1" | sort -V | head -1)" = "$2" ]; }   # ver_ge have need
 
 # The scene agent is written as a copy per harness, so the model is the user's choice and each format is right.
@@ -189,31 +191,20 @@ doctor() {
   if command -v node >/dev/null 2>&1; then v="$(node -v | sed 's/^v//')"; if ver_ge "$v" 20; then ok "node $v"; else bad "node $v (need 20+)"; L_STD=0; fi; else miss "node (need 20+)"; L_STD=0; fi
   command -v npm >/dev/null 2>&1 && ok "npm" || { miss "npm"; L_STD=0; }
   command -v ffmpeg >/dev/null 2>&1 && ok "ffmpeg" || { miss "ffmpeg"; L_STD=0; }
-  if command -v rsync >/dev/null 2>&1; then ok "rsync"; else miss "rsync (the kit sync uses it)"; L_STD=0; fi
-  if command -v kyfram >/dev/null 2>&1; then ok "kyfram $(kyfram --version 2>/dev/null | grep -o '[0-9][0-9.]*' | head -1) (kyfram engine)"; else miss "kyfram (only the kyfram engine needs it: curl -fsSL https://kyfram-site-68056d.gitlab.io/install.sh | sh)"; fi
   command -v python3 >/dev/null 2>&1 && ok "python3 $(python3 -c 'import platform;print(platform.python_version())')" || { miss "python3"; L_STD=0; }
-  local remo_found=0 d
-  for d in "${SKILLS_DIRS[@]}" "$HOME/.claude/skills" "$HOME/.config/opencode/skills" "$HOME/.agents/skills" "$HOME/.gemini/skills" "$HOME/.cursor/skills"; do
-    [ -f "$d/remotion-best-practices/SKILL.md" ] && remo_found=1
-  done
-  if [ $remo_found = 1 ]; then ok "remotion skills"; else miss "remotion skills (npx skills add remotion-dev/skills, see step_remotion)"; L_STD=0; fi
   if "$PAPERCUT_PY" -c 'import numpy, PIL, soundfile' >/dev/null 2>&1; then ok "python tools: numpy + Pillow + soundfile ($PAPERCUT_PY)"; else miss "python tools (numpy + Pillow + soundfile)"; L_STD=0; fi
-  if motion_find_chrome >/dev/null; then ok "Chrome or Chromium (sound effects and music render)"; else miss "Chrome/Chromium (only the SFX and music render needs it)"; fi
   if "$QWEN_TTS_PY" -c 'import qwen_tts' >/dev/null 2>&1; then
     ok "voice: qwen-tts importable ($QWEN_TTS_PY)"
     if ls -d "$HOME"/.cache/huggingface/hub/models--Qwen--Qwen3-TTS-12Hz-*-CustomVoice >/dev/null 2>&1; then ok "voice: CustomVoice model cached"; L_FULL=1; else miss "voice: no CustomVoice model in the Hugging Face cache"; fi
   else miss "voice: qwen-tts not installed (optional; ./install.sh --mode custom --components tts)"; fi
-  for f in kit/paper/camera.tsx public/bg/backdrops/backdrops.json public/bg/textures/felt-fibre.mp4; do
-    [ -e "$ROOT/style/papercut/remotion/$f" ] && ok "library: papercut/$f" || { bad "library file missing: papercut/$f"; L_STD=0; }
-  done
-  local nk=0 ns=0 nd=0 s
+  local ns=0 nbad=0 s
   for s in style/*/; do
     s=$(basename "$s"); ns=$((ns+1))
-    if [ -f "$ROOT/style/$s/kyfram/PRELUDE.lgv" ]; then nk=$((nk+1));
-    elif grep -q '"status": *"docs-only"' "$ROOT/style/$s/style.json" 2>/dev/null; then nd=$((nd+1));  # imported rules-only pack: nothing to render
-    else miss "kyfram: style/$s/PRELUDE.lgv missing (the kyfram engine cannot render this style)"; fi
+    if [ ! -f "$ROOT/style/$s/style.json" ] || [ ! -f "$ROOT/style/$s/docs/style-guide.md" ]; then
+      miss "style/$s: needs style.json and docs/style-guide.md"; nbad=$((nbad+1))
+    fi
   done
-  [ "$nk" -gt 0 ] && ok "kyfram: $nk/$ns styles ship a PRELUDE.lgv${nd:+ ($nd docs-only imports, not renderable)}"
+  if [ $nbad = 0 ]; then ok "styles: $ns packs, each with style.json + docs/style-guide.md"; else bad "styles: $nbad/$ns incomplete"; L_STD=0; fi
   local level="none (skills not installed)"
   if [ $L_SKILLS = 1 ]; then level="Minimal"; [ $L_STD = 1 ] && level="Standard" && [ $L_FULL = 1 ] && level="Full"; fi
   say "Install level: $level"
@@ -247,8 +238,8 @@ How much do you want to set up?
 
   1) Minimal   The skills only (hook, script, storyboard, strategy, style prompts).
                Nothing renders. Takes seconds.
-  2) Standard  Minimal + render silent reels: dependency check, Remotion skills,
-               Python tools, a self-test render.             ~0.7 GB, a few minutes.
+  2) Standard  Minimal + dependency check and the Python tools the plan stages use.
+                                                             ~0.3 GB, a couple of minutes.
   3) Full      Standard + local voiceover: Qwen3-TTS + word-timing ASR.
                                                               +4-6 GB (1.5 GB venv + model).
   4) Custom    Pick each component.
@@ -261,22 +252,21 @@ EOF
   fi
 fi
 
-C_SKILLS=0; C_DEPS=0; C_REMO=0; C_PY=0; C_TTS=0; C_VERIFY=0
+C_SKILLS=0; C_DEPS=0; C_PY=0; C_TTS=0
 case "$MODE" in
   minimal)  C_SKILLS=1 ;;
-  standard) C_SKILLS=1; C_DEPS=1; C_REMO=1; C_PY=1; C_VERIFY=1 ;;
-  full)     C_SKILLS=1; C_DEPS=1; C_REMO=1; C_PY=1; C_TTS=1; C_VERIFY=1 ;;
+  standard) C_SKILLS=1; C_DEPS=1; C_PY=1 ;;
+  full)     C_SKILLS=1; C_DEPS=1; C_PY=1; C_TTS=1 ;;
   custom)
     if [ -n "$COMPONENTS" ]; then
       for c in $(printf '%s' "$COMPONENTS" | tr ',' ' '); do
-        case "$c" in skills) C_SKILLS=1 ;; deps) C_DEPS=1 ;; remotion-skills) C_REMO=1 ;; pytools) C_PY=1 ;; tts) C_TTS=1 ;; verify) C_VERIFY=1 ;;
+        case "$c" in skills) C_SKILLS=1 ;; deps) C_DEPS=1 ;; pytools) C_PY=1 ;; tts) C_TTS=1 ;;
           *) echo "unknown component: $c" >&2; exit 2 ;; esac
       done
     else
       interactive || { echo "--mode custom needs --components or a terminal" >&2; exit 2; }
       confirm "Install the skills (links into ${SKILLS_DIRS[*]})?" y && C_SKILLS=1
-      confirm "Check dependencies (node 20+, npm, ffmpeg, python3)?" y && C_DEPS=1
-      confirm "Install the Remotion agent skills (npx skills add remotion-dev/skills)?" y && C_REMO=1
+      confirm "Check dependencies (python3, ffmpeg)?" y && C_DEPS=1
       confirm "Set up Python tools (venv with numpy + Pillow, for QA contact sheets)?" y && C_PY=1
       if confirm "Set up local voiceover (Qwen3-TTS + ASR; 4-6 GB of disk)?" n; then
         C_TTS=1
@@ -284,7 +274,6 @@ case "$MODE" in
         [ "$m" = 2 ] && TTS_MODEL=0.6B
         confirm "Also download the voice-cloning model (same size again)?" n && WITH_CLONE=1
       fi
-      confirm "Run a self-test render at the end?" y && C_VERIFY=1
     fi ;;
   *) echo "unknown mode: $MODE" >&2; exit 2 ;;
 esac
@@ -292,11 +281,9 @@ esac
 if [ "$MODE" != custom ] && interactive; then
   say "Plan ($MODE)"
   [ $C_SKILLS = 1 ] && echo "  - link the skills into ${SKILLS_DIRS[*]} (${TARGET_LIST[*]})"
-  [ $C_DEPS = 1 ]   && echo "  - check node, npm, ffmpeg, python3"
-  [ $C_REMO = 1 ]   && echo "  - install the Remotion agent skills (global)"
+  [ $C_DEPS = 1 ]   && echo "  - check python3 and ffmpeg"
   [ $C_PY = 1 ]     && echo "  - create a Python venv with numpy + Pillow"
   [ $C_TTS = 1 ]    && echo "  - build a voice venv and download Qwen3-TTS $TTS_MODEL (~$([ "$TTS_MODEL" = 1.7B ] && echo 4.2 || echo 2.3) GB)"
-  [ $C_VERIFY = 1 ] && echo "  - scaffold a throwaway project and render one still (npm install runs once)"
   confirm "Go?" y || { echo "cancelled"; exit 0; }
 fi
 [ "$MODE" = full ] && interactive && ! confirm "Full mode asks for a multi-GB model download. Keep model size $TTS_MODEL?" y && { echo "rerun with --tts-model 0.6B or --mode standard"; exit 0; }
@@ -374,35 +361,9 @@ step_skills() {
 step_deps() {
   say "dependencies"
   local miss_any=0
-  if command -v node >/dev/null 2>&1; then v="$(node -v | sed 's/^v//')"; if ver_ge "$v" 20; then ok "node $v"; else bad "node $v, need 20+"; miss_any=1; fi
-  else bad "node not found. Install Node 20+: https://nodejs.org or 'brew install node'"; miss_any=1; fi
-  command -v npm >/dev/null 2>&1 && ok "npm" || { bad "npm not found (ships with node)"; miss_any=1; }
-  command -v ffmpeg >/dev/null 2>&1 && ok "ffmpeg" || { bad "ffmpeg not found: 'brew install ffmpeg' or 'apt install ffmpeg'"; miss_any=1; }
-  command -v rsync >/dev/null 2>&1 && ok "rsync" || { bad "rsync not found (the kit sync uses it): 'brew install rsync' or 'apt install rsync'"; miss_any=1; }
-  if command -v kyfram >/dev/null 2>&1; then
-    ok "kyfram $(kyfram --version 2>/dev/null | grep -o '[0-9][0-9.]*' | head -1)"
-  else miss "kyfram not found (only the kyfram engine needs it): curl -fsSL https://kyfram-site-68056d.gitlab.io/install.sh | sh"; fi
-  if motion_find_chrome >/dev/null; then
-    ok "Chrome or Chromium (sound effects and music render)"
-  else miss "Chrome/Chromium not found: only the SFX and music render needs it (set CHROME_PATH or install Chrome); video renders do not"; fi
+  command -v ffmpeg >/dev/null 2>&1 && ok "ffmpeg" || { miss "ffmpeg not found (timing and placeholder voice): 'brew install ffmpeg' or 'apt install ffmpeg'"; miss_any=1; }
   command -v python3 >/dev/null 2>&1 && ok "python3" || { bad "python3 not found"; miss_any=1; }
-  if [ $miss_any = 1 ]; then note_fail deps "install the items above, then rerun with --mode custom --components deps,verify"; return 1; fi
-}
-
-step_remotion() {
-  say "Remotion agent skills (${TARGET_LIST[*]})"
-  command -v npx >/dev/null 2>&1 || { note_fail remotion-skills "npx not found"; return 1; }
-  # `npx skills` installs into each harness's own folder. Skip a harness that already has the skill where it reads skills.
-  local h id udir done_ids=()
-  for h in "${TARGET_LIST[@]}"; do
-    id="$(h_field "$h" 7)"; udir="$(h_field "$h" 2)"
-    [ -f "$udir/remotion-best-practices/SKILL.md" ] && continue
-    [ -f "$HOME/.claude/skills/remotion-best-practices/SKILL.md" ] && [ "$h" = claude ] && continue
-    in_array "$id" "${done_ids[@]+"${done_ids[@]}"}" && continue
-    done_ids+=("$id")
-    run npx -y skills@latest add remotion-dev/skills -g -y -a "$id" || note_fail remotion-skills "npx skills add failed for $id; run it by hand"
-  done
-  [ "${#done_ids[@]}" -gt 0 ] || ok "already installed"
+  if [ $miss_any = 1 ]; then note_fail deps "install the items above, then rerun with --mode custom --components deps"; return 1; fi
 }
 
 step_pytools() {
@@ -411,7 +372,7 @@ step_pytools() {
   command -v python3 >/dev/null 2>&1 || { note_fail pytools "python3 missing"; return 1; }
   run mkdir -p "$DATA_DIR"
   if [ ! -x "$V/bin/python" ]; then
-    run python3 -m venv "$V" || { rm -rf "$V"; note_fail pytools "could not create a venv (on Debian/Ubuntu: apt install python3-venv, then rerun with --mode custom --components pytools,verify)"; return 1; }
+    run python3 -m venv "$V" || { rm -rf "$V"; note_fail pytools "could not create a venv (on Debian/Ubuntu: apt install python3-venv, then rerun with --mode custom --components pytools)"; return 1; }
   fi
   run "$V/bin/python" -m pip install -q -U pip numpy pillow soundfile || { note_fail pytools "pip install failed"; return 1; }
   [ "$DRY" = 1 ] || motion_config_set MOTION_PY "$V/bin/python"
@@ -425,18 +386,11 @@ step_tts() {
   run bash "$LIB/voice/setup_tts.sh" $args || note_fail tts "see the output above; rerun: library/voice/setup_tts.sh"
 }
 
-step_verify() {
-  say "self-test render"
-  run bash "$LIB/tools/selftest.sh" || note_fail verify "self-test failed; run core/tools/selftest.sh to see why"
-}
-
 step_config
 [ $C_SKILLS = 1 ] && step_skills
-if [ $C_DEPS = 1 ]; then step_deps || C_VERIFY=0; fi
-[ $C_REMO = 1 ] && step_remotion
+[ $C_DEPS = 1 ] && step_deps || true
 [ $C_PY = 1 ] && step_pytools
 [ $C_TTS = 1 ] && step_tts
-[ $C_VERIFY = 1 ] && step_verify
 
 # ---------------------------------------------------------------- summary
 echo
@@ -445,10 +399,10 @@ if [ -n "$FAILED" ]; then bad "needs attention:$FAILED"; echo "After fixing, rer
 cat <<EOF
 
 Next: open your coding agent (Claude Code, opencode, Codex, Gemini CLI, Cursor ...) and say
-  "make a papercut explainer about <link>"
+  "plan a papercut explainer about <link>"
 or run one stage on its own: "write a hook for ...", "storyboard this script", "set up the voice".
 
-To pick a default style and engine and generate design.md + agents.md for your series:
+To pick a default style and generate design.md + agents.md for your series:
   $ROOT/core/init.sh [--series <series-dir>]
 
 Check the setup any time: ./install.sh --doctor [--target auto|all|claude,codex,...]

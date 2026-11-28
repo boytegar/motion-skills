@@ -2,7 +2,7 @@
   "name": "silkscreen-poster",
   "title": "Silkscreen Travel Poster",
   "tagline": "Registration: every layer offset 1–3 px at 1080p; a knocked-out shape leaves a crescent of bare paper",
-  "description": "Registration: every layer offset 1–3 px at 1080p; a knocked-out shape leaves a crescent of bare paper. Fits: destination guides; tourism; event posters. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "description": "Registration: every layer offset 1–3 px at 1080p; a knocked-out shape leaves a crescent of bare paper. Fits: destination guides; tourism; event posters.",
   "status": "docs-only",
   "source": {
     "repo": "https://github.com/lemomo-ai/lemo-opuscar",
@@ -14,7 +14,6 @@
   "category": "Print & Printmaking",
   "cn": "丝印旅行海报",
   "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
-  "engines": [],
   "docs": {
     "styleGuide": "docs/style-guide.md",
     "stylePrompt": "docs/style-prompt.md"

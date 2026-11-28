@@ -2,7 +2,7 @@
   "name": "paper-popup",
   "title": "Paper Pop-up Book",
   "tagline": "Two worlds in one frame",
-  "description": "Two worlds in one frame. Fits: children's books; game trailers; story films. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "description": "Two worlds in one frame. Fits: children's books; game trailers; story films.",
   "status": "docs-only",
   "source": {
     "repo": "https://github.com/lemomo-ai/lemo-opuscar",
@@ -14,7 +14,6 @@
   "category": "3D & Miniature",
   "cn": "纸片立体书",
   "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
-  "engines": [],
   "docs": {
     "styleGuide": "docs/style-guide.md",
     "stylePrompt": "docs/style-prompt.md"

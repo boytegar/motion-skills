@@ -61,7 +61,7 @@ Stages 1 to 6 end the plan. Nothing here builds, previews, renders or QA-passes 
 
 Stage 6 ends by writing `video/HANDOFF.md`, a contract that asks for an engine by name and says what the folder needs. The plan itself is engine-free: nothing in it imports, installs or configures a renderer, and no stage picks one for the user.
 
-`HANDOFF.md` names whatever the user already has, e.g. `@remotion` (React/TypeScript, one TSX per scene), `@fframes` (a Rust crate) or `@kyfram` (Logos `.lgv`) — those are examples, not a menu to choose from. If the user has no engine, write `Ask for: an engine skill` and say so in one line.
+`HANDOFF.md` names whatever the user already builds with — an engine, a tool, or a person taking the folder. That is a note about their tooling, not a menu to choose from. If the user has nothing, write `Ask for: a build target` and say so in one line.
 
 The engine skill owns scaffolding, scene code, assets that need its runtime, the render and every visual QA pass. This set writes the plan those steps consume and nothing else. Never improvise a renderer inside a planning stage.
 
@@ -90,7 +90,7 @@ The pipeline lives in files, not in chat. Each stage reads the files above and w
       tools/cues.json        every sound cue with its time
 ```
 
-Library catalogs: the style's staging vocabulary and `$MOTION_LIB/core/audio/CATALOG.md` (every SFX and bed). The style catalog sits with the style's own kit (for papercut today, `style/$MOTION_STYLE/remotion/CATALOG.md`). Both are generated, so a fresh checkout may lack them or have stale ones. Run `python3 $MOTION_LIB/core/tools/catalog.py` to rebuild. Agents read the catalogs, not the kit source.
+Locations: the style's staging vocabulary is its own `style/$MOTION_STYLE/SKILL.md` and `docs/style-guide.md`; the sound vocabulary is `$MOTION_LIB/core/audio/CATALOG.md` (every SFX and bed, generated — run `python3 $MOTION_LIB/core/tools/catalog.py` to rebuild). Agents read the docs and catalogs, not any builder's source.
 
 Reuse before writing: pick SFX and beds by name, and name existing camera moves and transitions in the storyboard instead of inventing new ones.
 
@@ -111,7 +111,7 @@ ffmpeg -version | head -1
 
 The first two probing lines passing means **plan + audio files**. The `qwen_tts` import passing as well means **plan + real voiceover**. If a stage needs more than the install provides, say so in one line, run `./install.sh --doctor` from the repo root, and hand over to `motion-setup` instead of improvising. Find the root with `readlink` on the installed skill folder (under `.claude/skills`, `.agents/skills`, `.config/opencode/skills` or another harness's skills folder), or `MOTION_HOME` in the config file.
 
-No render engine ships with any planning mode here, and none is installed by this set. A renderer's dependencies belong to its own skill.
+No render engine ships with any planning mode here, and none is installed by this set. A builder's dependencies belong to its own skill.
 
 ## Rules across stages
 

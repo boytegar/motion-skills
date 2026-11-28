@@ -2,7 +2,7 @@
   "name": "dataviz",
   "title": "Data Storytelling",
   "tagline": "The chart is the film",
-  "description": "The chart is the film. Fits: data journalism; reports; climate & science. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "description": "The chart is the film. Fits: data journalism; reports; climate & science.",
   "status": "docs-only",
   "source": {
     "repo": "https://github.com/lemomo-ai/lemo-opuscar",
@@ -14,7 +14,6 @@
   "category": "Data & Maps",
   "cn": "数据叙事",
   "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
-  "engines": [],
   "docs": {
     "styleGuide": "docs/style-guide.md",
     "stylePrompt": "docs/style-prompt.md"

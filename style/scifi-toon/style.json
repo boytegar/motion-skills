@@ -2,7 +2,7 @@
   "name": "scifi-toon",
   "title": "Sci-Fi Sitcom Toon",
   "tagline": "Copyright red lines (non-negotiable):",
-  "description": "Copyright red lines (non-negotiable):. Fits: comedy; tech brands; social shorts. Docs-only import: this pack carries the look, motion and sound rules but no engine code, so it cannot render until an engine is written for it.",
+  "description": "Copyright red lines (non-negotiable):. Fits: comedy; tech brands; social shorts.",
   "status": "docs-only",
   "source": {
     "repo": "https://github.com/lemomo-ai/lemo-opuscar",
@@ -14,7 +14,6 @@
   "category": "Cartoons",
   "cn": "科幻情景喜剧卡通",
   "canvasHint": "Lemo-Opuscar defaults to 1920x1080 @ 24fps; set `canvas` when porting.",
-  "engines": [],
   "docs": {
     "styleGuide": "docs/style-guide.md",
     "stylePrompt": "docs/style-prompt.md"
